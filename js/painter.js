@@ -1,3 +1,7 @@
+//Johann Steinbrecher
+//Santa Clara 2012
+
+
 var states = [
 	{
 		'name':'idle',
@@ -7,7 +11,8 @@ var states = [
 			'clickOnCanvas':'addReference',
 			'clickOnReference':'dragReference',
 			'clickOnNode':'createStartNode',
-			'deletePressed':'deleteObject'
+			'deletePressed':'deleteObject',
+			'zoomWheel':'zoomState'
 		}
 	},
 	{
@@ -62,8 +67,16 @@ var states = [
 		{
 		   'backToIdle':'idle'
 		}	
+	},
+	{
+		'name':'zoomState',
+		'events':
+		{
+		   'backToIdle':'idle'
+		}	
 	}
 ];
+
 
 
 function StateMachine(states){
@@ -161,7 +174,34 @@ var Reference = function(targetpoint,title,authorandyear,refid)
 
 
 
+Reference.prototype.zoom = function(delta, mouse)
+{
 
+    var newwidth = this.rectangle.width*(1+delta);
+    var newheight = this.rectangle.height*(1+delta);
+
+    var deltax = (this.rectangle.x + newwidth/2 - mouse.x)*(1+delta);
+    var deltay = (this.rectangle.y + newheight/2 - mouse.y)*(1+delta);
+
+    this.rectangle.x = mouse.x + deltax - newwidth/2;
+    this.rectangle.y = mouse.y + deltay - newheight/2; 
+
+    this.node[0].rectangle.x = this.rectangle.x -3;
+    this.node[0].rectangle.y = this.rectangle.y + newheight/2 - 3;
+    
+    this.node[1].rectangle.x = this.rectangle.x + newwidth - 3;
+    this.node[1].rectangle.y = this.rectangle.y + newheight/2 - 3;
+     
+    this.node[2].rectangle.x = this.rectangle.x + newwidth/2 - 3;
+    this.node[2].rectangle.y = this.rectangle.y -3;
+    
+    this.node[3].rectangle.x = this.rectangle.x + newwidth/2 - 3;
+    this.node[3].rectangle.y = this.rectangle.y + newheight -3;
+    
+	this.rectangle.width = newwidth;
+	this.rectangle.height = newheight;
+
+}
 
 Reference.prototype.paint = function(theMindMap)
 {
@@ -274,6 +314,8 @@ var MindMap = function(theCanvas)
     this.mousePosition = new SinglePoint(0, 0);
     this.startNode = new Node(0,0,0,0,0,0);
     
+    this.zoomdelta = 0;
+    
     this.draghelper=false;
     
     this.current='reference';
@@ -293,6 +335,8 @@ var MindMap = function(theCanvas)
 	this.touchMoveHandler = this.touchMove.bind(this);
 	
 	this.keyHandler = this.key.bind(this);
+	
+	this.mousewheelHandler = this.mousewheel.bind(this);
 
 	this.canvas.addEventListener("mousedown", this.mouseDownHandler, false);
 	this.canvas.addEventListener("mouseup", this.mouseUpHandler, false);
@@ -303,6 +347,9 @@ var MindMap = function(theCanvas)
 	this.canvas.addEventListener("touchmove", this.touchMoveHandler, false);
 	
 	this.canvas.addEventListener("keydown", this.keyHandler, false);
+	
+	this.canvas.addEventListener("DOMMouseScroll",this.mousewheelHandler,false);
+	this.canvas.addEventListener("mousewheel",this.mousewheelHandler,false);
 
 };
 
@@ -445,7 +492,6 @@ MindMap.prototype.performState = function()
 							this.context.fillStyle = "#ffffff";
 							this.context.strokeStyle = "#000000";
 							this.context.beginPath();
-							//this.context.moveTo(this.startPoint.x , this.startPoint.y);
 							this.context.moveTo(this.startNode.rectangle.x +3 , this.startNode.rectangle.y +3);
 							this.context.lineTo(this.mousePosition.x,this.mousePosition.y);
 							this.context.closePath();
@@ -577,11 +623,58 @@ MindMap.prototype.performState = function()
     
     						sm.consumeEvent('backToIdle');
     						break; 
+    						
+    case "zoomState":		//alert("zoom value "+this.zoomdelta);
+    
+    						for (var j = 0; j < this.references.length; j++)
+    						{
+								this.references[j].zoom(this.zoomdelta/10, this.mousePosition);
+    						}
+    						
+    						
+    						for (var j = 0; j < this.connections.length; j++)
+    						{
+								this.connections[j].paint(this);
+    						}
+    						
+    						for (var j = 0; j < this.references.length; j++)
+    						{
+								this.references[j].paint(this);
+    						}
+    
+    						sm.consumeEvent('backToIdle');
+    						break; 
+    
  
     default: alert('default state');
    }
 
 };
+
+
+MindMap.prototype.mousewheel = function(e)
+{
+  	
+	e.preventDefault();
+	this.zoomdelta = e.wheelDelta ? e.wheelDelta/40 : e.detail ? -e.detail : 0;
+
+    sm.consumeEvent('zoomWheel');
+
+    mindmap.performState();
+	
+	this.stopEvent(e);
+	return null;
+}
+
+
+MindMap.prototype.zoom = function(delta)
+{
+   alert("the delta "+delta);
+
+
+}
+
+
 
 MindMap.prototype.mouseDown = function(e)
 {
@@ -599,10 +692,7 @@ MindMap.prototype.mouseDown = function(e)
         if(this.references[j].node[i].selected==true)
     	{
     	    objectClicked=true;
-    	    sm.consumeEvent('clickOnNode');
-    	    //this.startPoint.x=this.references[j].node[i].rectangle.x+3;
-    	    //this.startPoint.y=this.references[j].node[i].rectangle.y+3;
-    	    //this.startNode=this.references[j].node[i];    	    
+    	    sm.consumeEvent('clickOnNode');   	    
     	    break;
     	 }
        }
@@ -619,23 +709,9 @@ MindMap.prototype.mouseDown = function(e)
 	      break;
 	     
 	   
-			//this.references[j].drag=true;
-			//this.references[j].oldPosition=this.mousePosition;
-			//this.current='plain';
-			//flag=true;	
 	   }
 		
-	   //check nodes	 
 	   
-    	 //  	else
-    	 //  	{
-    	 //  	  this.drawLine=false;
-    	   	  //this.connections[this.connections.length] = new Connection(this.references[j].node[i],this.startNode); 
-      	//	}
-      	//	return null;
-      		//this.stopEvent(e);
-      		//alert('mouse down event ' + this.drawLine + 'j' + j + 'i' + i);
-    	    //break;
     }
 	
 	if(objectClicked==false)
@@ -647,16 +723,6 @@ MindMap.prototype.mouseDown = function(e)
 	
 	mindmap.performState();
 	
-	
-	
-	/*
-	this.defaultdisplay=false;
-	if ( flag==false  )
-	{	
-		var tempPoint = new SinglePoint(this.mousePosition.x - 100 , this.mousePosition.y - 50 );
-		this.references[this.references.length] = new Reference(tempPoint, document.getElementById("paper").value , document.getElementById("paper").value, this.references.length);
-	}
-	*/
 	this.stopEvent(e);
 	return null;
 	
