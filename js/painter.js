@@ -157,7 +157,7 @@ Rectangle.prototype.contains = function(testpoint)
 };
 
 
-var Reference = function(targetpoint,title,authorandyear,refid)
+var Reference = function(targetpoint,title,authorandyear,refid,theMindMap)
 {
   this.drag=false;
   this.authorandyear=authorandyear;
@@ -165,7 +165,7 @@ var Reference = function(targetpoint,title,authorandyear,refid)
   this.line1;
   this.line2;
   this.radius=5;
-  this.rectangle = new Rectangle(targetpoint.x,targetpoint.y,200,100); 
+  this.rectangle = new Rectangle(targetpoint.x,targetpoint.y,theMindMap.currentwidth,theMindMap.currentheight); 
   this.refid=refid;
   this.node = new Array(4);
   this.node[0] = new Node(targetpoint.x-3,targetpoint.y+47,6,6,  refid,0); 
@@ -321,6 +321,8 @@ var MindMap = function(theCanvas)
     this.startNode = new Node(0,0,0,0,0,0);
     
     this.zoomdelta = 0;
+    this.currentwidth=200;
+    this.currentheight=100;
     
     this.draghelper=false;
     
@@ -373,7 +375,7 @@ MindMap.prototype.performState = function()
    
    switch ( sm.getStatus() ) 
    {
-    case "idle": 	var r = new Rectangle( this.mousePosition.x -100, this.mousePosition.y -50 , 200, 100 );
+    case "idle": 	var r = new Rectangle( this.mousePosition.x - this.currentwidth/2, this.mousePosition.y - this.currentheight/2 , this.currentwidth, this.currentheight );
    					this.context.lineWidth = 1;
    					this.context.fillStyle = "#ffffff";
    					this.context.strokeStyle = "#000000";
@@ -397,8 +399,8 @@ MindMap.prototype.performState = function()
     				
                    break;
  
-    case "addReference": 	var tempPoint = new SinglePoint(this.mousePosition.x - 100 , this.mousePosition.y - 50 );
-							this.references[this.references.length] = new Reference(tempPoint, document.getElementById("paper").value , document.getElementById("paper").value, this.references.length);
+    case "addReference": 	var tempPoint = new SinglePoint(this.mousePosition.x - this.currentwidth/2 , this.mousePosition.y - this.currentheight/2 );
+							this.references[this.references.length] = new Reference(tempPoint, document.getElementById("paper").value , document.getElementById("paper").value, this.references.length, this);
 							
 							for (var j = 0; j < this.connections.length; j++)
     						{
@@ -628,12 +630,26 @@ MindMap.prototype.performState = function()
     						break; 
     						
     case "zoomState":		//alert("zoom value "+this.zoomdelta);
-    
+
+							this.currentwidth = this.currentwidth*(1+this.zoomdelta/10);
+							this.currentheight = this.currentheight*(1+this.zoomdelta/10);
+	    
     						for (var j = 0; j < this.references.length; j++)
     						{
 								this.references[j].zoom(this.zoomdelta/10, this.mousePosition);
     						}
     						
+    						
+    						var r = new Rectangle( this.mousePosition.x - this.currentwidth/2, this.mousePosition.y - this.currentheight/2 , this.currentwidth, this.currentheight );
+   							this.context.lineWidth = 1;
+   							this.context.fillStyle = "#ffffff";
+   							this.context.strokeStyle = "#000000";
+   							this.context.fillRect(r.x , r.y , r.width , r.height );
+   							this.context.strokeRect(r.x , r.y , r.width, r.height); 
+		
+   							this.context.strokeStyle = 'blue';
+   							this.context.lineWidth = 1;
+   							this.context.strokeText( document.getElementById("paper").value , this.mousePosition.x+20, this.mousePosition.y+20);
     						
     						for (var j = 0; j < this.connections.length; j++)
     						{
