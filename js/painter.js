@@ -12,7 +12,8 @@ var states = [
 			'clickOnReference':'dragReference',
 			'clickOnNode':'createStartNode',
 			'deletePressed':'deleteObject',
-			'zoomWheel':'zoomState'
+			'zoomWheel':'zoomState',
+			'clickMousewheel':'panState'
 		}
 	},
 	{
@@ -74,8 +75,18 @@ var states = [
 		{
 		   'backToIdle':'idle'
 		}	
+	},
+	{
+		'name':'panState',
+		'events':
+		{
+		   'mouseUp':'idle'
+		}	
 	}
 ];
+
+
+
 
 
 
@@ -106,11 +117,6 @@ function StateMachine(states){
 		return this.currentState.name;
 	}
 }
-
-
-
-
-
 
 
 Function.prototype.bind = function(obj)
@@ -487,8 +493,7 @@ MindMap.prototype.performState = function()
 								}
     						}
 			
-	case "drawLine":	    //alert('drawLine');
-							this.context.lineWidth = 1;
+	case "drawLine":		this.context.lineWidth = 1;
 							this.context.fillStyle = "#ffffff";
 							this.context.strokeStyle = "#000000";
 							this.context.beginPath();
@@ -520,9 +525,7 @@ MindMap.prototype.performState = function()
 									{
 										this.connections[this.connections.length] = new Connection(this.startNode,this.references[j].node[i]);
 										sm.consumeEvent('backToIdle');
-										
 									}
-								
 								}
     						}
     						
@@ -644,6 +647,40 @@ MindMap.prototype.performState = function()
     
     						sm.consumeEvent('backToIdle');
     						break; 
+    						
+    case "panState":		var deltax = 0;
+							var deltay = 0;
+ 							if(!this.draghelper)
+							{
+								deltax = this.mousePosition.x - this.references[0].oldPosition.x;
+   							    deltay = this.mousePosition.y - this.references[0].oldPosition.y;
+   							}
+   							this.draghelper=false;
+							
+							for (var j = 0; j < this.references.length; j++)
+    						{
+    							this.references[j].rectangle.x += deltax;
+								this.references[j].rectangle.y += deltay;
+								for (var i = 0; i < this.references[j].node.length; i++)
+								{
+									this.references[j].node[i].rectangle.x += deltax;
+									this.references[j].node[i].rectangle.y += deltay;
+								}
+    						}
+							
+							this.references[0].oldPosition=this.mousePosition;
+							
+							for (var j = 0; j < this.connections.length; j++)
+    						{
+								this.connections[j].paint(this);
+    						}
+    						
+    						for (var j = 0; j < this.references.length; j++)
+    						{
+								this.references[j].paint(this);
+    						}
+
+    						break;
     
  
     default: alert('default state');
@@ -680,12 +717,15 @@ MindMap.prototype.mouseDown = function(e)
 {
 	e.preventDefault();
 	this.updateMousePosition(e);
-		
-	var objectClicked = false;
 	
-	//check if an object got clicked
-	for (var j = 0; j < this.references.length; j++)
-    {
+	if(e.which==1)   //left button
+	{
+		
+  	 var objectClicked = false;
+	
+	 //check if an object got clicked
+	 for (var j = 0; j < this.references.length; j++)
+     {
     
        for (var i = 0; i < this.references[j].node.length; i++)
        {
@@ -700,31 +740,36 @@ MindMap.prototype.mouseDown = function(e)
        //check references
 	   if(this.references[j].selected==true && !objectClicked)
 	   {
-	      
-	      
 	      objectClicked=true;
 	      this.references[j].drag=true;
 	      sm.consumeEvent('clickOnReference');
 	      this.draghelper=true;
 	      break;
-	     
-	   
 	   }
-		
-	   
     }
 	
 	if(objectClicked==false)
 	{
 		sm.consumeEvent('clickOnCanvas');
-		
-		
 	}		
+   }
+   else if(e.which == 2)  //mousewheel
+   {
+      this.draghelper=true;
+      sm.consumeEvent('clickMousewheel');
+   }
+   else
+   {
+     this.stopEvent(e);
+	 return null;
+   }
+   
+   
+   
+ 	 mindmap.performState();
 	
-	mindmap.performState();
-	
-	this.stopEvent(e);
-	return null;
+	 this.stopEvent(e);
+	 return null;
 	
 };
 
