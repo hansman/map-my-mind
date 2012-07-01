@@ -26,40 +26,73 @@
 		
 		function getdoi()
 		{
-			
-			document.getElementById("publisher").value="";
-			document.getElementById("title").value="";
+			var xmlhttp;
 		
-		if (window.XMLHttpRequest)
+		 if (window.XMLHttpRequest)
 		  {
 		    xmlhttp=new XMLHttpRequest();
 		  }
-		else
+		 else
 		  {
 		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 		  }
 		
-		  xmlhttp.onreadystatechange=function()
+		 xmlhttp.onreadystatechange=function()
+		 {
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 		  {
-		  if (xmlhttp.readyState==4 && xmlhttp.status==200 )
-				  
-		    {
-			 
 		     // document.getElementById("publisher").value=xmlhttp.responseText;
 		      var myArray = eval( xmlhttp.responseText );
 		      document.getElementById("author").value=myArray[0];
 		      document.getElementById("title").value=myArray[1];
 		      document.getElementById("date").value=myArray[2];
 		      document.getElementById("publisher").value=myArray[3];
-		      
-		    }
-		  
 		  }
+		 }
 		  
-		var doifield = document.getElementById("doifield").value;   
-		//var doifield = "http://dx.doi.org/10.1023/B:SUPE.0000011386.69245.f5";
-		xmlhttp.open("GET","php/doihandler.php?doi="+doifield,true);
-		xmlhttp.send();
+		 var doifield = document.getElementById("doifield").value;   
+		 //var doifield = "http://dx.doi.org/10.1023/B:SUPE.0000011386.69245.f5";
+		 xmlhttp.open("GET","php/doihandler.php?doi="+doifield,true);
+		 xmlhttp.send();
+       }
+		
+		
+		
+		function submitnewpaper()
+		{
+			var xmlhttp;
+
+			
+			var doi=document.getElementById("doifield").value;
+			var author=document.getElementById("author").value;
+			var title=document.getElementById("title").value;
+			var publisher=document.getElementById("publisher").value;
+			var date=document.getElementById("date").value;
+			
+			if (window.XMLHttpRequest)
+			  {
+			    xmlhttp=new XMLHttpRequest();
+			  }
+			 else
+			  {
+			    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			  }
+			
+			xmlhttp.onreadystatechange=function()
+			 {
+			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
+			  {  
+			     alert (xmlhttp.responseText);
+			  }
+			 }
+			 xmlhttp.open("GET","php/newpaper.php?doi="+doi+"&author="+author+"&title="+title+"&publisher="+publisher+"&date="+date,true);
+			 xmlhttp.send(); 
+			 
+				document.getElementById("publisher").value="";
+				document.getElementById("title").value="";
+				document.getElementById("author").value="";
+				document.getElementById("date").value="";
+			 
 		}
 			
 	</script>
@@ -81,8 +114,10 @@
         $query  = "select * from lit_testuser";
         $result = $conn->get_results($query);
         if (!$result) die ("Query Failed.");
+
+        mysql_close($conn);
         
-      ?>
+   ?>
 
 
   <body onload="document_load()">
@@ -105,33 +140,33 @@
   <details class="form">
     <summary>Add to library</summary>
 
-    <form role="search">
+   <form >
+		<fieldset>
     
       <label for="doifield">DOI</label>
-      <input class="refform" id="doifield" type="text" placeholder="Enter your doi ..." />
+      <input class="refform" id="doifield" name="doifield" type="text" placeholder="Enter your doi ..." />
       <input class="buttons" type="button" value="Get Paper" onclick="getdoi();" />
-	</form>
-	<form>
-		<fieldset>		
+	
+			
 		<ul>	
 		    <br>
         	<label for="author">Author</label>
-        	<input class="refform" id="author" type="text" placeholder="Set the author names ..." />	
+        	<input class="refform" id="author" name="author" type="text" placeholder="Set the author names ..." />	
 			</br>
 			<br>
         	<label for="title">Title</label>
-        	<input class="refform" id="title" type="text" placeholder="Set the title ..." />   		
+        	<input class="refform" id="title" name="title "type="text" placeholder="Set the title ..." />   		
 			</br>
 			<br>
         	<label for="date">Date</label>
-        	<input class="refform" id="date" type="text" placeholder="Set the date ..." /> 		
+        	<input class="refform" id="date" name="date" type="text" placeholder="Set the date ..." /> 		
 			</br>
 			<br>
         	<label for="publisher">Publisher</label>
-        	<input class="refform" id="publisher" type="text" placeholder="Set the publisher ..." />
+        	<input class="refform" id="publisher" name="publisher" type="text" placeholder="Set the publisher ..." />
 			</br>		    
 		</ul>
-		<input class="buttons" type="submit" value="Submit" />
+		<input class="buttons" type="button" value="Submit" onclick="submitnewpaper()" />
        </fieldset>
      </form>
     
