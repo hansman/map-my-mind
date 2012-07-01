@@ -31,31 +31,33 @@
 			document.getElementById("title").value="";
 		
 		if (window.XMLHttpRequest)
-		  {// code for IE7+, Firefox, Chrome, Opera, Safari
+		  {
 		    xmlhttp=new XMLHttpRequest();
-		    
 		  }
 		else
-		  {// code for IE6, IE5
+		  {
 		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 		  }
 		
 		  xmlhttp.onreadystatechange=function()
 		  {
-		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200 )
+				  
 		    {
-			  
-			  
-		      //document.getElementById("publisher").value=xmlhttp.responseText;
+			 
+		     // document.getElementById("publisher").value=xmlhttp.responseText;
 		      var myArray = eval( xmlhttp.responseText );
 		      document.getElementById("author").value=myArray[0];
 		      document.getElementById("title").value=myArray[1];
 		      document.getElementById("date").value=myArray[2];
 		      document.getElementById("publisher").value=myArray[3];
+		      
 		    }
+		  
 		  }
 		  
 		var doifield = document.getElementById("doifield").value;   
+		//var doifield = "http://dx.doi.org/10.1023/B:SUPE.0000011386.69245.f5";
 		xmlhttp.open("GET","php/doihandler.php?doi="+doifield,true);
 		xmlhttp.send();
 		}
@@ -102,22 +104,32 @@
   
   <details class="form">
     <summary>Add to library</summary>
-    <form>
+
+    <form role="search">
+    
+      <label for="doifield">DOI</label>
+      <input class="refform" id="doifield" type="text" placeholder="Enter your doi ..." />
+      <input class="buttons" type="button" value="Get Paper" onclick="getdoi();" />
+	</form>
+	<form>
 		<fieldset>		
-		<ul>
-		    
-		    <label for="doifield">DOI</label>
-        	<input class="refform" id="doifield" type="text" placeholder="Enter your doi ..." />
-        	<input class="buttons" type="submit" value="Get Paper" onclick="getdoi();" />
-		
+		<ul>	
+		    <br>
         	<label for="author">Author</label>
         	<input class="refform" id="author" type="text" placeholder="Set the author names ..." />	
+			</br>
+			<br>
         	<label for="title">Title</label>
         	<input class="refform" id="title" type="text" placeholder="Set the title ..." />   		
+			</br>
+			<br>
         	<label for="date">Date</label>
         	<input class="refform" id="date" type="text" placeholder="Set the date ..." /> 		
+			</br>
+			<br>
         	<label for="publisher">Publisher</label>
         	<input class="refform" id="publisher" type="text" placeholder="Set the publisher ..." />
+			</br>		    
 		</ul>
 		<input class="buttons" type="submit" value="Submit" />
        </fieldset>
