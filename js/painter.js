@@ -110,12 +110,12 @@ function StateMachine(states){
 		{
 			this.currentState = this.states[this.indexes[this.currentState.events[e]]] ;
 		}
-	}
+	};
 	
 	this.getStatus = function()
 	{
 		return this.currentState.name;
-	}
+	};
 }
 
 
@@ -164,14 +164,15 @@ var Reference = function(targetpoint,title,authorandyear,refid,theMindMap)
   this.title=title;
   this.line1;
   this.line2;
-  this.radius=5;
+  this.nodesize=6;
+  this.radius=16;
   this.rectangle = new Rectangle(targetpoint.x,targetpoint.y,theMindMap.currentwidth,theMindMap.currentheight); 
   this.refid=refid;
   this.node = new Array(4);
-  this.node[0] = new Node(targetpoint.x-3,targetpoint.y+47,6,6,  refid,0); 
-  this.node[1] = new Node(targetpoint.x+197,targetpoint.y+47,6,6,refid,1);
-  this.node[2] = new Node(targetpoint.x+97,targetpoint.y-3,6,6,  refid,2);
-  this.node[3] = new Node(targetpoint.x+97,targetpoint.y+97,6,6, refid,3);  
+  this.node[0] = new Node(targetpoint.x- this.nodesize/2,targetpoint.y + theMindMap.currentheight/2 - this.nodesize/2,this.nodesize,this.nodesize,  refid,0); 
+  this.node[1] = new Node(targetpoint.x+theMindMap.currentwidth-this.nodesize/2,targetpoint.y + theMindMap.currentheight/2 - this.nodesize/2 ,this.nodesize,this.nodesize,refid,1);
+  this.node[2] = new Node(targetpoint.x + theMindMap.currentwidth/2 - this.nodesize/2,targetpoint.y- this.nodesize/2,this.nodesize,this.nodesize,  refid,2);
+  this.node[3] = new Node(targetpoint.x + theMindMap.currentwidth/2 - this.nodesize/2,targetpoint.y + theMindMap.currentwidth/2 - this.nodesize/2,this.nodesize,this.nodesize, refid,3);  
   this.selected=false;
   
   this.oldPosition=targetpoint;
@@ -207,7 +208,7 @@ Reference.prototype.zoom = function(delta, mouse)
 	this.rectangle.width = newwidth;
 	this.rectangle.height = newheight;
 
-}
+};
 
 Reference.prototype.paint = function(theMindMap)
 {
@@ -218,11 +219,9 @@ Reference.prototype.paint = function(theMindMap)
 		{theMindMap.context.strokeStyle = "#FF0000";}
  	else
  		{theMindMap.context.strokeStyle = "#000000";}
- 	
-	theMindMap.context.fillRect(this.rectangle.x , this.rectangle.y , this.rectangle.width , this.rectangle.height );
-	theMindMap.context.strokeRect(this.rectangle.x , this.rectangle.y , this.rectangle.width, this.rectangle.height);
-	
-	
+ 		
+	theMindMap.roundedRect(this.rectangle.x, this.rectangle.y , this.rectangle.width , this.rectangle.height , 16 );
+		
 	theMindMap.context.strokeStyle = 'blue';
     theMindMap.context.lineWidth = 1;
     theMindMap.context.strokeText( this.title , this.rectangle.x+20, this.rectangle.y+20);
@@ -375,27 +374,22 @@ MindMap.prototype.performState = function()
    
    switch ( sm.getStatus() ) 
    {
-    case "idle": 	var r = new Rectangle( this.mousePosition.x - this.currentwidth/2, this.mousePosition.y - this.currentheight/2 , this.currentwidth, this.currentheight );
-   					this.context.lineWidth = 1;
-   					this.context.fillStyle = "#ffffff";
-   					this.context.strokeStyle = "#000000";
-   					this.context.fillRect(r.x , r.y , r.width , r.height );
-   					this.context.strokeRect(r.x , r.y , r.width, r.height); 
-		
+    case "idle": 	  					
+   					this.roundedRect(this.mousePosition.x - this.currentwidth/2, this.mousePosition.y - this.currentheight/2 , this.currentwidth , this.currentheight , 16 );
+					  							
    					this.context.strokeStyle = 'blue';
    					this.context.lineWidth = 1;
    					this.context.strokeText( document.getElementById("paper").value , this.mousePosition.x+20, this.mousePosition.y+20);
-   					
+   					  					
    					for (var j = 0; j < this.connections.length; j++)
     				{
 						this.connections[j].paint(this);
     				}
-   
-    				for (var j = 0; j < this.references.length; j++)
+   					
+   					for (var j = 0; j < this.references.length; j++)
     				{
 						this.references[j].paint(this);
-    				}
-    
+    				} 
     				
                    break;
  
@@ -411,7 +405,6 @@ MindMap.prototype.performState = function()
     						{
 								this.references[j].paint(this);
     						}
-    
     						
     						sm.consumeEvent('backToIdle');
                      		break;
@@ -639,14 +632,8 @@ MindMap.prototype.performState = function()
 								this.references[j].zoom(this.zoomdelta/10, this.mousePosition);
     						}
     						
-    						
-    						var r = new Rectangle( this.mousePosition.x - this.currentwidth/2, this.mousePosition.y - this.currentheight/2 , this.currentwidth, this.currentheight );
-   							this.context.lineWidth = 1;
-   							this.context.fillStyle = "#ffffff";
-   							this.context.strokeStyle = "#000000";
-   							this.context.fillRect(r.x , r.y , r.width , r.height );
-   							this.context.strokeRect(r.x , r.y , r.width, r.height); 
-		
+    						this.roundedRect(this.mousePosition.x - this.currentwidth/2, this.mousePosition.y - this.currentheight/2 , this.currentwidth , this.currentheight , 16 );
+   							   							
    							this.context.strokeStyle = 'blue';
    							this.context.lineWidth = 1;
    							this.context.strokeText( document.getElementById("paper").value , this.mousePosition.x+20, this.mousePosition.y+20);
@@ -717,16 +704,16 @@ MindMap.prototype.mousewheel = function(e)
 	
 	this.stopEvent(e);
 	return null;
-}
+};
 
-
+/*
 MindMap.prototype.zoom = function(delta)
 {
    alert("the delta "+delta);
 
 
-}
-
+};
+*/
 
 
 MindMap.prototype.mouseDown = function(e)
@@ -930,6 +917,28 @@ MindMap.prototype.dispose = function()
 		this.canvas = null;
 		this.context = null;
 	}
+};
+
+
+MindMap.prototype.roundedRect = function(x,y,width,height,radius )
+{
+	this.context.lineWidth = 1;
+	this.context.fillStyle = "#ffffff";
+	this.context.strokeStyle = "#000000";
+	 
+	this.context.beginPath();
+	this.context.moveTo(x + radius, y);
+	this.context.lineTo(x + width - radius, y);
+	this.context.quadraticCurveTo(x + width, y, x + width, y + radius);
+	this.context.lineTo(x + width, y + height - radius);
+	this.context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+	this.context.lineTo(x + radius, y + height);
+	this.context.quadraticCurveTo(x, y + height, x, y + height - radius);
+	this.context.lineTo(x, y + radius);
+	this.context.quadraticCurveTo(x, y, x + radius, y);
+	this.context.closePath();
+	this.context.fill();
+	this.context.stroke();
 };
 
 
