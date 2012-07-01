@@ -17,12 +17,12 @@
 		
 		function document_load()
 		{
+			
+		  updateDatalist();	
 		  sm = new StateMachine(states);
 		  mindmap = new MindMap(document.getElementById("canvas"));
 		  mindmap.performState();
 		}
-		
-		
 		
 		function getdoi()
 		{
@@ -82,7 +82,7 @@
 			 {
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 			  {  
-			     alert (xmlhttp.responseText);
+			     //alert (xmlhttp.responseText);
 			  }
 			 }
 			 xmlhttp.open("GET","php/newpaper.php?doi="+doi+"&author="+author+"&title="+title+"&publisher="+publisher+"&date="+date,true);
@@ -92,35 +92,51 @@
 				document.getElementById("title").value="";
 				document.getElementById("author").value="";
 				document.getElementById("date").value="";
+				updateDatalist()
 			 
 		}
+		
+		function updateDatalist()
+		{
+			
+			if (window.XMLHttpRequest)
+			  {
+			    xmlhttp=new XMLHttpRequest();
+			  }
+			 else
+			  {
+			    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			  }
+			
+			xmlhttp.onreadystatechange=function()
+			 {
+			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
+			  { 
+				var jsonPapers = eval( '(' + xmlhttp.responseText + ')' );
+				var tag;
+				
+                // console.log(jsonPapers.length);
+                // console.log(jsonPapers[1].author);
+				
+				for (var i=0; i<jsonPapers.length;i++) 
+				{ 
+					tag = '<option label="'+ jsonPapers[i].title +'" value="' + jsonPapers[i].author + ' ' + jsonPapers[i].date + '" />';
+					document.getElementById('bibliothek').innerHTML += tag;
+				}
+				
+			  }
+			 }
+			 xmlhttp.open("GET","php/gettotalpapers.php",true);
+			 xmlhttp.send(); 
+		}
+		
+		
 			
 	</script>
 </head>
 
-  <?php
 
-        include 'php/ez_sql_core.php';
-        include 'php/ez_sql_mysql.php';
-        include 'php/config.php';
-		
-
-        $conn = new ezSQL_mysql($dbuser, $dbpass, $dbname, $dbhost);
-
-        if (!$conn)
-         {
-                die('Could not connect: ' . mysql_error());
-         }
-        $query  = "select * from lit_testuser";
-        $result = $conn->get_results($query);
-        if (!$result) die ("Query Failed.");
-
-        mysql_close($conn);
-        
-   ?>
-
-
-  <body onload="document_load()">
+  <body id="thebody" onload="document_load()">
   <canvas id="canvas" width="1000" height= "400" tabindex="0"></canvas>
   
   <input class="form" id="paper" list="bibliothek" type="text" name="bibliothek" placeholder="please select from your library here ..." />
@@ -130,9 +146,7 @@
     <!option label="From Policy Entrepreneur to Policy Manager: The Challenge Facing the European Commission." value="Laffan 1997" />
     <!option label="The Leadership Capacity of the European Commission." value="Nugen 1995" />
 
-	<?php foreach($result as $i){ ?>
-		<option value="<?php echo $i->title; ?>"><?php echo $i->title; ?></option>
-	<?php } ?>
+	
 
   </datalist>
   <p>
