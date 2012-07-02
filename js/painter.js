@@ -226,20 +226,8 @@ Reference.prototype.paint = function(theMindMap)
  	else
  		{theMindMap.context.strokeStyle = "#000000";}
  		
-	theMindMap.roundedRect(this.rectangle.x, this.rectangle.y , this.rectangle.width , this.rectangle.height , 16 );
+	theMindMap.roundedRect(this.rectangle.x, this.rectangle.y , this.rectangle.width , this.rectangle.height , 16, this.title );
 		
-	theMindMap.context.strokeStyle = 'blue';
-    theMindMap.context.lineWidth = 1;
-    theMindMap.context.strokeText( this.title , this.rectangle.x+20, this.rectangle.y+20);
-    
-	theMindMap.context.strokeStyle = 'blue';
-    theMindMap.context.lineWidth = 1;
-    theMindMap.context.strokeText( this.authorandyear , this.rectangle.x+20, this.rectangle.y+50);
-    
-   	theMindMap.context.strokeStyle = 'blue';
-    theMindMap.context.lineWidth = 1;
-    theMindMap.context.strokeText( "refid " +this.refid  , this.rectangle.x+20, this.rectangle.y+70);
-    
     if(this.selected)
     {
      for (var j = 0; j < this.node.length; j++)
@@ -380,13 +368,18 @@ MindMap.prototype.performState = function()
    
    switch ( sm.getStatus() ) 
    {
-    case "idle": 	  					
-   					this.roundedRect(this.mousePosition.x - this.currentwidth/2, this.mousePosition.y - this.currentheight/2 , this.currentwidth , this.currentheight , 16 );
-					  							
-   					this.context.strokeStyle = 'blue';
-   					this.context.lineWidth = 1;
-   					this.context.strokeText( document.getElementById("paper").value , this.mousePosition.x+20, this.mousePosition.y+20);
-   					this.renderMap();  
+    case "idle": 	
+    				var text;
+    				if ( document.getElementById("paper").value )
+    				{
+    					text = document.getElementById("paper").value;
+    				}
+    				else
+    				{
+    				    text = "please select a paper";
+    				}
+   					this.roundedRect(this.mousePosition.x - this.currentwidth/2, this.mousePosition.y - this.currentheight/2 , this.currentwidth , this.currentheight , 16, text );
+					this.renderMap();  
     				
                    break;
  
@@ -394,7 +387,7 @@ MindMap.prototype.performState = function()
 							this.references[this.references.length] = new Reference(tempPoint, document.getElementById("paper").value , document.getElementById("paper").value, this.references.length, this);
 							
 							this.renderMap();
-    						
+							document.getElementById("paper").value="";
     						sm.consumeEvent('backToIdle');
                      		break;
                      		
@@ -581,12 +574,8 @@ MindMap.prototype.performState = function()
 								this.references[j].zoom(this.zoomdelta/10, this.mousePosition);
     						}
     						
-    						this.roundedRect(this.mousePosition.x - this.currentwidth/2, this.mousePosition.y - this.currentheight/2 , this.currentwidth , this.currentheight , 16 );
-   							   							
-   							this.context.strokeStyle = 'blue';
-   							this.context.lineWidth = 1;
-   							this.context.strokeText( document.getElementById("paper").value , this.mousePosition.x+20, this.mousePosition.y+20);
-    						
+    						this.roundedRect(this.mousePosition.x - this.currentwidth/2, this.mousePosition.y - this.currentheight/2 , this.currentwidth , this.currentheight , 16, document.getElementById("paper").value );
+   							
    							this.renderMap();
     
     						sm.consumeEvent('backToIdle');
@@ -715,6 +704,8 @@ MindMap.prototype.mouseDown = function(e)
 	 return null;
 	
 };
+
+
 
 MindMap.prototype.mouseUp = function(e)
 {
@@ -868,7 +859,7 @@ MindMap.prototype.dispose = function()
 };
 
 
-MindMap.prototype.roundedRect = function(x,y,width,height,radius )
+MindMap.prototype.roundedRect = function(x,y,width,height,radius, text )
 {
 	this.context.lineWidth = 1;
 	this.context.fillStyle = "#ffffff";
@@ -887,6 +878,48 @@ MindMap.prototype.roundedRect = function(x,y,width,height,radius )
 	this.context.closePath();
 	this.context.fill();
 	this.context.stroke();
+	
+	var textsize=width/12;
+	
+	var authoryear = text.split("-----  ")[0];
+	var title = text.split("-----  ")[1];
+	
+	this.context.fillStyle = "blue";
+	this.context.font = "italic "+textsize+"pt Arial";
+    this.context.lineWidth = 1;
+	this.context.fillText( authoryear , x + width/2 - this.context.measureText(authoryear).width/2, y+height/4);
+
+	if(title)
+    {   
+		title = "\""+title+"\"";
+		textsize=width/20;
+    	this.context.fillStyle = 'green';
+    	this.context.font = "italic "+textsize+"pt Calibri";
+    	this.context.lineWidth = 1;
+    	
+    	var wc = title.split(" ");
+        var line = "";
+        var lineheight=0;
+        //console.log(wc.length);
+        
+    	for(var i = 0; i < wc.length; i++) 
+    	{
+            var test = line + wc[i] + " ";
+            
+            if(this.context.measureText(test).width > width * 0.98 ) 
+            { 
+              this.context.fillText(line, x + width/2 - this.context.measureText(line).width/2, y + height/2 + lineheight);
+              line = wc[i] + " ";
+              lineheight += textsize+5;
+            }
+            else
+            {   
+            	line = test;
+            }
+        }
+    	this.context.fillText(line, x + width/2 - this.context.measureText(line).width/2, y + height/2 + lineheight);
+        
+     }
 };
 
 MindMap.prototype.renderMap = function()

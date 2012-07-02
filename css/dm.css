@@ -28,7 +28,8 @@ footer {
 canvas { 	
     display: block;
 	margin-left: auto;
-	margin-right: auto; 
+	margin-right: auto;
+	border: 1px solid #9C9898; 
    }   
    
    
