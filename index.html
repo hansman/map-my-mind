@@ -90,12 +90,44 @@
 				document.getElementById("title").value="";
 				document.getElementById("author").value="";
 				document.getElementById("date").value="";
-				updateDatalist()
+				updateDatalist();
 			 
 		}
 		
+		
+		function removepaper()
+		{
+			var xmlhttp;
+			
+			if (window.XMLHttpRequest)
+			  {
+			    xmlhttp=new XMLHttpRequest();
+			  }
+			 else
+			  {
+			    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			  }
+			
+			xmlhttp.onreadystatechange=function()
+			 {
+			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
+			  {  
+			     //alert (xmlhttp.responseText);
+			     document.getElementById('deletepaper').value="";
+				 updateDatalist();
+			  }
+			 }
+			 xmlhttp.open("GET","php/removepaper.php?title="+document.getElementById('deletepaper').value.split("-----  ")[1],true);
+			 xmlhttp.send(); 			 
+		}
+		
+		
+		
 		function updateDatalist()
 		{
+			
+			document.getElementById('bibliothek').innerHTML = "";
+			document.getElementById('bibliothek2').innerHTML = "";
 			
 			if (window.XMLHttpRequest)
 			  {
@@ -182,9 +214,11 @@
   </details>
     <details class="form">
     <summary>Delete from library</summary>
-    <input class="form" id="paper" list="bibliothek" type="text" name="bibliothek" placeholder="please select which entry to delete from your library ..." />  
+    <input class="form" id="deletepaper" list="bibliothek" type="text" name="bibliothek" placeholder="please select which entry to delete from your library ..." />  
     <datalist id="bibliothek2"> 
     </datalist>  
+    <input class="buttons" type="button" value="Remove" onclick="removepaper()" />
+    
   </details>
   
   <details class="form">
