@@ -33,8 +33,20 @@
       $title=$xml->xpath('//title');
       $publisher=$xml->xpath('//full_title');
       $year=$xml->xpath('//year');
-      $author=$xml->xpath('//surname');
+      $authorslastnames=$xml->xpath('//surname');
+      $authorsfirstnames=$xml->xpath('//given_name');
+      $month=$xml->xpath('//month');
+      $volume=$xml->xpath('//volume');
+      $issue=$xml->xpath('//issue');
+      $startpage=$xml->xpath('//first_page');
+      $lastpage=$xml->xpath('//last_page');
+      $author="";
+      for( $i=0; $i < sizeof($authorsfirstnames) ; $i++  )
+      {
+      	$author = $author . " " . $authorsfirstnames[$i] . " " . $authorslastnames[$i];
+      }
       
-      echo "new Array( \" $author[0] \" , \" $title[0] \"  , \" $year[0] \" , \" $publisher[0] \" ) ";
+      
+      echo "new Array(\"$author \",\" $title[0]\",\"$year[0]\",\"$publisher[0]\",\"$month[0]\",\"$volume[0]\",\"$issue[0]\",\"$startpage[0]\",\"$lastpage[0]\")";
 
 ?>

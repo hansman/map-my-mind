@@ -11,7 +11,7 @@ if (!$conn)
 }
 
 mysql_select_db("DM");
-$query  = "select doi, author, title, date, publisher from lit_testuser";
+$query  = "select doi, author, title, date, month, publisher from lit_testuser";
 $result=mysql_query($query);
 if (!$result) 
 { 

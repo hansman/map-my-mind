@@ -46,6 +46,12 @@
 		      document.getElementById("title").value=myArray[1];
 		      document.getElementById("date").value=myArray[2];
 		      document.getElementById("publisher").value=myArray[3];
+		      document.getElementById("month").value=myArray[4];
+		      document.getElementById("volume").value=myArray[5];
+		      document.getElementById("issue").value=myArray[6];
+		      document.getElementById("startpage").value=myArray[7];
+		      document.getElementById("lastpage").value=myArray[8];
+		      
 		  }
 		 }
 		  
@@ -66,6 +72,11 @@
 			var title=document.getElementById("title").value;
 			var publisher=document.getElementById("publisher").value;
 			var date=document.getElementById("date").value;
+			var month=document.getElementById("month").value;
+			var volume=document.getElementById("volume").value;
+			var issue=document.getElementById("issue").value;
+			var startpage=document.getElementById("startpage").value;
+			var lastpage=document.getElementById("lastpage").value;
 			
 			if (window.XMLHttpRequest)
 			  {
@@ -83,13 +94,19 @@
 			     //alert (xmlhttp.responseText);
 			  }
 			 }
-			 xmlhttp.open("GET","php/newpaper.php?doi="+doi+"&author="+author+"&title="+title+"&publisher="+publisher+"&date="+date,true);
+			 xmlhttp.open("GET","php/newpaper.php?doi="+doi+"&author="+author+"&title="+title+"&publisher="+publisher+"&date="+date+"&month="+month+"&volume="+volume+"&issue="+issue+"&startpage="+startpage+"&lastpage="+lastpage,true);
 			 xmlhttp.send(); 
 			 
 				document.getElementById("publisher").value="";
 				document.getElementById("title").value="";
 				document.getElementById("author").value="";
 				document.getElementById("date").value="";
+				document.getElementById("month").value="";
+				document.getElementById("issue").value="";
+				document.getElementById("volume").value="";
+				document.getElementById("startpage").value="";
+				document.getElementById("lastpage").value="";
+				
 				updateDatalist();
 			 
 		}
@@ -117,7 +134,7 @@
 				 updateDatalist();
 			  }
 			 }
-			 xmlhttp.open("GET","php/removepaper.php?title="+document.getElementById('deletepaper').value.split("-----  ")[1],true);
+			 xmlhttp.open("GET","php/removepaper.php?title="+document.getElementById('deletepaper').value.split("-------")[1],true);
 			 xmlhttp.send(); 			 
 		}
 		
@@ -150,7 +167,7 @@
 				
 				for (var i=0; i<jsonPapers.length;i++) 
 				{ 
-					tag = '<option label="'+ jsonPapers[i].title +'" value="' + jsonPapers[i].author + ' ' + jsonPapers[i].date + '  ----- ' + jsonPapers[i].title  + '" />';
+					tag = '<option label="'+ jsonPapers[i].title +'" value="' + jsonPapers[i].author[0] + jsonPapers[i].date + '      ' + jsonPapers[i].title + '" />';
 					document.getElementById('bibliothek').innerHTML += tag;
 					document.getElementById('bibliothek2').innerHTML += tag;
 				}
@@ -198,13 +215,34 @@
         	<input class="refform" id="title" name="title "type="text" placeholder="Set the title ..." />   		
 			</br>
 			<br>
-        	<label for="date">Date</label>
-        	<input class="refform" id="date" name="date" type="text" placeholder="Set the date ..." /> 		
+        	<label for="month">Month</label>
+        	<input class="refform" id="month" name="month" type="text" placeholder="Set the month ..." /> 		
+			</br>
+			<br>
+        	<label for="date">Year</label>
+        	<input class="refform" id="date" name="date" type="text" placeholder="Set the year ..." /> 		
 			</br>
 			<br>
         	<label for="publisher">Publisher</label>
         	<input class="refform" id="publisher" name="publisher" type="text" placeholder="Set the publisher ..." />
-			</br>		    
+			</br>	
+			<br>
+        	<label for="volume">Volume</label>
+        	<input class="refform" id="volume" name="volume" type="text" placeholder="Set the volume ..." />
+			</br>	
+			<br>
+        	<label for="issue">Issue</label>
+        	<input class="refform" id="issue" name="issue" type="text" placeholder="Set the issue ..." />
+			</br>	
+			<br>
+        	<label for="startpage">Start page</label>
+        	<input class="refform" id="startpage" name="startpage" type="text" placeholder="Set the start page ..." />
+			</br>
+			<br>
+        	<label for="lastpage">End page</label>
+        	<input class="refform" id="lastpage" name="lastpage" type="text" placeholder="Set the end page ..." />
+			</br>
+				    
 		</ul>
 		<input class="buttons" type="button" value="Submit" onclick="submitnewpaper()" />
        </fieldset>
@@ -223,7 +261,7 @@
   
   <details class="form">
     <summary>Bibliography</summary>
-    <textarea rows="10" class="form">
+    <textarea rows="10" id="thelist" class="form">
       Here will be the bibliography.
     </textarea>     
   </details>  

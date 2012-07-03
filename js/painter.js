@@ -388,6 +388,9 @@ MindMap.prototype.performState = function()
 							
 							this.renderMap();
 							document.getElementById("paper").value="";
+							
+							this.literaturelist();
+							
     						sm.consumeEvent('backToIdle');
                      		break;
                      		
@@ -487,7 +490,7 @@ MindMap.prototype.performState = function()
     						
     						
     case "deleteObject":	var flag=false;
-    						var maxiter=this.references.length;
+    						//var maxiter=this.references.length;
     						for (var j = 0; j < this.references.length; j++)
     						{
     						    if(this.references[j].selected)
@@ -552,14 +555,12 @@ MindMap.prototype.performState = function()
     						     
     						}
     						
-    						
-    						
     						this.canvas.style.background = this.settings.background;
    							this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);		
     						
    							this.renderMap();
     
-    
+   							this.literaturelist();
     
     						sm.consumeEvent('backToIdle');
     						break; 
@@ -664,7 +665,7 @@ MindMap.prototype.mouseDown = function(e)
        //check references
 	   if(this.references[j].selected==true && !objectClicked)
 	   {
-	      objectClicked=true;
+	      objectClicked=true;document.getElementById("paper").value
 	      this.references[j].drag=true;
 	      sm.consumeEvent('clickOnReference');
 	      this.draghelper=true;
@@ -881,8 +882,8 @@ MindMap.prototype.roundedRect = function(x,y,width,height,radius, text )
 	
 	var textsize=width/12;
 	
-	var authoryear = text.split("-----  ")[0];
-	var title = text.split("-----  ")[1];
+	var authoryear = text.split("       ")[0];
+	var title = text.split("       ")[1];
 	
 	this.context.fillStyle = "blue";
 	this.context.font = "italic "+textsize+"pt Arial";
@@ -934,3 +935,27 @@ MindMap.prototype.renderMap = function()
 		this.references[j].paint(this);
 	}
 };
+
+MindMap.prototype.literaturelist = function()
+{
+	document.getElementById("thelist").value="";
+	var string="";
+	
+	for (var j = 0; j < this.references.length; j++)
+	{
+		var authoryear = this.references[j].title.split("      ")[0];
+		var author = authoryear.split("  ")[0];
+		var date = authoryear.split("  ")[1];
+		var title = this.references[j].title.split("  -----  ")[1];
+		var publisher = this.references[j].title.split("  -----  ")[2];
+		
+		
+		string = string + author + ". " + title + ". " + publisher + ". " + date + "\n";
+	}
+	
+	
+	
+	document.getElementById("thelist").value = string;
+};
+
+

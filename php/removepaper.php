@@ -11,7 +11,7 @@
   }
   
    mysql_select_db("DM");
-   $query  = "delete from lit_testuser where title=' ". $title ."'";
+   $query  = "delete from lit_testuser where title=  '". $title ."'";
    
    echo "$query";
    
