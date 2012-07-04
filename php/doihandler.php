@@ -41,12 +41,13 @@
       $startpage=$xml->xpath('//first_page');
       $lastpage=$xml->xpath('//last_page');
       $author="";
-      for( $i=0; $i < sizeof($authorsfirstnames) ; $i++  )
+      for( $i=0; $i < sizeof($authorsfirstnames)-1 ; $i++  )
       {
-      	$author = $author . " " . $authorsfirstnames[$i] . " " . $authorslastnames[$i];
+      	$author = $author . substr($authorsfirstnames[$i],0,1) . ". " . $authorslastnames[$i] . ", ";
       }
+      $author = $author . " " . substr($authorsfirstnames[sizeof($authorsfirstnames)-1],0,1) . ". " . $authorslastnames[sizeof($authorsfirstnames)-1];
       
       
-      echo "new Array(\"$author \",\" $title[0]\",\"$year[0]\",\"$publisher[0]\",\"$month[0]\",\"$volume[0]\",\"$issue[0]\",\"$startpage[0]\",\"$lastpage[0]\")";
+      echo "new Array(\"$author\",\"$title[0]\",\"$year[0]\",\"$publisher[0]\",\"$month[0]\",\"$volume[0]\",\"$issue[0]\",\"$startpage[0]\",\"$lastpage[0]\")";
 
 ?>

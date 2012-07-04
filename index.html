@@ -14,6 +14,7 @@
 
 		var mindmap = null;
 		var sm = null;
+		var jsonPapers = null;
 		
 		function document_load()
 		{
@@ -108,7 +109,6 @@
 				document.getElementById("lastpage").value="";
 				
 				updateDatalist();
-			 
 		}
 		
 		
@@ -134,7 +134,7 @@
 				 updateDatalist();
 			  }
 			 }
-			 xmlhttp.open("GET","php/removepaper.php?title="+document.getElementById('deletepaper').value.split("-------")[1],true);
+			 xmlhttp.open("GET","php/removepaper.php?title="+document.getElementById('deletepaper').value.split(".  ")[2],true);
 			 xmlhttp.send(); 			 
 		}
 		
@@ -159,22 +159,22 @@
 			 {
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 			  { 
-				var jsonPapers = eval( '(' + xmlhttp.responseText + ')' );
+				jsonPapers = eval( '(' + xmlhttp.responseText + ')' );
 				var tag;
 				
-                // console.log(jsonPapers.length);
-                // console.log(jsonPapers[1].author);
+                 console.log(jsonPapers.length);
+                 //console.log(jsonPapers[0].author);
 				
 				for (var i=0; i<jsonPapers.length;i++) 
 				{ 
-					tag = '<option label="'+ jsonPapers[i].title +'" value="' + jsonPapers[i].author[0] + jsonPapers[i].date + '      ' + jsonPapers[i].title + '" />';
+					tag = '<option label="'+ jsonPapers[i].title +'" value="' + jsonPapers[i].author + '.  ' + jsonPapers[i].date + '.  ' + jsonPapers[i].title + '" />';
 					document.getElementById('bibliothek').innerHTML += tag;
 					document.getElementById('bibliothek2').innerHTML += tag;
 				}
 				
 			  }
 			 }
-			 xmlhttp.open("GET","php/gettotalpapers.php",true);
+			 xmlhttp.open("GET","php/getpapers.php",true);
 			 xmlhttp.send(); 
 		}
 		
@@ -187,7 +187,7 @@
   <body id="thebody" onload="document_load()">
   <canvas id="canvas" width="1000" height= "400" tabindex="0"></canvas>
   
-  <input class="form" id="paper" list="bibliothek" type="text" name="bibliothek" placeholder="please select from your library here ..." />
+  <input class="form" id="paper" autocomplete list="bibliothek" type="text" name="bibliothek" placeholder="please select from your library here ..." />
   <datalist id="bibliothek">
   
 

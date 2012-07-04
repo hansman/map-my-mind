@@ -6,12 +6,14 @@ $conn = mysql_connect("$dbhost", "$dbuser", "$dbpass");
 
 if (!$conn)
 {
-	print "test";
 	die('Could not connect: ' . mysql_error());
 }
 
 mysql_select_db("DM");
-$query  = "select doi, author, title, date, month, publisher from lit_testuser";
+
+$query = "select doi, author, title, date, month, publisher, volume, issue, startpage, lastpage from lit_testuser";
+
+	
 $result=mysql_query($query);
 if (!$result) 
 { 
@@ -21,8 +23,9 @@ if (!$result)
 
    
    $jsonrows = array();
-   while($row = mysql_fetch_assoc($result)) {
-   	$jsonrows[] = $row;
+   while($row = mysql_fetch_assoc($result)) 
+   {
+     $jsonrows[] = $row;
    }
    
    

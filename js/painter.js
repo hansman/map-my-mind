@@ -376,7 +376,7 @@ MindMap.prototype.performState = function()
     				}
     				else
     				{
-    				    text = "please select a paper";
+    				    text = "";
     				}
    					this.roundedRect(this.mousePosition.x - this.currentwidth/2, this.mousePosition.y - this.currentheight/2 , this.currentwidth , this.currentheight , 16, text );
 					this.renderMap();  
@@ -626,15 +626,7 @@ MindMap.prototype.mousewheel = function(e)
     mindmap.performState();
 	
 	this.stopEvent(e);
-	return null;for (var j = 0; j < this.connections.length; j++)
-	{
-		this.connections[j].paint(this);
-	}
-		
-		for (var j = 0; j < this.references.length; j++)
-	{
-		this.references[j].paint(this);
-	} 
+	return null;
 };
 
 
@@ -880,47 +872,67 @@ MindMap.prototype.roundedRect = function(x,y,width,height,radius, text )
 	this.context.fill();
 	this.context.stroke();
 	
-	var textsize=width/12;
+	if(text)
+	{
+ 	  var textsize=width/15;
+	  var temp = text.split(",")[0];
+	  var etal="";
+	  if(temp[1])
+	  {
+  		 etal = " et al.";
+	  }
+	  
+	  var author = temp.split(".")[0] + "." + temp.split(".")[1] + etal;
+	  var year = text.split(".  ")[1];
+	  var title = text.split(".  ")[2];
 	
-	var authoryear = text.split("       ")[0];
-	var title = text.split("       ")[1];
+	  this.context.fillStyle = "blue";
+	  this.context.font = "italic "+textsize+"pt Arial";
+      this.context.lineWidth = 1;
+	  this.context.fillText( author , x + width/2 - this.context.measureText(author).width/2, y+height/6);
 	
-	this.context.fillStyle = "blue";
-	this.context.font = "italic "+textsize+"pt Arial";
-    this.context.lineWidth = 1;
-	this.context.fillText( authoryear , x + width/2 - this.context.measureText(authoryear).width/2, y+height/4);
+	  this.context.fillStyle = "blue";
+	  this.context.font = "italic "+textsize+"pt Arial";
+      this.context.lineWidth = 1;
+	  this.context.fillText( year , x + width/2 - this.context.measureText(year).width/2, y+height/3);
 
-	if(title)
-    {   
-		title = "\""+title+"\"";
-		textsize=width/20;
-    	this.context.fillStyle = 'green';
-    	this.context.font = "italic "+textsize+"pt Calibri";
-    	this.context.lineWidth = 1;
+	  title = "\""+title+"\"";
+	  textsize=width/20;
+      this.context.fillStyle = 'green';
+      this.context.font = "italic "+textsize+"pt Calibri";
+      this.context.lineWidth = 1;
     	
-    	var wc = title.split(" ");
-        var line = "";
-        var lineheight=0;
-        //console.log(wc.length);
+      var wc = title.split(" ");
+      var line = "";
+      var lineheight=0;
+      //console.log(wc.length);
         
-    	for(var i = 0; i < wc.length; i++) 
-    	{
-            var test = line + wc[i] + " ";
+      for(var i = 0; i < wc.length; i++) 
+      {
+        var test = line + wc[i] + " ";
             
-            if(this.context.measureText(test).width > width * 0.98 ) 
-            { 
-              this.context.fillText(line, x + width/2 - this.context.measureText(line).width/2, y + height/2 + lineheight);
-              line = wc[i] + " ";
-              lineheight += textsize+5;
-            }
-            else
-            {   
-            	line = test;
-            }
+        if(this.context.measureText(test).width > width * 0.98 ) 
+        { 
+          this.context.fillText(line, x + width/2 - this.context.measureText(line).width/2, y + height/2 + lineheight);
+          line = wc[i] + " ";
+          lineheight += textsize+5;
         }
-    	this.context.fillText(line, x + width/2 - this.context.measureText(line).width/2, y + height/2 + lineheight);
-        
-     }
+        else
+        {   
+       	  line = test;
+        }
+      }
+   	  this.context.fillText(line, x + width/2 - this.context.measureText(line).width/2, y + height/2 + lineheight);
+	}
+	else
+	{
+		  this.context.fillStyle = "orange";
+		  var textsize=width/20;
+		  this.context.font = "italic "+textsize+"pt Arial";
+	      this.context.lineWidth = 1;
+	      var string = "Please select a paper ...";
+		  this.context.fillText( string , x + width/2 - this.context.measureText(string).width/2, y+height/6);
+	}
 };
 
 MindMap.prototype.renderMap = function()
@@ -943,19 +955,10 @@ MindMap.prototype.literaturelist = function()
 	
 	for (var j = 0; j < this.references.length; j++)
 	{
-		var authoryear = this.references[j].title.split("      ")[0];
-		var author = authoryear.split("  ")[0];
-		var date = authoryear.split("  ")[1];
-		var title = this.references[j].title.split("  -----  ")[1];
-		var publisher = this.references[j].title.split("  -----  ")[2];
-		
-		
-		string = string + author + ". " + title + ". " + publisher + ". " + date + "\n";
+		string = string + jsonPapers[j].author + ". " +  jsonPapers[j].title + ". " +  jsonPapers[j].publisher + ". " +  jsonPapers[j].publisher + ", volume " + jsonPapers[j].volume + ", pages " + jsonPapers[j].startpage + "-" + jsonPapers[j].lastpage + "\n";
 	}
-	
-	
-	
 	document.getElementById("thelist").value = string;
 };
+
 
 
