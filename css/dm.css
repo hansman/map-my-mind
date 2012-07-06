@@ -17,6 +17,7 @@ h2 {
    
 
 #nav {
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 	position: absolute;
 	top: 0%;
 	width: 100%;
@@ -30,21 +31,20 @@ h2 {
 	
 #nav ul {
 	list-style: none;
-	width: 800px;
-	margin: 0 auto;
+	width: 50%;
+	margin: 0;
 	padding: 0; 
 	}
 	
-#nav li {
-	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+#nav li {	
 	float: right; 
+	font-size: 16px;
 	}
 	
 #nav li a {
 	display: block;
-	padding: 8px 15px;
+	padding: 8px ;
 	text-decoration: none;
-	font-weight: bold;
 	color: #999999;
 	}
 	
@@ -56,16 +56,22 @@ h2 {
 
 
 #nav #logo {
-	position: absolute;
-	margin: 0;
+	position: relative;
+	margin-left: 5%;
 	padding: 0; 
 	float: left;
 	
 	}
 	
 #nav #name {
-	
-	color: #FFFFFF;
+	margin-top: 4px;
+	font-family: 'DMfonts';  	
+    font-size: 26px;
+	font-weight: bold;
+	color: #dadada;
+	margin-bottom: 0;
+	letter-spacing: -.08em;
+	text-rendering: optimizeLegibility; 
 	}
 	
 #nav #slogan {
@@ -73,17 +79,10 @@ h2 {
 	color: #FFFFFF;
 	}	
 	
-   
-head {
-  	font: 85%/0.9 arial, helvetica, sans-serif;
-  	line-height: 130%;
-  	width: 100%;
-  	margin: 0;
-  	padding: 0;
-  	min-width: 970px;
-  	color: #999999;
-	background: #272727;
-}
+	
+body {
+	display: block;
+} 
    
    
 footer { 	
@@ -98,6 +97,7 @@ footer {
    
 canvas { 	
     display: block;
+    margin-top: 60px;
 	margin-left: auto;
 	margin-right: auto;
 	border: 1px solid #9C9898; 
