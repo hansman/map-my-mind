@@ -6,13 +6,28 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 	<title>Digital Mindmapping</title>
+	
 	<link href="css/dm.css" rel="stylesheet" />	
+	<link href="css/slide.css" rel="stylesheet" />	
 	<link href="css/jquery-ui-1.8.21.custom.css" rel="stylesheet" />	
 	
+	<div id="nav">
+	<ul >
+	    <div id="logo">
+	    <span id="name">Map My Mind</span>
+	    <span id="slogan">0xCOO1DOOD</span>
+	    </div>
+		<li><a href="#">Mindmap</a></li>
+		<li><a href="#">Account</a></li>
+	</ul>
+	</div>
 	
 		
 	<h1 font id="webfontH9pO81ke" >Digital Mindmapping</h1>
 	<h2>0xC001D00D?</h2>	
+	
+	
+	
 	
 	<script src="js/painter.js"></script>
 	<script src="js/jquery-1.7.2.min.js"></script>
@@ -33,6 +48,25 @@
 		  sm = new StateMachine(states);
 		  mindmap = new MindMap(document.getElementById("canvas"));
 		  mindmap.performState();
+		  
+		  // Expand Panel
+		  $("#open").click(function()
+		  {
+			$("div#panel").slideDown("slow");
+		  });	
+			 
+		  // Collapse Panel
+		  $("#close").click(function()
+		  {
+			$("div#panel").slideUp("slow");
+		  });		
+			 
+		  // Switch buttons from "Log In | Register" to "Close Panel" on click
+		  $("#toggle a").click(function () 
+		  {
+		    $("#toggle a").toggle();
+		  });	
+		  
 		}
 		
 		function getdoi()
@@ -290,7 +324,7 @@
   </div>
   
   
-  <h3><a href="#">Delete From Library</a></h3>
+  <h3><a href="#">Remove From Library</a></h3>
   <div>
    <input class="form" id="deletepaper" list="bibliothek" type="text" name="bibliothek" placeholder="please select which entry to delete from your library ..." />  
    <datalist id="bibliothek2"> 

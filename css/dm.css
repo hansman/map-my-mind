@@ -15,6 +15,77 @@ h2 {
 	margin-left: 320px; 
    }
    
+
+#nav {
+	position: absolute;
+	top: 0%;
+	width: 100%;
+	margin: 0;
+	float: left;
+	padding: 0;
+	background-color: #292929;
+	border-bottom: 1px solid #D9D9D9;  
+	border-top: 1px solid #D9D9D9; 
+	}
+	
+#nav ul {
+	list-style: none;
+	width: 800px;
+	margin: 0 auto;
+	padding: 0; 
+	}
+	
+#nav li {
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	float: right; 
+	}
+	
+#nav li a {
+	display: block;
+	padding: 8px 15px;
+	text-decoration: none;
+	font-weight: bold;
+	color: #999999;
+	}
+	
+
+#nav li a:hover {
+	color: #FFFFFF;
+	background-color: #222222; 
+	}
+
+
+#nav #logo {
+	position: absolute;
+	margin: 0;
+	padding: 0; 
+	float: left;
+	
+	}
+	
+#nav #name {
+	
+	color: #FFFFFF;
+	}
+	
+#nav #slogan {
+	
+	color: #FFFFFF;
+	}	
+	
+   
+head {
+  	font: 85%/0.9 arial, helvetica, sans-serif;
+  	line-height: 130%;
+  	width: 100%;
+  	margin: 0;
+  	padding: 0;
+  	min-width: 970px;
+  	color: #999999;
+	background: #272727;
+}
+   
+   
 footer { 	
     font-family: 'DMfonts'; 
  	color: #444; 
@@ -57,8 +128,7 @@ article {
 	width:700px; 
 }
 
-   
-mark { background-color:#ff9; color:#000; font-style:italic; font-weight:bold; }
+
 
 
 @font-face {
