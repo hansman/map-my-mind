@@ -8,13 +8,21 @@
 	<title>Digital Mindmapping</title>
 	
 	<link href="css/dm.css" rel="stylesheet" />	
-	<link href="css/jquery-ui-1.8.21.custom.css" rel="stylesheet" />	
+	<link href="css/jquery-ui-1.8.21.custom.css" rel="stylesheet" />
+		
+	<?php
+	   $currentuser="guest";
+	?>
 	
 	<div id="nav">
 	<ul >
 	    <div id="logo">
 	    <span id="name">Digital Mindmapping</span>
 	    </div>
+	    <div id="username">
+	    <span> <?php print "$currentuser";?> </span>
+	    </div>
+	    
 		<li><a href="#" id="loginbutton">Login</a></li>
 		<li><a href="#">Manage Mindmaps</a></li>
 	</ul>
@@ -36,8 +44,6 @@
 	</form>
 	
 	
-	
-	<script src="js/effects.js"></script>
 	<script src="js/painter.js"></script>
 	<script src="js/jquery-1.7.2.min.js"></script>
 	<script src="js/jquery-ui-1.8.21.custom.min.js"></script>
@@ -264,6 +270,9 @@
 		
 			
 	</script>
+	
+	
+	
 </head>
 
 
