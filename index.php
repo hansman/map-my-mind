@@ -8,7 +8,6 @@
 	<title>Digital Mindmapping</title>
 	
 	<link href="css/dm.css" rel="stylesheet" />	
-	<link href="css/jquery-ui-1.8.21.custom.css" rel="stylesheet" />
 		
 	<?php
 	   $currentuser="guest";
@@ -69,6 +68,7 @@
 			  $('#login').slideUp('slow', function() {
 			  });
 			 });
+
 			
 			
 		  updateDatalist();	
@@ -318,18 +318,18 @@
   
   <article>
   
-  <div id="accordionResizer" style="padding:10px; width:980px; " class="ui-widget-content">
+  <div id="accordionResizer" style=" width:1000px; " class="ui-widget-content">
   <div id="accordion" class="accordion">
   
   
-  <h3><a href="#">Bibliography</a></h3>
+  <h3><a>Bibliography</a></h3>
   <div>
     <textarea rows="10" id="thelist" class="form">
       Your bibliography will be generated here once you got something in your mind map ...
     </textarea>     
   </div>
   
-  <h3><a href="#">Add To Library</a></h3>
+  <h3><a>Add To Library</a></h3>
 	<div>
 
    <form >
@@ -387,7 +387,7 @@
   </div>
   
   
-  <h3><a href="#">Remove From Library</a></h3>
+  <h3><a>Remove From Library</a></h3>
   <div>
    <input class="form" id="deletepaper" list="bibliothek" type="text" name="bibliothek" placeholder="please select which entry to delete from your library ..." />  
    <datalist id="bibliothek2"> 
