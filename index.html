@@ -8,23 +8,36 @@
 	<title>Digital Mindmapping</title>
 	
 	<link href="css/dm.css" rel="stylesheet" />	
-	<link href="css/slide.css" rel="stylesheet" />	
 	<link href="css/jquery-ui-1.8.21.custom.css" rel="stylesheet" />	
 	
 	<div id="nav">
 	<ul >
 	    <div id="logo">
-	    <span id="name">Map My Mind</span>
-	    <span id="slogan">0xCOO1DOOD</span>
+	    <span id="name">Digital Mindmapping</span>
 	    </div>
-		<li><a href="#">Mindmap</a></li>
-		<li><a href="#">Account</a></li>
+		<li><a href="#" id="loginbutton">Login</a></li>
+		<li><a href="#">Manage Mindmaps</a></li>
 	</ul>
 	</div>
 	
 	
+	<form id="login" hide="true">
+    <div id="inputs">
+        
+        <input id="username" type="text" placeholder="Email" required>   
+        <input id="password" type="password" placeholder="Password" required>
+    </div>
+    <div id="actions">
+        <div id="spacer"></div>
+        <input type="submit" id="submitlogin" value="Log in">
+        <a href="">Forgot your password?</a><a href="">Register</a>
+        <div id="spacer"></div>
+    </div>
+	</form>
 	
 	
+	
+	<script src="js/effects.js"></script>
 	<script src="js/painter.js"></script>
 	<script src="js/jquery-1.7.2.min.js"></script>
 	<script src="js/jquery-ui-1.8.21.custom.min.js"></script>
@@ -32,18 +45,32 @@
 	
     <script type="text/javascript">
 
-
+        $("#login").hide();
+        
 		var mindmap = null;
 		var sm = null;
 		var jsonPapers = null;
 		
 		function document_load()
 		{
+		  
+		  
+		  $('#loginbutton').click(function() {
+			  $('#login').slideDown('slow', function() {
+			  });
+			 });
+		  $('#submitlogin').click(function() {
+			  $('#login').slideUp('slow', function() {
+			  });
+			 });
+			
 			
 		  updateDatalist();	
 		  sm = new StateMachine(states);
 		  mindmap = new MindMap(document.getElementById("canvas"));
 		  mindmap.performState();
+		  
+		  
 		  
 		  // Expand Panel
 		  $("#open").click(function()
