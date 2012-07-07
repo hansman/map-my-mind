@@ -20,7 +20,7 @@
 	    <span id="name">Digital Mindmapping</span>
 	    </div>
 	    <div id="username">
-	    <span> <?php print "$currentuser";?> </span>
+	    <span id="shownname"> <?php print "$currentuser";?> </span>
 	    </div>
 	    
 		<li><a href="#" id="loginbutton">Login</a></li>
@@ -37,7 +37,7 @@
     </div>
     <div id="actions">
         <div id="spacer"></div>
-        <input type="submit" id="submitlogin" value="Log in">
+        <input type="submit" id="submitlogin" value="Log in" onclick="login()">
         <a href="">Forgot your password?</a><a href="">Register</a>
         <div id="spacer"></div>
     </div>
@@ -250,6 +250,37 @@
 			 xmlhttp.open("GET","php/getpapers.php",true);
 			 xmlhttp.send(); 
 		}
+
+
+
+		function login()
+		{
+			
+			var xmlhttp;			
+			if (window.XMLHttpRequest)
+			  {
+			    xmlhttp=new XMLHttpRequest();
+			  }
+			 else
+			  {
+			    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			  }
+			
+			xmlhttp.onreadystatechange=function()
+			 {
+			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
+			  { 
+				  document.getElementById('shownname').innerHTML = xmlhttp.responseText;
+				
+			  }
+			 }
+			 xmlhttp.open("GET","php/login.php",true);
+			 xmlhttp.send(); 
+		}
+
+		
+
+
 		
 		$(function() {
 			$( "#accordion" ).accordion({

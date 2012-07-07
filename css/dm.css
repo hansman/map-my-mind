@@ -17,7 +17,7 @@
 	margin-right: 1%;
 	float: right; 
 	font-size: 16px;
-	list-style-type: none;
+	list-style-type: none;		
 	}
 	
 #nav li a {
@@ -25,6 +25,7 @@
 	padding: 8px ;
 	text-decoration: none;
 	color: #999999;
+	outline: 0;
 	}
 	
 
@@ -48,6 +49,7 @@
 	margin-left: 45%;
 	margin-top: 8px;
 	color: #999999;
+	font-style: italic;
 	}
 	
 #nav #name {
@@ -85,8 +87,6 @@
 #login #spacer {
 	height: 20px;
    } 
-   
-      
    
    
 canvas { 	
