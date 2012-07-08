@@ -68,7 +68,6 @@
 	position: relative;
     display: block;
     top: 27px;
-    margin:0;
 	background-color: #292929;
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 	width:550px;
@@ -93,11 +92,93 @@
 	height: 20px;
    } 
    
+   
+   
 #login #warningtext {
 	color: red;
 	margin-left:30px;
 	font-size: 12px;
 }
+   
+#login #loginoptions a {
+	margin-left:30px;
+	margin-top:8px;
+	text-decoration: none;
+	color: #999999;
+	outline: 0;
+	font-size:10px;	
+}
+
+#login #loginoptions a:hover{
+	color: #FFFFFF;
+	background-color: #222222;
+}
+
+
+#login #loginoptions #submitlogin{
+	font-size: 18px;
+	font-style: bold;
+}
+
+
+#signupform { 	
+	position: relative;
+    display: block;
+    top: 60px;
+	background-color: #292929;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	width:550px;
+	margin-top: 0;
+	margin-left: auto;
+	margin-right: auto; 
+	border-radius: 15px;
+	border: 1px solid #D9D9D9;    
+	
+   } 
+   
+#signupform div{
+	padding-top: 4px;
+	padding-bottom: 4px;
+	}   
+   
+   
+#signupform label{
+    vertical-align: middle;
+	
+	float:left;
+	color: #999999; 
+	}
+	
+#signupform input{
+	vertical-align: middle;
+	float: right;
+	margin-right:20px;
+	margin-top:0px;
+	color: #BBBBBB; 
+	width: 320px;
+	} 
+	
+
+#signupform .spacer{
+	height:30px;
+	} 
+	
+#signupform .clear{clear:both;}   
+   
+#signupform #signupoptions a {
+	margin-left:50px;
+	margin-top:8px;
+	text-decoration: none;
+	color: #999999;
+	outline: 0;
+	font-size:18px;	
+}
+
+#signupform #signupoptions a:hover{
+	color: #FFFFFF;
+}   
+   
+   
    
  
 head {

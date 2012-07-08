@@ -28,14 +28,20 @@
 	</div>
 	
 	
-	<form id="login" hide="true">
+	<form id="login">
     <div id="inputs">        
         <input id="loginusername" type="text" name="loginusername" placeholder="Email" required/>   
         <input id="loginpassword" type="password" name="loginpassword" placeholder="Password" required/>        
     </div>
     <div id="actions">
-        <div class="loginspacer" id="warningtext"></div>
-        <input type="button" id="submitlogin" value="Log in" onclick="login()">
+        <div class="loginspacer" id="warningtext"></div>        
+        <div id="loginoptions">
+        <a href="#" id="submitlogin" onclick="login()">Log in</a>
+        <a href="signup.php" id="signup">Sign up</a>
+		<a href="#">Forgot password</a>
+		<a href="#">Manage account</a>
+		<a id="closelogin" href="#">Close</a>
+        </div>
         <div class="loginspacer"></div>
     </div>
 	</form>
@@ -56,41 +62,55 @@
 		
 		function document_load()
 		{
-		  
+			$("signup").click(function(event){
+		        event.preventDefault();
+		        linkLocation = this.href;
+		        $("body").fadeOut(1000, redirectPage);     
+		    });
+
+			 
 		  
 		  $('#loginbutton').click(function() {
 			  $('#login').slideDown('slow', function() {
 			  });
 			 });
-		  
 
-			
+		  $('#closelogin').click(function() {
+			  $('#login').slideUp('slow', function() {				  
+			  });
+			  $('#warningtext').text("");
+			 });
+
+		  $("#loginusername").focus(function()
+		  {
+			  $('#warningtext').text("");
+			  $("#loginusername").val("");
+			  $("#loginpassword").val("");
+		  });
+
+		  $("#loginpassword").focus(function()
+		  {
+			  $('#warningtext').text("");
+			  $("#loginpassword").val("");
+		  });
 			
 		  updateDatalist();	
 		  sm = new StateMachine(states);
 		  mindmap = new MindMap(document.getElementById("canvas"));
 		  mindmap.performState();
 		  
-		  
-		  
 		  // Expand Panel
 		  $("#open").click(function()
 		  {
 			$("div#panel").slideDown("slow");
-		  });	
+		  });
 			 
 		  // Collapse Panel
 		  $("#close").click(function()
 		  {
 			$("div#panel").slideUp("slow");
-		  });		
-			 
-		  // Switch buttons from "Log In | Register" to "Close Panel" on click
-		  $("#toggle a").click(function () 
-		  {
-		    $("#toggle a").toggle();
-		  });	
-		  
+		  });
+		  		  
 		}
 		
 		function getdoi()
