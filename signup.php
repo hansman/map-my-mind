@@ -161,7 +161,9 @@
 			  }  
 		   	  else
 		   	  {
-		   		console.log( "signedup" );
+		   	   console.log( "signedup" );
+		   		
+		   		
 		   		location.href="index.php";
 
 			  }

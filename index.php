@@ -1,3 +1,7 @@
+<?php 
+session_start(); 
+?>
+
 <!doctype html>  
 <html lang="en" >
 <head>
@@ -8,10 +12,6 @@
 	<title>MapMyMind</title>
 	
 	<link href="css/dm.css" rel="stylesheet" />	
-		
-	<?php
-	   $currentuser="guest";
-	?>
 	
 	<div id="nav">
 	<ul >
@@ -19,7 +19,7 @@
 	    <span id="name">Map My Mind</span>
 	    </div>
 	    <div id="username">
-	    <span id="shownname"> <?php print "$currentuser";?> </span>
+	    <span id="shownname"></span>
 	    </div>
 	    
 		<li><a href="#" id="loginbutton">Login</a></li>
@@ -71,8 +71,14 @@
 			 
 		  
 		  $('#loginbutton').click(function() {
-			  $('#login').slideDown('slow', function() {
-			  });
+			  if($('#loginbutton').text() == "Login")
+			  {
+			  	$('#login').slideDown('slow', function() {});
+			  }
+			  else
+			  {
+                 logout();
+			  }
 			 });
 
 		  $('#closelogin').click(function() {
@@ -93,6 +99,8 @@
 			  $('#warningtext').text("");
 			  $("#loginpassword").val("");
 		  });
+
+		  showusername();
 			
 		  updateDatalist();	
 		  sm = new StateMachine(states);
@@ -265,7 +273,31 @@
 			 xmlhttp.open("GET","php/getpapers.php",true);
 			 xmlhttp.send(); 
 		}
-
+		
+		function logout()
+		{
+			
+			var xmlhttp;			
+			if (window.XMLHttpRequest)
+			  {
+			    xmlhttp=new XMLHttpRequest();
+			  }
+			 else
+			  {
+			    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			  }
+			
+			xmlhttp.onreadystatechange=function()
+			 {
+			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
+			  { 
+				  showusername();
+			  }
+			 }
+			 xmlhttp.open("GET","php/logout.php",true);
+			 xmlhttp.send();
+						
+		}
 
 
 		function login()
@@ -296,10 +328,10 @@
 			  	  }
 				  else
 				  {
-					  var jsonname = eval( '(' + xmlhttp.responseText + ')' );
-					  document.getElementById('shownname').innerHTML = jsonname[0].username;
+					  showusername();
 					  $('#login').slideUp('slow', function() {});
 					  document.getElementById('warningtext').innerHTML = "";
+					  
 				  } 
 				
 			  }
@@ -308,6 +340,34 @@
 			 xmlhttp.send(); 
 		}
 
+
+		function showusername()
+		{				
+            var xmlhttp;			
+			if (window.XMLHttpRequest)
+			  {
+			    xmlhttp=new XMLHttpRequest();
+			  }
+			 else
+			  {
+			    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			  }
+			
+			xmlhttp.onreadystatechange=function()
+			 {
+			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
+			  { 
+				  document.getElementById('shownname').innerHTML =  xmlhttp.responseText ;
+				  
+				  if (xmlhttp.responseText=="guest")
+					  document.getElementById('loginbutton').innerHTML = "Login";
+				  else
+					  document.getElementById('loginbutton').innerHTML = "Logout";
+			  }
+			 }
+			 xmlhttp.open("GET","php/getuser.php",true);
+			 xmlhttp.send();
+		}
 		
 
 

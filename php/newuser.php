@@ -36,6 +36,11 @@ else if (mysql_num_rows($result) == 0  )
 	$query = "unlock table";
 	mysql_query($query);
 	echo "worked";
+	session_start();
+    if (!isset($_SESSION['activeuser']))
+    {
+   	  $_SESSION['activeuser'] = $username;
+    }
 	
 }
 else    

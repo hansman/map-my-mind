@@ -1,6 +1,5 @@
 <?php 
   
-
 include 'config.php';
 
 $username = $_GET["name"];
@@ -41,13 +40,10 @@ else if (mysql_num_rows($result) == 0  )
 }
 else    
 {
-   $jsonrows = array();
-   while($row = mysql_fetch_assoc($result)) 
-   {
-     $jsonrows[] = $row;
-   }
-   echo json_encode($jsonrows); 
-	
+   session_start();
+   if(!isset($_SESSION['activeuser']))
+	$_SESSION['activeuser'] = $username;
+   	
 }
 
 
