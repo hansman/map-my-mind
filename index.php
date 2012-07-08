@@ -29,16 +29,14 @@
 	
 	
 	<form id="login" hide="true">
-    <div id="inputs">
-        
-        <input id="username" type="text" placeholder="Email" required>   
-        <input id="password" type="password" placeholder="Password" required>
+    <div id="inputs">        
+        <input id="loginusername" type="text" name="loginusername" placeholder="Email" required/>   
+        <input id="loginpassword" type="password" name="loginpassword" placeholder="Password" required/>        
     </div>
     <div id="actions">
-        <div id="spacer"></div>
-        <input type="submit" id="submitlogin" value="Log in" onclick="login()">
-        <a href="">Forgot your password?</a><a href="">Register</a>
-        <div id="spacer"></div>
+        <div class="loginspacer" id="warningtext"></div>
+        <input type="button" id="submitlogin" value="Log in" onclick="login()">
+        <div class="loginspacer"></div>
     </div>
 	</form>
 	
@@ -64,10 +62,7 @@
 			  $('#login').slideDown('slow', function() {
 			  });
 			 });
-		  $('#submitlogin').click(function() {
-			  $('#login').slideUp('slow', function() {
-			  });
-			 });
+		  
 
 			
 			
@@ -254,7 +249,10 @@
 
 
 		function login()
-		{
+		{	
+
+			var username=document.getElementById("loginusername").value;
+			var password=document.getElementById("loginpassword").value;
 			
 			var xmlhttp;			
 			if (window.XMLHttpRequest)
@@ -270,11 +268,23 @@
 			 {
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 			  { 
-				  document.getElementById('shownname').innerHTML = xmlhttp.responseText;
+				  console.log(xmlhttp.responseText);
+				  if(xmlhttp.responseText == "failed")
+				  {
+					  document.getElementById('warningtext').innerHTML = "Your login data is incorrect ...";
+					  //alert("authentification failed");
+			  	  }
+				  else
+				  {
+					  var jsonname = eval( '(' + xmlhttp.responseText + ')' );
+					  document.getElementById('shownname').innerHTML = jsonname[0].username;
+					  $('#login').slideUp('slow', function() {});
+					  document.getElementById('warningtext').innerHTML = "";
+				  } 
 				
 			  }
 			 }
-			 xmlhttp.open("GET","php/login.php",true);
+			 xmlhttp.open("GET","php/login.php?name="+username+"&pass="+password,true);
 			 xmlhttp.send(); 
 		}
 
@@ -336,7 +346,7 @@
 		<fieldset>
     
       <label for="doifield">DOI</label>
-      <input class="refform" id="doifield" name="doifield" type="text" placeholder="Enter your doi ..." />
+      <input class="refform" id="doifield" name="doifield" type="text" placeholder="Enter your doi, i.e. http://dx.doi.org/10.1023/A:1015460304860 ..." />
       <input class="buttons" type="button" value="Get Paper" onclick="getdoi();" />
 	
 			
