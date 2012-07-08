@@ -23,8 +23,8 @@
 	<form id="signupform">
     <ul>	
 		    <div>
-        	<label for="newname">Username *</label>
-        	<input class="signform" id="newname" name="newname" type="text" placeholder="Username" required />	
+        	<label for="newemail">Email *</label>
+        	<input class="signform" id="newemail" name="newemail" type="text" placeholder="Email" required />	
 			</div>
         	<br>
 			<div>
