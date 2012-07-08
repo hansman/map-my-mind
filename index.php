@@ -5,7 +5,7 @@
     <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]--> 
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-	<title>Digital Mindmapping</title>
+	<title>MapMyMind</title>
 	
 	<link href="css/dm.css" rel="stylesheet" />	
 		
@@ -16,7 +16,7 @@
 	<div id="nav">
 	<ul >
 	    <div id="logo">
-	    <span id="name">Digital Mindmapping</span>
+	    <span id="name">Map My Mind</span>
 	    </div>
 	    <div id="username">
 	    <span id="shownname"> <?php print "$currentuser";?> </span>

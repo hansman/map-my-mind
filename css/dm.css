@@ -160,7 +160,9 @@
 	
 
 #signupform .spacer{
-	height:30px;
+	height:12px;
+	display: block;
+	position: relative;
 	} 
 	
 #signupform .clear{clear:both;}   
@@ -176,7 +178,13 @@
 
 #signupform #signupoptions a:hover{
 	color: #FFFFFF;
-}   
+}
+
+#signupform #warningtext {
+	color: red;
+	margin-left:170px;
+	font-size: 12px;
+}
    
    
    
