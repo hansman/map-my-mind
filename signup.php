@@ -162,15 +162,8 @@
 		   	  else
 		   	  {
 		   	   console.log( "signedup" );
-		   		
-		   		
-		   		location.href="index.php";
-
-			  }
-
-
-
-		  }
+		   	   location.href="index.php";
+			  }		  }
 		 }
 		 xmlhttp.open("GET","php/newuser.php?email="+newemail+"&pass="+password,true);
 		 xmlhttp.send();

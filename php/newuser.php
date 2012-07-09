@@ -33,9 +33,11 @@ else if (mysql_num_rows($result) == 0  )
 	$query = "insert into accounts(username, pswd) values ('" . $username . "', MD5('" . $password . "'))";
 	mysql_query($query);
 	
+	$query = "creat table lit_". $username ." like lit_testuser";
+	mysql_query($query);
+	
 	$query = "unlock table";
 	mysql_query($query);
-	echo "worked";
 	session_start();
     if (!isset($_SESSION['activeuser']))
     {
@@ -49,6 +51,4 @@ else
 }
    
 mysql_close($conn);
-
-
 ?>

@@ -55,6 +55,7 @@ session_start();
     <script type="text/javascript">
 
         $("#login").hide();
+
         
 		var mindmap = null;
 		var sm = null;
@@ -101,8 +102,8 @@ session_start();
 		  });
 
 		  showusername();
-			
-		  updateDatalist();	
+		  updateDatalist();
+		  	
 		  sm = new StateMachine(states);
 		  mindmap = new MindMap(document.getElementById("canvas"));
 		  mindmap.performState();
@@ -188,7 +189,7 @@ session_start();
 			 {
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 			  {  
-			     //alert (xmlhttp.responseText);
+			     alert (xmlhttp.responseText);
 			  }
 			 }
 			 xmlhttp.open("GET","php/newpaper.php?doi="+doi+"&author="+author+"&title="+title+"&publisher="+publisher+"&date="+date+"&month="+month+"&volume="+volume+"&issue="+issue+"&startpage="+startpage+"&lastpage="+lastpage,true);
@@ -227,6 +228,7 @@ session_start();
 			  {  
 			     //alert (xmlhttp.responseText);
 			     document.getElementById('deletepaper').value="";
+			     document.getElementById('paper').value="";
 				 updateDatalist();
 			  }
 			 }
@@ -276,6 +278,14 @@ session_start();
 		
 		function logout()
 		{
+
+			sm = new StateMachine(states);
+			mindmap = new MindMap(document.getElementById("canvas"));
+			mindmap.performState();
+			document.getElementById('bibliothek').innerHTML = "";
+			document.getElementById('bibliothek2').innerHTML = "";
+			document.getElementById('paper').value = "";
+			document.getElementById('deletepaper').value = "";
 			
 			var xmlhttp;			
 			if (window.XMLHttpRequest)
@@ -291,6 +301,7 @@ session_start();
 			 {
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 			  { 
+				  updateDatalist();
 				  showusername();
 			  }
 			 }
@@ -303,6 +314,8 @@ session_start();
 		function login()
 		{	
 
+
+			
 			var username=document.getElementById("loginusername").value;
 			var password=document.getElementById("loginpassword").value;
 			
@@ -328,9 +341,15 @@ session_start();
 			  	  }
 				  else
 				  {
+					  sm = new StateMachine(states);
+					  mindmap = new MindMap(document.getElementById("canvas"));
+					  mindmap.performState();
+					  updateDatalist();
 					  showusername();
 					  $('#login').slideUp('slow', function() {});
 					  document.getElementById('warningtext').innerHTML = "";
+					  document.getElementById('paper').value = "";
+					  document.getElementById('deletepaper').value = "";
 					  
 				  } 
 				
@@ -358,7 +377,7 @@ session_start();
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 			  { 
 				  document.getElementById('shownname').innerHTML =  xmlhttp.responseText ;
-				  
+				  				  
 				  if (xmlhttp.responseText=="guest")
 					  document.getElementById('loginbutton').innerHTML = "Login";
 				  else

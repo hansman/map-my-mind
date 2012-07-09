@@ -1,6 +1,13 @@
 <?php 
 
 
+session_start();
+
+if(isset($_SESSION['activeuser']))
+	$username=$_SESSION['activeuser'];
+else
+	$username="guest";
+
   $doi = $_GET["doi"];  
   $date=$_GET["date"];
   $month=$_GET["month"];
@@ -22,12 +29,27 @@
   }
   
    mysql_select_db("DM");
-   $query  = "insert into lit_testuser(doi, author, title, date, month, publisher, volume, issue, startpage, lastpage) values ('". $doi ."','". $author ."','". $title ."','". $date ."','". $month ."','". $publisher ."','". $volume ."','". $issue ."','". $startpage ."','". $lastpage  ."' );";
-   //print "$query";
- 
+   $query = "lock table lit_". $username ." write";
+   mysql_query($query);
+   
+   $query  = "select from lit_". $username ." where title='". $title ."'";
    $result=mysql_query($query);
-   if (!$result) die ("Query Failed.");
-  
+   if(!$result)
+   {
+   	echo "This paper is already in the data base";
+   }
+   else 
+   {   
+     $query  = "insert into lit_". $username ."(doi, author, title, date, month, publisher, volume, issue, startpage, lastpage) values ('". $doi ."','". $author ."','". $title ."','". $date ."','". $month ."','". $publisher ."','". $volume ."','". $issue ."','". $startpage ."','". $lastpage  ."' );";
+     //print "$query";
+     echo $query;
+ 
+     $result=mysql_query($query);
+     if (!$result) die ("Query Failed.");
+   }
+   $query = "unlock table";
+   mysql_query($query);
+   
    mysql_close($conn); 
 
 ?>
