@@ -32,9 +32,9 @@ else
    $query = "lock table lit_". $username ." write";
    mysql_query($query);
    
-   $query  = "select from lit_". $username ." where title='". $title ."'";
+   $query  = "select * from lit_". $username ." where title='". $title ."'";
    $result=mysql_query($query);
-   if(!$result)
+   if($result)
    {
    	echo "This paper is already in the data base";
    }
@@ -42,7 +42,7 @@ else
    {   
      $query  = "insert into lit_". $username ."(doi, author, title, date, month, publisher, volume, issue, startpage, lastpage) values ('". $doi ."','". $author ."','". $title ."','". $date ."','". $month ."','". $publisher ."','". $volume ."','". $issue ."','". $startpage ."','". $lastpage  ."' );";
      //print "$query";
-     echo $query;
+     //echo $query;
  
      $result=mysql_query($query);
      if (!$result) die ("Query Failed.");

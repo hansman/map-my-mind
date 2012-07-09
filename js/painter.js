@@ -714,6 +714,7 @@ MindMap.prototype.mouseUp = function(e)
 
 MindMap.prototype.mouseMove = function(e)
 {
+	this.canvas.focus();
   	e.preventDefault(); 
 	this.updateMousePosition(e);
 	

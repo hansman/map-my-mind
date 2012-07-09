@@ -95,6 +95,20 @@ session_start();
 			  $("#loginpassword").val("");
 		  });
 
+		  $("#getpaperbtn").click(function()
+				  {
+					  $('#newpaperwarning').text("");
+				  });
+
+		  $("#addlibrary").click(function()
+				  {
+					  $('#newpaperwarning').text("");
+				  });
+		  
+
+
+		  
+
 		  $("#loginpassword").focus(function()
 		  {
 			  $('#warningtext').text("");
@@ -189,7 +203,12 @@ session_start();
 			 {
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 			  {  
-			     alert (xmlhttp.responseText);
+			     if (xmlhttp.responseText)
+			     {
+			    	 document.getElementById("newpaperwarning").innerHTML=xmlhttp.responseText;
+
+			    	 
+				 }
 			  }
 			 }
 			 xmlhttp.open("GET","php/newpaper.php?doi="+doi+"&author="+author+"&title="+title+"&publisher="+publisher+"&date="+date+"&month="+month+"&volume="+volume+"&issue="+issue+"&startpage="+startpage+"&lastpage="+lastpage,true);
@@ -341,15 +360,16 @@ session_start();
 			  	  }
 				  else
 				  {
-					  sm = new StateMachine(states);
-					  mindmap = new MindMap(document.getElementById("canvas"));
-					  mindmap.performState();
+					  
 					  updateDatalist();
 					  showusername();
 					  $('#login').slideUp('slow', function() {});
 					  document.getElementById('warningtext').innerHTML = "";
 					  document.getElementById('paper').value = "";
 					  document.getElementById('deletepaper').value = "";
+					  sm = new StateMachine(states);
+					  mindmap = new MindMap(document.getElementById("canvas"));
+					  mindmap.performState();
 					  
 				  } 
 				
@@ -438,7 +458,7 @@ session_start();
     </textarea>     
   </div>
   
-  <h3><a>Add To Library</a></h3>
+  <h3 id="addlibrary" ><a>Add To Library</a></h3>
 	<div>
 
    <form id="newpaperform">
@@ -446,7 +466,7 @@ session_start();
     
       <label id="doilabel" for="doifield">DOI</label>
       <input class="refform" id="doifield" name="doifield" type="text" placeholder="Enter your doi, i.e. http://dx.doi.org/10.1023/A:1015460304860 ..." />
-      <input class="buttons" type="button" value="Get Paper" onclick="getdoi();" />
+      <input id="getpaperbtn" class="buttons" type="button" value="Get Paper" onclick="getdoi();" />
 	
 			
 		<ul>	
@@ -497,6 +517,7 @@ session_start();
 				    
 		</ul>
 		<br>
+		<span id="newpaperwarning">  </span>
 		<input class="buttons" type="button" value="Submit" onclick="submitnewpaper()" />
        </fieldset>
      </form>
