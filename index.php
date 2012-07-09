@@ -441,53 +441,62 @@ session_start();
   <h3><a>Add To Library</a></h3>
 	<div>
 
-   <form >
+   <form id="newpaperform">
 		<fieldset>
     
-      <label for="doifield">DOI</label>
+      <label id="doilabel" for="doifield">DOI</label>
       <input class="refform" id="doifield" name="doifield" type="text" placeholder="Enter your doi, i.e. http://dx.doi.org/10.1023/A:1015460304860 ..." />
       <input class="buttons" type="button" value="Get Paper" onclick="getdoi();" />
 	
 			
 		<ul>	
-		    <br>
-        	<label for="author">Author</label>
+		    <div>
+        	<label for="author">Author *</label>
         	<input class="refform" id="author" name="author" type="text" placeholder="Set the author names ..." />	
-			</br>
-			<br>
-        	<label for="title">Title</label>
-        	<input class="refform" id="title" name="title "type="text" placeholder="Set the title ..." />   		
-			</br>
-			<br>
+			</div>
+        	<br>
+			<div>
+        	<label for="title">Title *</label>
+        	<input class="refform" id="title" name="title "type="text" placeholder="Set the title ..." />  
+        	</div>
+        	<br>
+			<div>
+        	<label for="date">Year *</label>
+        	<input class="refform" id="date" name="date" type="text" placeholder="Set the year ..." /> 	 		
+			</div>
+        	<br>
+			<div>
         	<label for="month">Month</label>
-        	<input class="refform" id="month" name="month" type="text" placeholder="Set the month ..." /> 		
-			</br>
-			<br>
-        	<label for="date">Year</label>
-        	<input class="refform" id="date" name="date" type="text" placeholder="Set the year ..." /> 		
-			</br>
-			<br>
+        	<input class="refform" id="month" name="month" type="text" placeholder="Set the month ..." /> 			
+			</div>
+        	<br>
+			<div>
         	<label for="publisher">Publisher</label>
         	<input class="refform" id="publisher" name="publisher" type="text" placeholder="Set the publisher ..." />
-			</br>	
-			<br>
+			</div>
+        	<br>
+			<div>
         	<label for="volume">Volume</label>
         	<input class="refform" id="volume" name="volume" type="text" placeholder="Set the volume ..." />
-			</br>	
-			<br>
+			</div>
+        	<br>
+			<div>
         	<label for="issue">Issue</label>
         	<input class="refform" id="issue" name="issue" type="text" placeholder="Set the issue ..." />
-			</br>	
-			<br>
+			</div>
+        	<br>
+			<div>
         	<label for="startpage">Start page</label>
         	<input class="refform" id="startpage" name="startpage" type="text" placeholder="Set the start page ..." />
-			</br>
-			<br>
+			</div>
+        	<br>
+			<div>
         	<label for="lastpage">End page</label>
         	<input class="refform" id="lastpage" name="lastpage" type="text" placeholder="Set the end page ..." />
-			</br>
+			</div>
 				    
 		</ul>
+		<br>
 		<input class="buttons" type="button" value="Submit" onclick="submitnewpaper()" />
        </fieldset>
      </form>

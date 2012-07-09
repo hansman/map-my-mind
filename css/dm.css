@@ -120,6 +120,59 @@
 	font-style: bold;
 }
 
+#newpaperform { 	
+	position: relative;
+    display: block;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+   } 
+
+#newpaperform #doilabel {
+	float:left;
+	margin-left: 40px;
+	margin-right: 60px;
+	
+	
+}
+
+#newpaperform #doifield {
+		
+	
+}
+
+#newpaperform ul label {
+	vertical-align: middle;
+	float:left;
+}
+
+#newpaperform ul input{
+	vertical-align: middle;
+	float: right;
+	margin-right:20px;
+	margin-top:0px;
+	width: 820px;
+	} 
+	
+#newpaperform div{
+	padding-top: 4px;
+	padding-bottom: 4px;
+	} 
+	
+article .buttons{
+	float: right;
+	margin-right:20px;
+	color: #444444;
+	background-color: #FFFFFF;
+	border: 2px solid #D9D9D9; 
+	border-radius: 5px;
+	} 
+	
+article .buttons:hover{
+	cursor:pointer;
+	border: 2px solid orange; 
+	} 
+	
+#newpaperform .clear{clear:both;}  
+
 
 #signupform { 	
 	position: relative;
