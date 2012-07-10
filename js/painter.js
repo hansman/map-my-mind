@@ -383,14 +383,22 @@ MindMap.prototype.performState = function()
     				
                    break;
  
-    case "addReference": 	var tempPoint = new SinglePoint(this.mousePosition.x - this.currentwidth/2 , this.mousePosition.y - this.currentheight/2 );
-							this.references[this.references.length] = new Reference(tempPoint, document.getElementById("paper").value , document.getElementById("paper").value, this.references.length, this);
+    case "addReference": 	if( document.getElementById("paper").value!="" )
+    						{
+    						  if( !this.checkNames( document.getElementById("paper").value ) )
+    						  {
+    							  
+    							  
+    							  
+    						  var tempPoint = new SinglePoint(this.mousePosition.x - this.currentwidth/2 , this.mousePosition.y - this.currentheight/2 );
+							  this.references[this.references.length] = new Reference(tempPoint, document.getElementById("paper").value , document.getElementById("paper").value, this.references.length, this);
 							
-							this.renderMap();
-							document.getElementById("paper").value="";
+							  document.getElementById("paper").value="";
 							
-							this.literaturelist();
-							
+							  this.literaturelist();
+    						  }
+    						}
+    						this.renderMap();
     						sm.consumeEvent('backToIdle');
                      		break;
                      		
@@ -566,33 +574,40 @@ MindMap.prototype.performState = function()
     						break; 
     						
     case "zoomState":		//alert("zoom value "+this.zoomdelta);
-
-							this.currentwidth = this.currentwidth*(1+this.zoomdelta/10);
-							this.currentheight = this.currentheight*(1+this.zoomdelta/10);
-	    
-    						for (var j = 0; j < this.references.length; j++)
+    						if( (this.currentheight <= 36) && (this.zoomdelta<0) )
+    						{}
+    						else
     						{
+							  this.currentwidth = this.currentwidth*(1+this.zoomdelta/10);
+							  this.currentheight = this.currentheight*(1+this.zoomdelta/10);
+	    
+    						  for (var j = 0; j < this.references.length; j++)
+    						  {
 								this.references[j].zoom(this.zoomdelta/10, this.mousePosition);
-    						}
+    						  }
     						
+    						  
+    						}
     						this.roundedRect(this.mousePosition.x - this.currentwidth/2, this.mousePosition.y - this.currentheight/2 , this.currentwidth , this.currentheight , 16, document.getElementById("paper").value );
-   							
    							this.renderMap();
     
     						sm.consumeEvent('backToIdle');
     						break; 
     						
-    case "panState":		var deltax = 0;
-							var deltay = 0;
- 							if(!this.draghelper)
-							{
+    case "panState":		
+    	                    if(this.references[0])
+    	                    {
+    						  var deltax = 0;
+							  var deltay = 0;
+ 							  if(!this.draghelper)
+							  {
 								deltax = this.mousePosition.x - this.references[0].oldPosition.x;
    							    deltay = this.mousePosition.y - this.references[0].oldPosition.y;
-   							}
-   							this.draghelper=false;
+   							  }
+   							  this.draghelper=false;
 							
-							for (var j = 0; j < this.references.length; j++)
-    						{
+							  for (var j = 0; j < this.references.length; j++)
+    						  {
     							this.references[j].rectangle.x += deltax;
 								this.references[j].rectangle.y += deltay;
 								for (var i = 0; i < this.references[j].node.length; i++)
@@ -600,12 +615,11 @@ MindMap.prototype.performState = function()
 									this.references[j].node[i].rectangle.x += deltax;
 									this.references[j].node[i].rectangle.y += deltay;
 								}
-    						}
+    						  }
 							
-							this.references[0].oldPosition=this.mousePosition;
-							
+							  this.references[0].oldPosition=this.mousePosition;
+    	                    }
 							this.renderMap();
-
     						break;
     
  
@@ -657,7 +671,7 @@ MindMap.prototype.mouseDown = function(e)
        //check references
 	   if(this.references[j].selected==true && !objectClicked)
 	   {
-	      objectClicked=true;document.getElementById("paper").value
+	      objectClicked=true;document.getElementById("paper").value;
 	      this.references[j].drag=true;
 	      sm.consumeEvent('clickOnReference');
 	      this.draghelper=true;
@@ -773,6 +787,17 @@ MindMap.prototype.mouseMove = function(e)
 	
 	this.performState();
 	this.stopEvent(e); 
+};
+
+//check if this paper is already in the mind map
+MindMap.prototype.checkNames = function( papername )
+{
+	for (var i = 0; i < this.references.length; i++)
+	{			
+		if(this.references[i].title==papername)
+			return true;
+	}
+	return false;
 };
 
 	
@@ -914,16 +939,22 @@ MindMap.prototype.roundedRect = function(x,y,width,height,radius, text )
             
         if(this.context.measureText(test).width > width * 0.98 ) 
         { 
-          this.context.fillText(line, x + width/2 - this.context.measureText(line).width/2, y + height/2 + lineheight);
-          line = wc[i] + " ";
-          lineheight += textsize+5;
+          if( lineheight < height/2 )
+          {
+            this.context.fillText(line, x + width/2 - this.context.measureText(line).width/2, y + height/2 + lineheight);
+            line = wc[i] + " ";
+            lineheight += textsize+5;
+          }
         }
         else
         {   
        	  line = test;
         }
       }
-   	  this.context.fillText(line, x + width/2 - this.context.measureText(line).width/2, y + height/2 + lineheight);
+      if( lineheight < height/2 )
+      {
+    	  this.context.fillText(line, x + width/2 - this.context.measureText(line).width/2, y + height/2 + lineheight);
+      }
 	}
 	else
 	{
@@ -953,12 +984,22 @@ MindMap.prototype.literaturelist = function()
 {
 	document.getElementById("thelist").value="";
 	var string="";
-	
-	for (var j = 0; j < this.references.length; j++)
-	{
-		string = string + jsonPapers[j].author + ". " +  jsonPapers[j].title + ". " +  jsonPapers[j].publisher + ". " +  jsonPapers[j].publisher + ", volume " + jsonPapers[j].volume + ", pages " + jsonPapers[j].startpage + "-" + jsonPapers[j].lastpage + "\n";
+	var j;
+	for (var i = 0; i < this.references.length; i++)
+	{    
+		if( (j=this.getPaperIndex(this.references[i].title.split(".  ")[2]) ) >=0 )
+			string = string + jsonPapers[j].author + ". " +  jsonPapers[j].title + ". " +  jsonPapers[j].publisher + ". " +  jsonPapers[j].publisher + ", volume " + jsonPapers[j].volume + ", pages " + jsonPapers[j].startpage + "-" + jsonPapers[j].lastpage + "\n";
 	}
 	document.getElementById("thelist").value = string;
+};
+
+MindMap.prototype.getPaperIndex = function(title)
+{
+	for (var j = 0; j < jsonPapers.length; j++)
+		if ( jsonPapers[j].title==title )
+			return j;
+	
+	return -1;
 };
 
 

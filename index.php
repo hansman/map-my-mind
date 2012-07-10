@@ -167,7 +167,13 @@ session_start();
 		  }
 		 }
 		  
-		 var doifield = document.getElementById("doifield").value;   
+		 var doifield = document.getElementById("doifield").value;  
+		 var doiparser = doifield.split(".org/");
+			if (doiparser[1])
+			{
+				doifield=doiparser[1];
+			}
+	  
 		 xmlhttp.open("GET","php/doihandler.php?doi="+doifield,true);
 		 xmlhttp.send();
        }
@@ -177,7 +183,6 @@ session_start();
 		function submitnewpaper()
 		{
 			var xmlhttp;
-
 			
 			var doi=document.getElementById("doifield").value;
 			var author=document.getElementById("author").value;
@@ -189,6 +194,13 @@ session_start();
 			var issue=document.getElementById("issue").value;
 			var startpage=document.getElementById("startpage").value;
 			var lastpage=document.getElementById("lastpage").value;
+
+			if( (!author) || (!title) || (!date))
+			{
+				document.getElementById("newpaperwarning").innerHTML="Please fill out all required fields";
+			}	
+			else
+			{
 			
 			if (window.XMLHttpRequest)
 			  {
@@ -203,11 +215,10 @@ session_start();
 			 {
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 			  {  
+				  updateDatalist();
 			     if (xmlhttp.responseText)
 			     {
 			    	 document.getElementById("newpaperwarning").innerHTML=xmlhttp.responseText;
-
-			    	 
 				 }
 			  }
 			 }
@@ -225,6 +236,7 @@ session_start();
 				document.getElementById("lastpage").value="";
 				
 				updateDatalist();
+			}
 		}
 		
 		
@@ -285,6 +297,7 @@ session_start();
 				for (var i=0; i<jsonPapers.length;i++) 
 				{ 
 					tag = '<option label="'+ jsonPapers[i].title +'" value="' + jsonPapers[i].author + '.  ' + jsonPapers[i].date + '.  ' + jsonPapers[i].title + '" />';
+					//console.log(tag);
 					document.getElementById('bibliothek').innerHTML += tag;
 					document.getElementById('bibliothek2').innerHTML += tag;
 				}
@@ -305,6 +318,7 @@ session_start();
 			document.getElementById('bibliothek2').innerHTML = "";
 			document.getElementById('paper').value = "";
 			document.getElementById('deletepaper').value = "";
+			document.getElementById('thelist').value = "";
 			
 			var xmlhttp;			
 			if (window.XMLHttpRequest)
@@ -331,10 +345,7 @@ session_start();
 
 
 		function login()
-		{	
-
-
-			
+		{				
 			var username=document.getElementById("loginusername").value;
 			var password=document.getElementById("loginpassword").value;
 			
@@ -363,10 +374,12 @@ session_start();
 					  
 					  updateDatalist();
 					  showusername();
-					  $('#login').slideUp('slow', function() {});
+					  
+					  $('#login').slideUp('slow', function() {window.location.reload();});
 					  document.getElementById('warningtext').innerHTML = "";
 					  document.getElementById('paper').value = "";
 					  document.getElementById('deletepaper').value = "";
+					  document.getElementById('thelist').value = "";
 					  sm = new StateMachine(states);
 					  mindmap = new MindMap(document.getElementById("canvas"));
 					  mindmap.performState();
@@ -453,7 +466,7 @@ session_start();
   
   <h3><a>Bibliography</a></h3>
   <div>
-    <textarea rows="10" id="thelist" class="form">
+    <textarea readonly rows="10" id="thelist" class="form">
       Your bibliography will be generated here once you got something in your mind map ...
     </textarea>     
   </div>
@@ -465,7 +478,7 @@ session_start();
 		<fieldset>
     
       <label id="doilabel" for="doifield">DOI</label>
-      <input class="refform" id="doifield" name="doifield" type="text" placeholder="Enter your doi, i.e. http://dx.doi.org/10.1023/A:1015460304860 ..." />
+      <input class="refform" id="doifield" name="doifield" type="text" placeholder="Enter doi, i.e. 'http://dx.doi.org/10.1023/A:1015460304860' OR '10.1023/A:1015460304860' OR '___.org/10.1023/A:1015460304860' " />
       <input id="getpaperbtn" class="buttons" type="button" value="Get Paper" onclick="getdoi();" />
 	
 			

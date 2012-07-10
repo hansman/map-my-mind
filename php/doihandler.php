@@ -1,7 +1,7 @@
 <?php
       
       //$url = "http://dx.doi.org/10.1023/B:SUPE.0000011386.69245.f5";
-      $url = $_GET["doi"];
+      $url = "http://dx.doi.org/".trim($_GET["doi"]);
       if (!function_exists('curl_init'))
       {
         die('You need to install php curl');

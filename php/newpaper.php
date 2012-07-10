@@ -8,16 +8,16 @@ if(isset($_SESSION['activeuser']))
 else
 	$username="guest";
 
-  $doi = $_GET["doi"];  
-  $date=$_GET["date"];
-  $month=$_GET["month"];
-  $publisher=$_GET["publisher"];
-  $author=$_GET["author"];
-  $title=$_GET["title"];
-  $volume=$_GET["volume"];
-  $issue=$_GET["issue"];
-  $startpage=$_GET["startpage"];
-  $lastpage=$_GET["lastpage"];
+  $doi = trim($_GET["doi"]);  
+  $date= trim($_GET["date"]); 
+  $month= trim($_GET["month"]); 
+  $publisher= trim($_GET["publisher"]); 
+  $author= trim($_GET["author"]); 
+  $title= trim($_GET["title"]); 
+  $volume= trim($_GET["volume"]); 
+  $issue= trim($_GET["issue"]); 
+  $startpage= trim($_GET["startpage"]); 
+  $lastpage= trim($_GET["lastpage"]); 
   
   include 'config.php';
   
@@ -34,7 +34,7 @@ else
    
    $query  = "select * from lit_". $username ." where title='". $title ."'";
    $result=mysql_query($query);
-   if($result)
+   if(mysql_num_rows($result))
    {
    	echo "This paper is already in the data base";
    }
