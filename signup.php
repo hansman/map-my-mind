@@ -24,7 +24,7 @@
     <ul>	
 		    <div>
         	<label for="newemail">Email *</label>
-        	<input class="signform" id="newemail" name="newemail" type=text placeholder="Email" required />	
+        	<input class="signform" id="newemail" name="newemail" type="text" placeholder="Email" required />	
 			</div>
         	<br>
 			<div>

@@ -497,71 +497,35 @@ MindMap.prototype.performState = function()
     						break;
     						
     						
-    case "deleteObject":	var flag=false;
-    						//var maxiter=this.references.length;
+    case "deleteObject":	var delref;	
+    	
     						for (var j = 0; j < this.references.length; j++)
     						{
     						    if(this.references[j].selected)
-    						    {	
-    						    
-    						    	//delete related connections
-    						    	
-    						    	
-    						    	flag=true;
-    						    	while(flag)
-    						    	{
-    						    	 flag=false;
-    						    	 var i=0;
-    						    	 while(!flag && i<this.connections.length)
-    						    	 {
-    						    	    if ( (this.connections[i].from.refid == j) || (this.connections[i].to.refid == j) )
-    						       		{    						       			
-    						       			this.connections.splice(i,1);
-    						       			flag=true;
-    						       		}
-    						       		i++;
-    						    	 }
-    						       	} 
-    						       	/*
-    						       	for(var k = 0; k < this.connections.length ; k++ )
-    						       	{
-    						       		if ( (this.connections[k].from.refid == j) || (this.connections[k].to.refid == j) )
-    						       		{    						       			
-    						       			this.connections.splice(k,1);
-    						       		}
-    						       	} */
-    						       	
-    						       	//delete the reference
-    						       	this.references.splice(j,1);
-
-									//update refid's
-    						       	for(var k = 0; k < this.connections.length ; k++ )
-    						       	{
-    						       		if ( this.connections[k].from.refid > j )
-    						       		{
-    						       			this.connections[k].from.refid--;
-    						       		}
-    						       		
-    						       		if ( this.connections[k].to.refid > j )
-    						       		{
-    						       			this.connections[k].to.refid--;
-    						       		}
-    						       	}
-    						       	
-    						       	for(var k = 0; k < this.references.length ; k++ )
-    						       	{
-    						       		this.references[k].refid=k;
-    						       		for (var l = 0; l < this.references[j].node.length; l++)
-    						       		{
-    						       			this.references[k].node[l].refid=k;
-    						       		
-    						       		}
-    						       	}
-    						       	j--;
-    						       	
-    						    }
-    						     
+    						    {  
+    						    	delref=j;
+    						    }    						     
     						}
+    						
+    						var i=0;
+    						var delcon=[];
+    						
+    						for (var j = 0; j < this.connections.length; j++)
+    						{
+    						    if( (this.connections[j].to == this.references[delref].node[0]) || (this.connections[j].to == this.references[delref].node[1]) || (this.connections[j].to == this.references[delref].node[2]) || (this.connections[j].to == this.references[delref].node[3]) || (this.connections[j].from == this.references[delref].node[0]) || (this.connections[j].from == this.references[delref].node[1]) || (this.connections[j].from == this.references[delref].node[2]) || (this.connections[j].from == this.references[delref].node[3])  )
+    						    {  
+    						    	delcon[i++]=j;
+    						    }    						     
+    						}
+    						
+    						for (var j = 0; j < delcon.length; j++)
+    						{
+    							this.connections.splice(delcon[j],1);    						     
+    						}
+    						
+    						
+    						this.references.splice(delref,1);
+    						
     						
     						this.canvas.style.background = this.settings.background;
    							this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);		
