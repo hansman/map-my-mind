@@ -14,16 +14,12 @@ if (!$conn)
 
 mysql_select_db("DM");
 
-
 $query = "lock table accounts read";
 mysql_query($query);
 
-
-$query = "select username from accounts where username='". $username ."' and pswd=MD5('". $password ."')";
-
+$query = "select id from accounts where username='". $username ."' and pswd=MD5('". $password ."')";
 	
 $result=mysql_query($query);
-
 
 $query = "unlock table";
 mysql_query($query);
@@ -42,7 +38,11 @@ else
 {
    session_start();
    if(!isset($_SESSION['activeuser']))
+   {
 	$_SESSION['activeuser'] = $username;
+	$_SESSION['activeID'] = $result;
+	
+   }
    	
 }
 

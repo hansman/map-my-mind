@@ -3,10 +3,10 @@
 
 session_start();
 
-if(isset($_SESSION['activeuser']))
-	$username=$_SESSION['activeuser'];
+if(isset($_SESSION['activeID']))
+	$userid=$_SESSION['activeID'];
 else
-	$username="guest";
+	$userid="guest";
 
   $doi = trim($_GET["doi"]);  
   $date= trim($_GET["date"]); 
@@ -29,10 +29,10 @@ else
   }
   
    mysql_select_db("DM");
-   $query = "lock table lit_". $username ." write";
+   $query = "lock table lit_". $userid ." write";
    mysql_query($query);
    
-   $query  = "select * from lit_". $username ." where title='". $title ."'";
+   $query  = "select * from lit_". $userid ." where title='". $title ."'";
    $result=mysql_query($query);
    if(mysql_num_rows($result))
    {
@@ -40,9 +40,7 @@ else
    }
    else 
    {   
-     $query  = "insert into lit_". $username ."(doi, author, title, date, month, publisher, volume, issue, startpage, lastpage) values ('". $doi ."','". $author ."','". $title ."','". $date ."','". $month ."','". $publisher ."','". $volume ."','". $issue ."','". $startpage ."','". $lastpage  ."' );";
-     //print "$query";
-     //echo $query;
+     $query  = "insert into lit_". $userid ."(doi, author, title, date, month, publisher, volume, issue, startpage, lastpage) values ('". $doi ."','". $author ."','". $title ."','". $date ."','". $month ."','". $publisher ."','". $volume ."','". $issue ."','". $startpage ."','". $lastpage  ."' );";
  
      $result=mysql_query($query);
      if (!$result) die ("Query Failed.");

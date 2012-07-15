@@ -20,7 +20,7 @@
 	</div>
 	
 	
-	<form id="signupform">
+	<form id="userform">
     <ul>	
 		    <div>
         	<label for="newemail">Email *</label>
@@ -157,7 +157,7 @@
 		 {
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 		  {
-			  
+			  alert(xmlhttp.responseText);
 		   	  if( xmlhttp.responseText == "exists")
 		   	  {
 		   		document.getElementById('warningtext').innerHTML="This username is already gone.";

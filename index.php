@@ -467,7 +467,7 @@ session_start();
   <h3><a>Bibliography</a></h3>
   <div>
     <textarea readonly rows="10" id="thelist" class="form">
-      Your bibliography will be generated here once you got something in your mind map ...
+      Your bibliography will be generated here once you got something in your mind ...
     </textarea>     
   </div>
   

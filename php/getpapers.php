@@ -2,10 +2,10 @@
   
 session_start();
 
-if(isset($_SESSION['activeuser']))
-	$username=$_SESSION['activeuser'];
+if(isset($_SESSION['activeID']))
+	$userid=$_SESSION['activeID'];
 else
-	$username="guest";
+	$userid="guest";
 
 
 
@@ -20,11 +20,11 @@ if (!$conn)
 
 mysql_select_db("DM");
 
-$query = "lock table lit_". $username ." read";
+$query = "lock table lit_". $userid ." read";
 mysql_query($query);
 
 
-$query = "select doi, author, title, date, month, publisher, volume, issue, startpage, lastpage from lit_".$username;
+$query = "select doi, author, title, date, month, publisher, volume, issue, startpage, lastpage from lit_".$userid;
 
 	
 $result=mysql_query($query);

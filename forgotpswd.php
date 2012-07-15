@@ -20,7 +20,7 @@
 	</div>
 	
 	
-	<form id="forgotpswdform">
+	<form id="userform">
     <ul>	
 		    <div>
         	<label for="newemail">Your email</label>

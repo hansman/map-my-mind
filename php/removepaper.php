@@ -2,10 +2,10 @@
 
   session_start();
 
-  if(isset($_SESSION['activeuser']))
-	$username=$_SESSION['activeuser'];
+  if(isset($_SESSION['activeID']))
+	$userid=$_SESSION['activeID'];
   else
-	$username="guest";
+	$userid="guest";
 
   $title = $_GET["title"];
   include 'config.php';
@@ -17,7 +17,7 @@
   }
   
    mysql_select_db("DM");
-   $query ="delete from lit_". $username ." where title='". $title ."'";
+   $query ="delete from lit_". $userid ." where title='". $title ."'";
    
    $result=mysql_query($query);
    if (!$result) die ("Query Failed.");
