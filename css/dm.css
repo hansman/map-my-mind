@@ -194,7 +194,7 @@ article textarea
 #newpaperform .clear{clear:both;}  
 
 
-#signupform { 	
+#signupform, #forgotpswdform { 	
 	position: relative;
     display: block;
     top: 90px;
@@ -209,20 +209,20 @@ article textarea
 	
    } 
    
-#signupform div{
+#signupform, #forgotpswdform div{
 	padding-top: 4px;
 	padding-bottom: 4px;
 	}   
    
    
-#signupform label{
+#signupform, #forgotpswdform label{
     vertical-align: middle;
 	
 	float:left;
 	color: #999999; 
 	}
 	
-#signupform input{
+#signupform, #forgotpswdform input{
 	vertical-align: middle;
 	float: right;
 	margin-right:20px;
@@ -232,15 +232,15 @@ article textarea
 	} 
 	
 
-#signupform .spacer{
+#signupform, #forgotpswdform .spacer{
 	height:12px;
 	display: block;
 	position: relative;
 	} 
 	
-#signupform .clear{clear:both;}   
+#signupform, #forgotpswdform .clear{clear:both;}   
    
-#signupform #signupoptions a {
+#signupform, #forgotpswdform #signupoptions a {
 	margin-left:50px;
 	margin-top:8px;
 	text-decoration: none;
@@ -249,11 +249,11 @@ article textarea
 	font-size:18px;	
 }
 
-#signupform #signupoptions a:hover{
+#signupform, #forgotpswdform #signupoptions a:hover{
 	color: #FFFFFF;
 }
 
-#signupform #warningtext {
+#signupform, #forgotpswdform #warningtext {
 	color: red;
 	margin-left:170px;
 	font-size: 12px;

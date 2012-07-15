@@ -38,7 +38,7 @@ session_start();
         <div id="loginoptions">
         <a href="#" id="submitlogin" onclick="login()">Log in</a>
         <a href="signup.php" id="signup">Sign up</a>
-		<a href="#">Forgot password</a>
+		<a href="forgotpswd.php">Forgot password</a>
 		<a href="#">Manage account</a>
 		<a id="closelogin" href="#">Close</a>
         </div>
