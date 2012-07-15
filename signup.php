@@ -120,11 +120,14 @@
 			var password = document.getElementById('newpassword').value;
 			var reppassword = document.getElementById('repeatpassword').value;
 			var newemail = document.getElementById('newemail').value;
-
+			var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+			
 			if( (newemail=="") || (reppassword=="") || (password=="")  )
-				{ document.getElementById('warningtext').innerHTML="Please fill out all required fields"   }
+				{ document.getElementById('warningtext').innerHTML="Please fill out all required fields";   }
+			else if ( reg.test(newemail) == false )
+				{ document.getElementById('warningtext').innerHTML="This is not a valid email address";		}
 			else if ( reppassword!=password  )
-			    { document.getElementById('warningtext').innerHTML="Your passwords don't match"   }
+			    { document.getElementById('warningtext').innerHTML="Your passwords don't match";   }
 			else
 			{
  				signupuser();

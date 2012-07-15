@@ -163,7 +163,7 @@ Rectangle.prototype.contains = function(testpoint)
 };
 
 
-var Reference = function(targetpoint,title,authorandyear,refid,theMindMap)
+var Reference = function(targetpoint,title,authorandyear,theMindMap)
 {
   this.drag=false;
   this.authorandyear=authorandyear;
@@ -173,12 +173,12 @@ var Reference = function(targetpoint,title,authorandyear,refid,theMindMap)
   this.nodesize=6;
   this.radius=16;
   this.rectangle = new Rectangle(targetpoint.x,targetpoint.y,theMindMap.currentwidth,theMindMap.currentheight); 
-  this.refid=refid;
   this.node = new Array(4);
-  this.node[0] = new Node(targetpoint.x- this.nodesize/2,targetpoint.y + theMindMap.currentheight/2 - this.nodesize/2,this.nodesize,this.nodesize,  refid,0); 
-  this.node[1] = new Node(targetpoint.x+theMindMap.currentwidth-this.nodesize/2,targetpoint.y + theMindMap.currentheight/2 - this.nodesize/2 ,this.nodesize,this.nodesize,refid,1);
-  this.node[2] = new Node(targetpoint.x + theMindMap.currentwidth/2 - this.nodesize/2,targetpoint.y- this.nodesize/2,this.nodesize,this.nodesize,  refid,2);
-  this.node[3] = new Node(targetpoint.x + theMindMap.currentwidth/2 - this.nodesize/2,targetpoint.y + theMindMap.currentwidth/2 - this.nodesize/2,this.nodesize,this.nodesize, refid,3);  
+  this.node[0] = new Node(targetpoint.x- this.nodesize/2,targetpoint.y + theMindMap.currentheight/2 - this.nodesize/2,this.nodesize,this.nodesize); 
+  this.node[1] = new Node(targetpoint.x+theMindMap.currentwidth-this.nodesize/2,targetpoint.y + theMindMap.currentheight/2 - this.nodesize/2 ,this.nodesize,this.nodesize);
+  this.node[2] = new Node(targetpoint.x + theMindMap.currentwidth/2 - this.nodesize/2,targetpoint.y- this.nodesize/2,this.nodesize,this.nodesize);
+  this.node[3] = new Node(targetpoint.x + theMindMap.currentwidth/2 - this.nodesize/2,targetpoint.y + theMindMap.currentwidth/2 - this.nodesize/2,this.nodesize,this.nodesize);  
+  
   this.selected=false;
   
   this.oldPosition=targetpoint;
@@ -241,10 +241,8 @@ Reference.prototype.paint = function(theMindMap)
 };
 
 
-var Node = function(x,y,width,height,refid,nodeid)
+var Node = function(x,y,width,height)
 {
-   this.refid=refid;
-   this.nodeid=nodeid;
    this.selected=false;
    this.rectangle = new Rectangle(x,y,width,height);
    
@@ -311,7 +309,7 @@ var MindMap = function(theCanvas)
     this.canvas.focus();
     this.defaultdisplay = true;
     this.mousePosition = new SinglePoint(0, 0);
-    this.startNode = new Node(0,0,0,0,0,0);
+    this.startNode = new Node(0,0,0,0,0);
     
     this.zoomdelta = 0;
     this.currentwidth=200;
@@ -391,7 +389,7 @@ MindMap.prototype.performState = function()
     							  
     							  
     						  var tempPoint = new SinglePoint(this.mousePosition.x - this.currentwidth/2 , this.mousePosition.y - this.currentheight/2 );
-							  this.references[this.references.length] = new Reference(tempPoint, document.getElementById("paper").value , document.getElementById("paper").value, this.references.length, this);
+							  this.references[this.references.length] = new Reference(tempPoint, document.getElementById("paper").value , document.getElementById("paper").value, this);
 							
 							  document.getElementById("paper").value="";
 							
@@ -497,8 +495,9 @@ MindMap.prototype.performState = function()
     						break;
     						
     						
-    case "deleteObject":	var delref;	
-    	
+    case "deleteObject":	var delref=-1;
+    						var delsel=-1;
+    						    	
     						for (var j = 0; j < this.references.length; j++)
     						{
     						    if(this.references[j].selected)
@@ -507,32 +506,48 @@ MindMap.prototype.performState = function()
     						    }    						     
     						}
     						
-    						var i=0;
-    						var delcon=[];
     						
     						for (var j = 0; j < this.connections.length; j++)
     						{
+    						    if(this.connections[j].selected)
+    						    {  
+    						    	delsel=j;
+    						    }    						     
+    						}
+    						
+    						if(delref != -1)
+    						{
+    						
+    						  var i=0;
+    						  var delcon=[];
+    						
+    						  for (var j = 0; j < this.connections.length; j++)
+    						  {
     						    if( (this.connections[j].to == this.references[delref].node[0]) || (this.connections[j].to == this.references[delref].node[1]) || (this.connections[j].to == this.references[delref].node[2]) || (this.connections[j].to == this.references[delref].node[3]) || (this.connections[j].from == this.references[delref].node[0]) || (this.connections[j].from == this.references[delref].node[1]) || (this.connections[j].from == this.references[delref].node[2]) || (this.connections[j].from == this.references[delref].node[3])  )
     						    {  
     						    	delcon[i++]=j;
     						    }    						     
-    						}
+    						  }
     						
-    						for (var j = 0; j < delcon.length; j++)
-    						{
+    						  for (var j = 0; j < delcon.length; j++)
+    						  {
     							this.connections.splice(delcon[j],1);    						     
+    						  }
+    						
+    						
+    						  this.references.splice(delref,1);
+    						
+    						
+    						  this.canvas.style.background = this.settings.background;
+   							  this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+   							  this.literaturelist();
     						}
-    						
-    						
-    						this.references.splice(delref,1);
-    						
-    						
-    						this.canvas.style.background = this.settings.background;
-   							this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);		
+    						else if(delsel != -1)
+    						{
+    							this.connections.splice(delsel,1);    							
+    						}
     						
    							this.renderMap();
-    
-   							this.literaturelist();
     
     						sm.consumeEvent('backToIdle');
     						break; 
@@ -606,6 +621,7 @@ MindMap.prototype.mousewheel = function(e)
 	this.stopEvent(e);
 	return null;
 };
+
 
 
 MindMap.prototype.mouseDown = function(e)
@@ -908,6 +924,7 @@ MindMap.prototype.roundedRect = function(x,y,width,height,radius, text )
             this.context.fillText(line, x + width/2 - this.context.measureText(line).width/2, y + height/2 + lineheight);
             line = wc[i] + " ";
             lineheight += textsize+5;
+            
           }
         }
         else
@@ -950,9 +967,25 @@ MindMap.prototype.literaturelist = function()
 	var string="";
 	var j;
 	for (var i = 0; i < this.references.length; i++)
-	{    
+	{   
 		if( (j=this.getPaperIndex(this.references[i].title.split(".  ")[2]) ) >=0 )
-			string = string + jsonPapers[j].author + ". " +  jsonPapers[j].title + ". " +  jsonPapers[j].publisher + ". " +  jsonPapers[j].publisher + ", volume " + jsonPapers[j].volume + ", pages " + jsonPapers[j].startpage + "-" + jsonPapers[j].lastpage + "\n";
+		{
+			  string += jsonPapers[j].author + ", " +  jsonPapers[j].title + ", ";
+			  if(jsonPapers[j].publisher)
+				string += jsonPapers[j].publisher + ", ";
+			  if(jsonPapers[j].month != 0)
+					string += jsonPapers[j].month + "\/";
+			  string += jsonPapers[j].date + ", ";
+			  if( jsonPapers[j].volume )
+				string += "volume " + jsonPapers[j].volume + ", ";
+			  if( jsonPapers[j].startpage && jsonPapers[j].lastpage )
+				string += "pp. " + jsonPapers[j].startpage + "-" + jsonPapers[j].lastpage + ", ";
+			  if( jsonPapers[j].doi )
+				string += "doi:" + jsonPapers[j].doi;
+			  
+			  
+			  string += "\n";
+		}
 	}
 	document.getElementById("thelist").value = string;
 };
@@ -961,6 +994,7 @@ MindMap.prototype.getPaperIndex = function(title)
 {
 	for (var j = 0; j < jsonPapers.length; j++)
 		if ( jsonPapers[j].title==title )
+			
 			return j;
 	
 	return -1;
