@@ -363,7 +363,7 @@ session_start();
 			 {
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 			  { 
-				  console.log(xmlhttp.responseText);
+				  //console.log(xmlhttp.responseText);
 				  if(xmlhttp.responseText == "failed")
 				  {
 					  document.getElementById('warningtext').innerHTML = "Your login data is incorrect ...";
@@ -371,7 +371,7 @@ session_start();
 			  	  }
 				  else
 				  {
-					  
+					  //alert(xmlhttp.responseText);
 					  updateDatalist();
 					  showusername();
 					  

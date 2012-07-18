@@ -40,7 +40,8 @@ else
    if(!isset($_SESSION['activeuser']))
    {
 	$_SESSION['activeuser'] = $username;
-	$_SESSION['activeID'] = $result;
+	$_SESSION['activeID'] = mysql_result($result, 0, 'id');;
+	//print("--". $_SESSION['activeuser'] . "--" . $_SESSION['activeID'] ."--");
 	
    }
    	

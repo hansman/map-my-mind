@@ -157,7 +157,7 @@
 		 {
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 		  {
-			  alert(xmlhttp.responseText);
+			  //alert(xmlhttp.responseText);
 		   	  if( xmlhttp.responseText == "exists")
 		   	  {
 		   		document.getElementById('warningtext').innerHTML="This username is already gone.";
