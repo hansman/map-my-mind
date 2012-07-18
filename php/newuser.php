@@ -28,8 +28,6 @@ if (!$result)
 }
 else if (mysql_num_rows($result) == 0  )
 {	
-	$query = "lock table accounts write";
-	mysql_query($query);
 	
 	$query = "insert into accounts(username, pswd) values ('" . $username . "', MD5('" . $password . "'))";
 	mysql_query($query);
@@ -38,25 +36,13 @@ else if (mysql_num_rows($result) == 0  )
 	$result=mysql_query($query);
 	print("result:  ". $result . "  ");
 	
-	//$query = "select `id` from accounts where username='" . $username . "'";
-	//print($query);
-	//$userid=mysql_query($query);
-	//$userid = mysql_result($userid, 0, 'id');
+	$query = "select `id` from accounts where username='" . $username . "'";
+	$userid=mysql_query($query);
+	$userid = mysql_result($userid, 0, 'id');
 	
-	//$query = "create table lit_". $userid ." like lit_testuser";
-
-	$query = "create table hansman2 like lit_testuser";
-	print($query);
-	$result=mysql_query($query);
-	print("    " . $result);
-	
-	/*if(!$result)
-	{
-		die ("Query Failed.");
-	}*/
-	
-	$query = "unlock table";
+	$query = "create table lit_". $userid ." like lit_testuser";
 	mysql_query($query);
+	
 	session_start();
     if (!isset($_SESSION['activeuser']))
     {
