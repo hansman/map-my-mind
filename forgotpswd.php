@@ -32,7 +32,7 @@
     <div id="actions">
         <div class="loginspacer""></div>        
         <div id="signupoptions">
-        	<a href="#" onClick="inputvalidation()">Send Password</a>
+        	<a href="#" onClick="sendpswd()">Send new password</a>
 			<a id="backtomain" href="index.php">Back</a>
         </div>
         <div class="loginspacer"></div>
@@ -56,7 +56,44 @@
 		    });
 		};
 
+		function sendpswd()
+		{
+			 var email = document.getElementById('newemail').value;
 
+			 var xmlhttp;
+			
+			 if (window.XMLHttpRequest)
+			  {
+			    xmlhttp=new XMLHttpRequest();
+			  }
+			 else
+			  {
+			    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			  }
+			
+			 xmlhttp.onreadystatechange=function()
+			 {
+			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
+			  {
+				  //alert(xmlhttp.responseText);
+			   	  if( xmlhttp.responseText == "failed")
+			   	  {
+						alert("failed");
+				  }
+			   	  else
+			   	  {
+						alert("worked");
+				  }
+			   	  		  
+			   }
+			 }
+			 xmlhttp.open("GET","php/sendpswd.php?email="+email,true);
+			 xmlhttp.send();
+
+
+		};
+		
+		
 		/*
 		function inputvalidation()
 		{
