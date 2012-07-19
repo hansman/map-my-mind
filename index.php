@@ -23,12 +23,12 @@ session_start();
 	    </div>
 	    
 		<li><a href="#" id="loginbutton">Login</a></li>
-		<li><a href="#">Manage Mindmaps</a></li>
+		<li><a href="#" id="managebutton">Manage Mindmaps</a></li>
 	</ul>
 	</div>
 	
 	
-	<form id="login">
+	<form id="login" class="slidedowns">
     <div id="inputs">        
         <input id="loginusername" type="text" name="loginusername" placeholder="Email" required/>   
         <input id="loginpassword" type="password" name="loginpassword" placeholder="Password" required/>        
@@ -46,6 +46,29 @@ session_start();
     </div>
 	</form>
 	
+	<form id="managemaps" class="slidedowns">
+    <div id="inputs">      
+        <label id="SaveMapLabel" for="SaveMap">Save this map as:</label>  
+        <input id="SaveMap" type="text" name="SaveMap" placeholder="Save map as ..." required/>   
+        <label id="LoadMapLabel" for="LoadMap">DOI</label>
+        <input id="LoadMap" type="text" name="LoadMap" placeholder="Load map ..." required/>
+        <label id="DeleteMapLabel" for="DeleteMap">DOI</label>
+        <input id="DeleteMap" type="text" name="DeleteMap" placeholder="Delete map ..." required/>          
+    </div>
+    <div id="actions">
+        <div class="loginspacer" id="warningtext"></div>        
+        <div id="loginoptions">
+        <a href="#" id="submitlogin" onclick="login()">Log in</a>
+        <a href="signup.php" id="signup">Sign up</a>
+		<a href="forgotpswd.php">Forgot password</a>
+		<a href="#">Manage account</a>
+		<a id="closelogin" href="#">Close</a>
+        </div>
+        <div class="loginspacer"></div>
+    </div>
+	</form>
+	
+	
 	
 	<script src="js/painter.js"></script>
 	<script src="js/jquery-1.7.2.min.js"></script>
@@ -55,6 +78,7 @@ session_start();
     <script type="text/javascript">
 
         $("#login").hide();
+        $("#managemaps").hide();
 
         
 		var mindmap = null;
@@ -94,6 +118,12 @@ session_start();
 			  $("#loginusername").val("");
 			  $("#loginpassword").val("");
 		  });
+
+
+		  $('#managebutton').click(function() {
+			  $('#managemaps').slideDown('slow', function() {				  
+			  });
+			 });
 
 		  $("#getpaperbtn").click(function()
 				  {
