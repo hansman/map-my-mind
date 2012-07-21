@@ -68,6 +68,7 @@
 	position: relative;
     display: block;
     top: 27px;
+    color: #999999;
 	background-color: #292929;
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 	width: 550px;
@@ -87,14 +88,22 @@
 	margin-left: 30px;
 	padding: 0;
    } 
-   
-.slidedowns .loginspacer {
+
+.slidedowns span:hover {
+	color: #FFFFFF;
+	cursor:pointer;
+   } 
+
+
+
+.slidedowns .slidespacer {
 	height: 20px;
    } 
    
    
    
-.slidedowns #warningtext {
+.slidedowns #warningtext 
+{
 	color: red;
 	margin-left:30px;
 	font-size: 12px;
@@ -129,8 +138,6 @@
 	float:left;
 	margin-left: 40px;
 	margin-right: 60px;
-	
-	
 }
 
 #newpaperform #doifield {

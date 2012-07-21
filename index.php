@@ -34,7 +34,7 @@ session_start();
         <input id="loginpassword" type="password" name="loginpassword" placeholder="Password" required/>        
     </div>
     <div id="actions">
-        <div class="loginspacer" id="warningtext"></div>        
+        <div class="slidespacer" id="warningtext"></div>        
         <div id="loginoptions">
         <a href="#" id="submitlogin" onclick="login()">Log in</a>
         <a href="signup.php" id="signup">Sign up</a>
@@ -42,29 +42,18 @@ session_start();
 		<a href="#">Manage account</a>
 		<a id="closelogin" href="#">Close</a>
         </div>
-        <div class="loginspacer"></div>
+        <div class="slidespacer"></div>
     </div>
 	</form>
 	
 	<form id="managemaps" class="slidedowns">
     <div id="inputs">      
         <label id="SaveMapLabel" for="SaveMap">Save this map as:</label>  
-        <input id="SaveMap" type="text" name="SaveMap" placeholder="Save map as ..." required/>   
-        <label id="LoadMapLabel" for="LoadMap">DOI</label>
-        <input id="LoadMap" type="text" name="LoadMap" placeholder="Load map ..." required/>
-        <label id="DeleteMapLabel" for="DeleteMap">DOI</label>
-        <input id="DeleteMap" type="text" name="DeleteMap" placeholder="Delete map ..." required/>          
+        <input id="SaveMap" type="text" name="SaveMap" placeholder="Save map as ..." required/>
+        <span onclick="savemap()">Save Map</span>   
     </div>
     <div id="actions">
-        <div class="loginspacer" id="warningtext"></div>        
-        <div id="loginoptions">
-        <a href="#" id="submitlogin" onclick="login()">Log in</a>
-        <a href="signup.php" id="signup">Sign up</a>
-		<a href="forgotpswd.php">Forgot password</a>
-		<a href="#">Manage account</a>
-		<a id="closelogin" href="#">Close</a>
-        </div>
-        <div class="loginspacer"></div>
+        <div class="slidespacer" id="warningtext"></div>        
     </div>
 	</form>
 	
@@ -92,7 +81,6 @@ session_start();
 		        linkLocation = this.href;
 		        $("body").fadeOut(1000, redirectPage);     
 		    });
-
 			 
 		  
 		  $('#loginbutton').click(function() {
@@ -135,10 +123,6 @@ session_start();
 					  $('#newpaperwarning').text("");
 				  });
 		  
-
-
-		  
-
 		  $("#loginpassword").focus(function()
 		  {
 			  $('#warningtext').text("");
@@ -165,6 +149,31 @@ session_start();
 		  });
 		  		  
 		}
+
+
+        function savemap()
+        {
+        	var xmlhttp;	
+   		 	if (window.XMLHttpRequest)
+   		    	xmlhttp=new XMLHttpRequest();
+   		 	else
+   		    	xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+
+   		 	xmlhttp.onreadystatechange=function()
+		 	{
+		  		if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
+		  		{
+		      	  alert( xmlhttp.responseText );
+		  		}
+		 	}
+   		 	
+        	xmlhttp.open("POST","php/savemap.php",true);
+        	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        	xmlhttp.send("fname=Henry&lname=Ford");
+            
+        }
+
+		
 		
 		function getdoi()
 		{
