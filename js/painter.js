@@ -1002,3 +1002,25 @@ MindMap.prototype.getPaperIndex = function(title)
 
 
 
+MindMap.prototype.createJsonObject = function()
+{
+	/*for (var j = 0; j < jsonPapers.length; j++)
+		if ( jsonPapers[j].title==title )
+			
+			return j;
+	
+	return -1; */
+	return { "reference": {
+		           "0":{
+		        	   "title":"firsttitle",
+		        	   "position":"theposition"
+		               },
+		           "1":{
+			           "title":"sndtitle",
+			           "position":"the2position"
+			           }	            
+				}, 
+			 "connection": {"name": "somename"},
+			 "metadata": {"zoom": "15"}
+	};
+};

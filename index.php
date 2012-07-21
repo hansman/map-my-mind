@@ -153,7 +153,7 @@ session_start();
 
         function savemap()
         {
-        	var obj = {"action": "nothing"};
+        	var obj = mindmap.createJsonObject();
         	var jsonString = "jsonString=" + JSON.stringify(obj);
  
             
