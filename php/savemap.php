@@ -1,7 +1,5 @@
 <?php 
 
-	$test = trim($_POST['fname']);
-	print($test);
-
+	var_dump(json_decode($_POST['jsonString']));
 
 ?>

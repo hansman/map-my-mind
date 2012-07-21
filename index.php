@@ -153,6 +153,10 @@ session_start();
 
         function savemap()
         {
+        	var obj = {"action": "nothing"};
+        	var jsonString = "jsonString=" + JSON.stringify(obj);
+ 
+            
         	var xmlhttp;	
    		 	if (window.XMLHttpRequest)
    		    	xmlhttp=new XMLHttpRequest();
@@ -163,13 +167,17 @@ session_start();
 		 	{
 		  		if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 		  		{
-		      	  alert( xmlhttp.responseText );
+			  	  console.log(xmlhttp.responseText);
+		      	  //alert( xmlhttp.responseText );
 		  		}
 		 	}
    		 	
         	xmlhttp.open("POST","php/savemap.php",true);
         	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        	xmlhttp.send("fname=Henry&lname=Ford");
+        	xmlhttp.setRequestHeader("Content-Length",jsonString.length);
+        	
+        	xmlhttp.send(jsonString);
+        	
             
         }
 
