@@ -24,21 +24,16 @@
 	$query = "select doi, author, title, date, month, publisher, volume, issue, startpage, lastpage from lit_".$userid;
 	
 	$result=mysql_query($query);
-	if (!$result) 
-	{ 
-		echo "failed";	
-		die ("Query Failed.");
-	}
-   
-   $jsonrows = array();
-   while($row = mysql_fetch_assoc($result)) 
-   {
+	
+	   
+    $jsonrows = array();
+    while($row = mysql_fetch_assoc($result)) 
+    {
      $jsonrows[] = $row;
-   }
+    }
    
-   echo json_encode($jsonrows);
-   $query = "unlock table";
-   mysql_query($query);
-   
-   mysql_close($conn);
+    echo json_encode($jsonrows);
+    $query = "unlock table";
+    mysql_query($query);
+    mysql_close($conn);
 ?>
