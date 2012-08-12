@@ -2,66 +2,63 @@
 <html lang="en" >
 <head>
 
-    <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]--> 
-	<meta charset="utf-8">
+    <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 	<title>MapMyMind</title>
 	
 	<link href="css/dm.css" rel="stylesheet" />
 	<script src="js/jquery-1.7.2.min.js"></script>	
 	
-	
 	<div id="nav">
-	<ul >
+	<ul>
 	    <div id="logo">
 	    <span id="name">Map My Mind</span>
 	    </div>
 	</ul>
 	</div>
 	
-	
 	<form id="userform">
     <ul>	
 		    <div>
-        	<label for="newemail">Email *</label>
-        	<input class="signform" id="newemail" name="newemail" type="text" placeholder="Email" required />	
+        		<label for="newemail">Email *</label>
+        		<input class="signform" id="newemail" name="newemail" type="text" placeholder="Email" required />	
 			</div>
         	<br>
 			<div>
-        	<label for="newpassword">Password *</label>
-        	<input class="signform" id="newpassword" name="newpassword" type="password" placeholder="Password" required/> 
+        		<label for="newpassword">Password *</label>
+        		<input class="signform" id="newpassword" name="newpassword" type="password" placeholder="Password" required/> 
         	</div>
         	<br>
 			<div>
-        	<label for="repeatpassword">Repeat Password *</label>
-        	<input class="signform" id="repeatpassword" name="repeatpassword" type="password" placeholder="Password" required/> 
+        		<label for="repeatpassword">Repeat Password *</label>
+        		<input class="signform" id="repeatpassword" name="repeatpassword" type="password" placeholder="Password" required/> 
         	</div>
         	<br>
 			<div class="spacer" id="warningtext"> </div>
 			<div class="spacer"  > </div>
 			<div>
-        	<label for="firstname">First name</label>
-        	<input class="signform" id="firstname" name="firstname" type="text" placeholder="First name" /> 		
+        		<label for="firstname">First name</label>
+        		<input class="signform" id="firstname" name="firstname" type="text" placeholder="First name" /> 		
 			</div>
         	<br>
         	<div>
-        	<label for="familyname">Family name</label>
-        	<input class="signform" id="familyname" name="familyname" type="text" placeholder="Family name" /> 		
+        		<label for="familyname">Family name</label>
+        		<input class="signform" id="familyname" name="familyname" type="text" placeholder="Family name" /> 		
 			</div>
         	<br>
         	<div>
-        	<label for="degree">Degree</label>
-        	<input class="signform" id="degree" name="degree" type="text" placeholder="Degree" /> 		
+        		<label for="degree">Degree</label>
+        		<input class="signform" id="degree" name="degree" type="text" placeholder="Degree" /> 		
 			</div>
         	<br>
 			<div>
-        	<label for="institution">Institution</label>
-        	<input class="signform" id="institution" name="institution" type="text" placeholder="Institution" /> 		
+        		<label for="institution">Institution</label>
+        		<input class="signform" id="institution" name="institution" type="text" placeholder="Institution" /> 		
 			</div>
         	<br>
 			<div>			
-        	<label for="affiliation">Affiliation</label>
-        	<input class="signform" id="affiliation" name="affiliation" type="text" placeholder="Affiliation" /> 		
+        		<label for="affiliation">Affiliation</label>
+        		<input class="signform" id="affiliation" name="affiliation" type="text" placeholder="Affiliation" /> 		
 			</div>
         	<br>
 			
@@ -76,13 +73,10 @@
         <div class="loginspacer"></div>
     </div>
 	</form>
-	
-	
 </head>
 
 <body>
-
-<script type="text/javascript">
+    <script type="text/javascript">
 
 		
 		function document_load()
@@ -171,10 +165,8 @@
 		 xmlhttp.open("GET","php/newuser.php?email="+newemail+"&pass="+password,true);
 		 xmlhttp.send();
        };
-		
-		
 
-</script>
+    </script>
 	
 </body>
 </html>

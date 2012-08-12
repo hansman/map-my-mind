@@ -1,39 +1,34 @@
 <?php 
   
-session_start();
+	session_start();
 
-if(isset($_SESSION['activeID']))
-	$userid=$_SESSION['activeID'];
-else
-	$userid="guest";
+	if(isset($_SESSION['activeID']))
+		$userid=$_SESSION['activeID'];
+	else
+		$userid="guest";
 
+	include 'config.php';
 
+	$conn = mysql_connect("$dbhost", "$dbuser", "$dbpass");
 
-include 'config.php';
+	if (!$conn)
+	{
+		die('Could not connect: ' . mysql_error());
+	}
 
-$conn = mysql_connect("$dbhost", "$dbuser", "$dbpass");
+	mysql_select_db("DM");
 
-if (!$conn)
-{
-	die('Could not connect: ' . mysql_error());
-}
+	$query = "lock table lit_". $userid ." read";
+	mysql_query($query);
 
-mysql_select_db("DM");
-
-$query = "lock table lit_". $userid ." read";
-mysql_query($query);
-
-
-$query = "select doi, author, title, date, month, publisher, volume, issue, startpage, lastpage from lit_".$userid;
-
+	$query = "select doi, author, title, date, month, publisher, volume, issue, startpage, lastpage from lit_".$userid;
 	
-$result=mysql_query($query);
-if (!$result) 
-{ 
-	echo "failed";	
-	die ("Query Failed.");
-}
-
+	$result=mysql_query($query);
+	if (!$result) 
+	{ 
+		echo "failed";	
+		die ("Query Failed.");
+	}
    
    $jsonrows = array();
    while($row = mysql_fetch_assoc($result)) 
@@ -41,13 +36,9 @@ if (!$result)
      $jsonrows[] = $row;
    }
    
-   
    echo json_encode($jsonrows);
    $query = "unlock table";
    mysql_query($query);
    
-   
-mysql_close($conn);
-
-
+   mysql_close($conn);
 ?>

@@ -6,27 +6,31 @@ session_start();
 <html lang="en" >
 <head>
 
-    <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]--> 
-	<meta charset="utf-8">
+    <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 	<title>MapMyMind</title>
 	
 	<link href="css/dm.css" rel="stylesheet" />	
+	<script src="js/painter.js"></script>
+	<script src="js/jquery-1.7.2.min.js"></script>
+	<script src="js/jquery-ui-1.8.21.custom.min.js"></script>
+	
 	
 	<div id="nav">
-	<ul >
+	  <ul>
 	    <div id="logo">
-	    <span id="name">Map My Mind</span>
+	    	<span id="name">MapMyMind</span>
 	    </div>
 	    <div id="username">
-	    <span id="shownname"></span>
+	    	<span id="shownname"></span>
 	    </div>
 	    
-		<li><a href="#" id="loginbutton">Login</a></li>
-		<li><a href="#" id="managebutton">Manage Mindmaps</a></li>
-	</ul>
+		<li>
+			<a href="#" id="loginbutton">Login</a>
+		</li>
+		<!--   <li><a href="#" id="managebutton">Manage Mindmaps</a></li> -->
+	  </ul>
 	</div>
-	
 	
 	<form id="login" class="slidedowns">
     <div id="inputs">        
@@ -36,44 +40,37 @@ session_start();
     <div id="actions">
         <div class="slidespacer" id="warningtext"></div>        
         <div id="loginoptions">
-        <a href="#" id="submitlogin" onclick="login()">Log in</a>
-        <a href="signup.php" id="signup">Sign up</a>
-		<a href="forgotpswd.php">Forgot password</a>
-		<a href="#">Manage account</a>
-		<a id="closelogin" href="#">Close</a>
+        	<a href="#" id="submitlogin" onclick="login()">Log in</a>
+        	<a href="signup.php" id="signup">Sign up</a>
+			<a href="forgotpswd.php">Forgot password</a>
+			<a href="#">Manage account</a>
+			<a id="closelogin" href="#">Close</a>
         </div>
         <div class="slidespacer"></div>
     </div>
 	</form>
-	
+	 
 	<form id="managemaps" class="slidedowns">
     <div id="inputs">      
-        <label id="SaveMapLabel" for="SaveMap">Save this map as:</label>  
+          <label id="SaveMapLabel" for="SaveMap">Save this map as:</label>   
         <input id="SaveMap" type="text" name="SaveMap" placeholder="Save map as ..." required/>
         <span onclick="savemap()">Save Map</span>   
     </div>
+    
     <div id="actions">
         <div class="slidespacer" id="warningtext"></div>        
     </div>
 	</form>
-	
-	
-	
-	<script src="js/painter.js"></script>
-	<script src="js/jquery-1.7.2.min.js"></script>
-	<script src="js/jquery-ui-1.8.21.custom.min.js"></script>
-
-	
+		
     <script type="text/javascript">
 
         $("#login").hide();
         $("#managemaps").hide();
-
         
 		var mindmap = null;
 		var sm = null;
 		var jsonPapers = null;
-		
+								
 		function document_load()
 		{
 			$("signup").click(function(event){
@@ -81,7 +78,6 @@ session_start();
 		        linkLocation = this.href;
 		        $("body").fadeOut(1000, redirectPage);     
 		    });
-			 
 		  
 		  $('#loginbutton').click(function() {
 			  if($('#loginbutton').text() == "Login")
@@ -150,7 +146,7 @@ session_start();
 		  		  
 		}
 
-
+		/* work in progress
         function savemap()
         {
         	var obj = mindmap.createJsonObject();
@@ -177,60 +173,54 @@ session_start();
         	xmlhttp.setRequestHeader("Content-Length",jsonString.length);
         	
         	xmlhttp.send(jsonString);
-        	
-            
-        }
+        } */
 
 		
 		
 		function getdoi()
 		{
-			var xmlhttp;
-		
-		 if (window.XMLHttpRequest)
-		  {
-		    xmlhttp=new XMLHttpRequest();
-		  }
-		 else
-		  {
-		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-		  }
-		
-		 xmlhttp.onreadystatechange=function()
-		 {
-		  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
-		  {
-		      var myArray = eval( xmlhttp.responseText );
-		      document.getElementById("author").value=myArray[0];
-		      document.getElementById("title").value=myArray[1];
-		      document.getElementById("date").value=myArray[2];
-		      document.getElementById("publisher").value=myArray[3];
-		      document.getElementById("month").value=myArray[4];
-		      document.getElementById("volume").value=myArray[5];
-		      document.getElementById("issue").value=myArray[6];
-		      document.getElementById("startpage").value=myArray[7];
-		      document.getElementById("lastpage").value=myArray[8];
-		      
-		  }
-		 }
+        	var xmlhttp;
+        	if (window.XMLHttpRequest)
+    		    xmlhttp=new XMLHttpRequest();
+    		else
+    		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    		
+			xmlhttp.onreadystatechange=function()
+		 	{
+		  		if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
+		  		{
+		      		var myArray = eval( xmlhttp.responseText );
+		      		document.getElementById("author").value=myArray[0];
+		      		document.getElementById("title").value=myArray[1];
+		      		document.getElementById("date").value=myArray[2];
+		      		document.getElementById("publisher").value=myArray[3];
+		      		document.getElementById("month").value=myArray[4];
+		      		document.getElementById("volume").value=myArray[5];
+		      		document.getElementById("issue").value=myArray[6];
+		      		document.getElementById("startpage").value=myArray[7];
+		      		document.getElementById("lastpage").value=myArray[8];
+		      	}
+		 	}
 		  
-		 var doifield = document.getElementById("doifield").value;  
-		 var doiparser = doifield.split(".org/");
+		 	var doifield = document.getElementById("doifield").value;  
+		 	var doiparser = doifield.split(".org/");
 			if (doiparser[1])
 			{
 				doifield=doiparser[1];
 			}
 	  
-		 xmlhttp.open("GET","php/doihandler.php?doi="+doifield,true);
-		 xmlhttp.send();
-       }
-		
-		
+		 	xmlhttp.open("GET","php/doihandler.php?doi="+doifield,true);
+		 	xmlhttp.send();
+       	}
 		
 		function submitnewpaper()
 		{
 			var xmlhttp;
-			
+			if (window.XMLHttpRequest)
+    		    xmlhttp=new XMLHttpRequest();
+    		else
+    		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    		
 			var doi=document.getElementById("doifield").value;
 			var author=document.getElementById("author").value;
 			var title=document.getElementById("title").value;
@@ -248,29 +238,18 @@ session_start();
 			}	
 			else
 			{
-			
-			if (window.XMLHttpRequest)
-			  {
-			    xmlhttp=new XMLHttpRequest();
-			  }
-			 else
-			  {
-			    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-			  }
-			
-			xmlhttp.onreadystatechange=function()
-			 {
-			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
-			  {  
-				  updateDatalist();
-			     if (xmlhttp.responseText)
-			     {
-			    	 document.getElementById("newpaperwarning").innerHTML=xmlhttp.responseText;
-				 }
-			  }
-			 }
-			 xmlhttp.open("GET","php/newpaper.php?doi="+doi+"&author="+author+"&title="+title+"&publisher="+publisher+"&date="+date+"&month="+month+"&volume="+volume+"&issue="+issue+"&startpage="+startpage+"&lastpage="+lastpage,true);
-			 xmlhttp.send(); 
+					
+				xmlhttp.onreadystatechange=function()
+			 	{
+			  		if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
+			  		{	  
+				 		updateDatalist();
+			     		if (xmlhttp.responseText)
+			     	 		document.getElementById("newpaperwarning").innerHTML=xmlhttp.responseText;
+				 	}
+			 	}
+			 	xmlhttp.open("GET","php/newpaper.php?doi="+doi+"&author="+author+"&title="+title+"&publisher="+publisher+"&date="+date+"&month="+month+"&volume="+volume+"&issue="+issue+"&startpage="+startpage+"&lastpage="+lastpage,true);
+			 	xmlhttp.send(); 
 			 
 				document.getElementById("publisher").value="";
 				document.getElementById("title").value="";
@@ -290,21 +269,16 @@ session_start();
 		function removepaper()
 		{
 			var xmlhttp;
-			
 			if (window.XMLHttpRequest)
-			  {
-			    xmlhttp=new XMLHttpRequest();
-			  }
-			 else
-			  {
-			    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-			  }
-			
+    		    xmlhttp=new XMLHttpRequest();
+    		else
+    		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    		
 			xmlhttp.onreadystatechange=function()
 			 {
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 			  {  
-			     //alert (xmlhttp.responseText);
+			     //console.log(xmlhttp.responseText);
 			     document.getElementById('deletepaper').value="";
 			     document.getElementById('paper').value="";
 				 updateDatalist();
@@ -314,22 +288,16 @@ session_start();
 			 xmlhttp.send(); 			 
 		}
 		
-		
-		
 		function updateDatalist()
 		{
-			
+			var xmlhttp;
+			if (window.XMLHttpRequest)
+    		    xmlhttp=new XMLHttpRequest();
+    		else
+    		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    		
 			document.getElementById('bibliothek').innerHTML = "";
 			document.getElementById('bibliothek2').innerHTML = "";
-			
-			if (window.XMLHttpRequest)
-			  {
-			    xmlhttp=new XMLHttpRequest();
-			  }
-			 else
-			  {
-			    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-			  }
 			
 			xmlhttp.onreadystatechange=function()
 			 {
@@ -338,9 +306,8 @@ session_start();
 				jsonPapers = eval( '(' + xmlhttp.responseText + ')' );
 				var tag;
 				
-                 console.log(jsonPapers.length);
-                 //console.log(jsonPapers[0].author);
-				
+                 //console.log(jsonPapers.length);
+                 
 				for (var i=0; i<jsonPapers.length;i++) 
 				{ 
 					tag = '<option label="'+ jsonPapers[i].title +'" value="' + jsonPapers[i].author + '.  ' + jsonPapers[i].date + '.  ' + jsonPapers[i].title + '" />';
@@ -357,7 +324,12 @@ session_start();
 		
 		function logout()
 		{
-
+			var xmlhttp;
+			if (window.XMLHttpRequest)
+    		    xmlhttp=new XMLHttpRequest();
+    		else
+    		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    		
 			sm = new StateMachine(states);
 			mindmap = new MindMap(document.getElementById("canvas"));
 			mindmap.performState();
@@ -366,16 +338,6 @@ session_start();
 			document.getElementById('paper').value = "";
 			document.getElementById('deletepaper').value = "";
 			document.getElementById('thelist').value = "";
-			
-			var xmlhttp;			
-			if (window.XMLHttpRequest)
-			  {
-			    xmlhttp=new XMLHttpRequest();
-			  }
-			 else
-			  {
-			    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-			  }
 			
 			xmlhttp.onreadystatechange=function()
 			 {
@@ -387,24 +349,19 @@ session_start();
 			 }
 			 xmlhttp.open("GET","php/logout.php",true);
 			 xmlhttp.send();
-						
 		}
 
 
 		function login()
-		{				
+		{	
+			var xmlhttp;
+			if (window.XMLHttpRequest)
+    		    xmlhttp=new XMLHttpRequest();
+    		else
+    		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    					
 			var username=document.getElementById("loginusername").value;
 			var password=document.getElementById("loginpassword").value;
-			
-			var xmlhttp;			
-			if (window.XMLHttpRequest)
-			  {
-			    xmlhttp=new XMLHttpRequest();
-			  }
-			 else
-			  {
-			    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-			  }
 			
 			xmlhttp.onreadystatechange=function()
 			 {
@@ -414,7 +371,6 @@ session_start();
 				  if(xmlhttp.responseText == "failed")
 				  {
 					  document.getElementById('warningtext').innerHTML = "Your login data is incorrect ...";
-					  //alert("authentification failed");
 			  	  }
 				  else
 				  {
@@ -441,17 +397,13 @@ session_start();
 
 
 		function showusername()
-		{				
-            var xmlhttp;			
+		{	
+			var xmlhttp;
 			if (window.XMLHttpRequest)
-			  {
-			    xmlhttp=new XMLHttpRequest();
-			  }
-			 else
-			  {
-			    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-			  }
-			
+    		    xmlhttp=new XMLHttpRequest();
+    		else
+    		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    		
 			xmlhttp.onreadystatechange=function()
 			 {
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
@@ -467,10 +419,8 @@ session_start();
 			 xmlhttp.open("GET","php/getuser.php",true);
 			 xmlhttp.send();
 		}
-		
 
-
-		
+				
 		$(function() {
 			$( "#accordion" ).accordion({
 				autoHeight: false,
@@ -486,17 +436,12 @@ session_start();
 				}
 			});
 		}); 
-				
-		
-			
+					
 	</script>
-	
-	
-	
+    
 </head>
 
-
-  <body id="thebody" onload="document_load()">
+<body id="thebody" onload="document_load()">
   
   <canvas id="canvas" width="1000" height= "400" tabindex="0"></canvas>
   
@@ -514,7 +459,7 @@ session_start();
   <h3><a>Bibliography</a></h3>
   <div>
     <textarea readonly rows="10" id="thelist" class="form">
-      Your bibliography will be generated here once you got something in your mind ...
+      Your bibliography will be generated here once you got something on your mind ...
     </textarea>     
   </div>
   
@@ -527,52 +472,51 @@ session_start();
       <label id="doilabel" for="doifield">DOI</label>
       <input class="refform" id="doifield" name="doifield" type="text" placeholder="Enter doi, i.e. 'http://dx.doi.org/10.1023/A:1015460304860' OR '10.1023/A:1015460304860' OR '___.org/10.1023/A:1015460304860' " />
       <input id="getpaperbtn" class="buttons" type="button" value="Get Paper" onclick="getdoi();" />
-	
 			
 		<ul>	
 		    <div>
-        	<label for="author">Author *</label>
-        	<input class="refform" id="author" name="author" type="text" placeholder="Set the author names ..." />	
+        		<label for="author">Author *</label>
+        		<input class="refform" id="author" name="author" type="text" placeholder="Set the author names ..." />	
 			</div>
         	<br>
 			<div>
-        	<label for="title">Title *</label>
-        	<input class="refform" id="title" name="title "type="text" placeholder="Set the title ..." />  
+        		<label for="title">Title *</label>
+        		<input class="refform" id="title" name="title "type="text" placeholder="Set the title ..." />  
         	</div>
         	<br>
 			<div>
-        	<label for="date">Year *</label>
-        	<input class="refform" id="date" name="date" type="text" placeholder="Set the year ..." /> 	 		
+        		<label for="date">Year *</label>
+        		<input class="refform" id="date" name="date" type="text" placeholder="Set the year ..." /> 	 		
 			</div>
         	<br>
 			<div>
-        	<label for="month">Month</label>
-        	<input class="refform" id="month" name="month" type="text" placeholder="Set the month ..." /> 			
+        		<label for="month">Month</label>
+        		<input class="refform" id="month" name="month" type="text" placeholder="Set the month ..." /> 			
 			</div>
         	<br>
 			<div>
-        	<label for="publisher">Publisher</label>
-        	<input class="refform" id="publisher" name="publisher" type="text" placeholder="Set the publisher ..." />
+        		<label for="publisher">Publisher</label>
+        		<input class="refform" id="publisher" name="publisher" type="text" placeholder="Set the publisher ..." />
 			</div>
         	<br>
 			<div>
-        	<label for="volume">Volume</label>
-        	<input class="refform" id="volume" name="volume" type="text" placeholder="Set the volume ..." />
+        		<label for="volume">Volume</label>
+        		<input class="refform" id="volume" name="volume" type="text" placeholder="Set the volume ..." />
 			</div>
         	<br>
 			<div>
-        	<label for="issue">Issue</label>
-        	<input class="refform" id="issue" name="issue" type="text" placeholder="Set the issue ..." />
+        		<label for="issue">Issue</label>
+        		<input class="refform" id="issue" name="issue" type="text" placeholder="Set the issue ..." />
 			</div>
         	<br>
 			<div>
-        	<label for="startpage">Start page</label>
-        	<input class="refform" id="startpage" name="startpage" type="text" placeholder="Set the start page ..." />
+        		<label for="startpage">Start page</label>
+        		<input class="refform" id="startpage" name="startpage" type="text" placeholder="Set the start page ..." />
 			</div>
         	<br>
 			<div>
-        	<label for="lastpage">End page</label>
-        	<input class="refform" id="lastpage" name="lastpage" type="text" placeholder="Set the end page ..." />
+        		<label for="lastpage">End page</label>
+        		<input class="refform" id="lastpage" name="lastpage" type="text" placeholder="Set the end page ..." />
 			</div>
 				    
 		</ul>
@@ -581,8 +525,6 @@ session_start();
 		<input class="buttons" type="button" value="Submit" onclick="submitnewpaper()" />
        </fieldset>
      </form>
-    
-    
   </div>
   
   
