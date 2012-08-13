@@ -303,6 +303,10 @@ session_start();
 			 {
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 			  { 
+
+				document.getElementById('bibliothek').innerHTML = '';
+				document.getElementById('bibliothek2').innerHTML = '';
+				  
 				jsonPapers = eval( '(' + xmlhttp.responseText + ')' );
 				var tag;
 				
