@@ -2,4 +2,10 @@ Written by Johann Steinbrecher
 Santa Clara, CA
 2012
 
-Map My Mind is meant to support paper publishers to manage their related work. 
+This project aims to support paper publishers and students to store their related work, organize it using mind maps and generate bibliographies in a futuristic manner. Try it out (while work is in progress, I am hosting it on Amazon Web Services):
+http://ec2-54-245-19-156.us-west-2.compute.amazonaws.com/map-my-mind
+Browsers supported are currently Firefox, Chrome and Safari.
+
+The core competency is to search for publications using DOI numbers and render mind maps based on paper objects. The mind map is a HTML5 canvas. The JavaScript renderer (just as the entire project) is entirely designed and implemented by myself.
+
+MapMyMind started after a conversation with a friend of mine, who is currently working as a researcher at the London School of Economics. She complained about the lack of browser based mind mapping software for managing research related work. 
