@@ -389,7 +389,7 @@ MindMap.prototype.performState = function()
     							  
     							  
     						  var tempPoint = new SinglePoint(this.mousePosition.x - this.currentwidth/2 , this.mousePosition.y - this.currentheight/2 );
-							  this.references[this.references.length] = new Reference(tempPoint, document.getElementById("paper").value , document.getElementById("paper").value, this);
+							  this.references.push(new Reference(tempPoint, document.getElementById("paper").value , document.getElementById("paper").value, this));
 							
 							  document.getElementById("paper").value="";
 							
@@ -485,7 +485,7 @@ MindMap.prototype.performState = function()
 								{
 									if(this.references[j].node[i].selected)
 									{
-										this.connections[this.connections.length] = new Connection(this.startNode,this.references[j].node[i]);
+										this.connections.push( new Connection(this.startNode,this.references[j].node[i]));
 										sm.consumeEvent('backToIdle');
 									}
 								}
@@ -495,17 +495,40 @@ MindMap.prototype.performState = function()
     						break;
     						
     						
-    case "deleteObject":	for(var key in this.references) 
+    case "deleteObject":	var refkey=null;
+    						var delflag=true;
+    	
+    						for(refkey in this.references) 
     						{
-    							if(this.references[key].selected)
-    						    {  
-    								this.references.splice(key,1);
+    							if(this.references[refkey].selected)
+    						    {      								
+    								break;
     						    }
+    						}						
+    						
+    						while(delflag)
+    						{
+    						 delflag=false;
+    						 for (var j in this.connections)
+    						 {
+    							for (var i in this.references[refkey].node)
+    							{
+    							   if( (this.references[refkey].node[i] == this.connections[j].from) || (this.references[refkey].node[i] == this.connections[j].to) )	
+    							   {   
+    								   delflag=true;
+    							   }
+    							}
+    							
+    							if(delflag)
+    							{
+    								this.connections.splice(j,1);
+    								break;
+    							}
+    						 }
     						}
     						
-    						
-   							this.renderMap();
-    
+    						this.references.splice(refkey,1);
+   							this.renderMap();    
     						sm.consumeEvent('backToIdle');
     						break; 
     						
