@@ -97,7 +97,7 @@ function StateMachine(states){
 	
 	
 	this.indexes = {}; 
-	for( var i = 0; i< this.states.length; i++)
+	for( var i in this.states)
 	{
 		this.indexes[this.states[i].name] = i;
 		if (this.states[i].initial)
@@ -230,7 +230,7 @@ Reference.prototype.paint = function(theMindMap)
 		
     if(this.selected)
     {
-     for (var j = 0; j < this.node.length; j++)
+     for (var j in this.node)
      {
     	this.node[j].paint(theMindMap);
      }
@@ -401,7 +401,7 @@ MindMap.prototype.performState = function()
                      		break;
                      		
     case "dragReference":		
-    						for (var j = 0; j < this.references.length; j++)
+    						for (var j in this.references)
     						{
     					 	  if(this.references[j].drag)
 							  {	
@@ -419,7 +419,7 @@ MindMap.prototype.performState = function()
 								this.references[j].rectangle.x += deltax;
 								this.references[j].rectangle.y += deltay;
 								
-								for (var i = 0; i < this.references[j].node.length; i++)
+								for (var i in this.references[j].node)
     							{
 									this.references[j].node[i].rectangle.x += deltax;
 									this.references[j].node[i].rectangle.y += deltay;
@@ -437,7 +437,7 @@ MindMap.prototype.performState = function()
 							break;
 							
 							
-	case "endDragReference": for (var j = 0; j < this.references.length; j++)
+	case "endDragReference": for (var j in this.references)
     						{  						
     						  this.references[j].drag=false;   
     						}
@@ -449,9 +449,9 @@ MindMap.prototype.performState = function()
     						
 							break;
 							
-	case "createStartNode":	for (var j = 0; j < this.references.length; j++)
+	case "createStartNode":	for (var j in this.references)
     						{
-								for (var i = 0; i < this.references[j].node.length; i++)
+								for (var i in this.references[j].node)
 								{
 									if(this.references[j].node[i].selected)
 									{
@@ -479,9 +479,9 @@ MindMap.prototype.performState = function()
     						break;
     						
     case "addConnection":   
-    						for (var j = 0; j < this.references.length; j++)
+    						for (var j in this.references)
     						{
-								for (var i = 0; i < this.references[j].node.length; i++)
+								for (var i in this.references[j].node)
 								{
 									if(this.references[j].node[i].selected)
 									{
@@ -495,57 +495,14 @@ MindMap.prototype.performState = function()
     						break;
     						
     						
-    case "deleteObject":	var delref=-1;
-    						var delsel=-1;
-    						    	
-    						for (var j = 0; j < this.references.length; j++)
+    case "deleteObject":	for(var key in this.references) 
     						{
-    						    if(this.references[j].selected)
+    							if(this.references[key].selected)
     						    {  
-    						    	delref=j;
-    						    }    						     
+    								this.references.splice(key,1);
+    						    }
     						}
     						
-    						
-    						for (var j = 0; j < this.connections.length; j++)
-    						{
-    						    if(this.connections[j].selected)
-    						    {  
-    						    	delsel=j;
-    						    }    						     
-    						}
-    						
-    						if(delref != -1)
-    						{
-    						
-    						  var i=0;
-    						  var delcon=[];
-    						
-    						  for (var j = 0; j < this.connections.length; j++)
-    						  {
-    						    if( (this.connections[j].to == this.references[delref].node[0]) || (this.connections[j].to == this.references[delref].node[1]) || (this.connections[j].to == this.references[delref].node[2]) || (this.connections[j].to == this.references[delref].node[3]) || (this.connections[j].from == this.references[delref].node[0]) || (this.connections[j].from == this.references[delref].node[1]) || (this.connections[j].from == this.references[delref].node[2]) || (this.connections[j].from == this.references[delref].node[3])  )
-    						    {  
-    						    	delcon[i++]=j;
-    						    }    						     
-    						  }
-    						
-    						  for (var j = 0; j < delcon.length; j++)
-    						  {
-    							this.connections.splice(delcon[j],1);    						     
-    						  }
-    						
-    						
-    						  this.references.splice(delref,1);
-    						
-    						
-    						  this.canvas.style.background = this.settings.background;
-   							  this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-   							  this.literaturelist();
-    						}
-    						else if(delsel != -1)
-    						{
-    							this.connections.splice(delsel,1);    							
-    						}
     						
    							this.renderMap();
     
@@ -560,7 +517,7 @@ MindMap.prototype.performState = function()
 							  this.currentwidth = this.currentwidth*(1+this.zoomdelta/10);
 							  this.currentheight = this.currentheight*(1+this.zoomdelta/10);
 	    
-    						  for (var j = 0; j < this.references.length; j++)
+    						  for (var j in this.references)
     						  {
 								this.references[j].zoom(this.zoomdelta/10, this.mousePosition);
     						  }
@@ -585,11 +542,11 @@ MindMap.prototype.performState = function()
    							  }
    							  this.draghelper=false;
 							
-							  for (var j = 0; j < this.references.length; j++)
+							  for (var j in this.references)
     						  {
     							this.references[j].rectangle.x += deltax;
 								this.references[j].rectangle.y += deltay;
-								for (var i = 0; i < this.references[j].node.length; i++)
+								for (var i in this.references[j].node)
 								{
 									this.references[j].node[i].rectangle.x += deltax;
 									this.references[j].node[i].rectangle.y += deltay;
@@ -635,10 +592,10 @@ MindMap.prototype.mouseDown = function(e)
   	 var objectClicked = false;
 	
 	 //check if an object got clicked
-	 for (var j = 0; j < this.references.length; j++)
+	 for (var j in this.references)
      {
     
-       for (var i = 0; i < this.references[j].node.length; i++)
+       for (var i in this.references[j].node)
        {
         if(this.references[j].node[i].selected==true)
     	{
@@ -655,12 +612,12 @@ MindMap.prototype.mouseDown = function(e)
 	      this.references[j].drag=true;
 	      sm.consumeEvent('clickOnReference');
 	      this.draghelper=true;
-	      break;for (var j = 0; j < this.connections.length; j++)
+	      for (var j in this.connections)
 			{
 				this.connections[j].paint(this);
 			}
 				
-				for (var j = 0; j < this.references.length; j++)
+		  for (var j in this.references)
 			{
 				this.references[j].paint(this);
 			} 
@@ -715,7 +672,7 @@ MindMap.prototype.mouseMove = function(e)
 	var flag = false;
 
 	//mark selected objects
-	for (var j = 0; j < this.references.length; j++)
+	for (var j in this.references)
     {
 		if(this.references[j].rectangle.areacontains(this.mousePosition))
 		{
@@ -729,7 +686,7 @@ MindMap.prototype.mouseMove = function(e)
 				this.references[j].selected=false;			
 			}
 			
-			for (var i = 0; i < this.references[j].node.length; i++)
+			for (var i in this.references[j].node)
     		{
     		  if (this.references[j].node[i].rectangle.contains(this.mousePosition))
     		  {  
@@ -745,7 +702,7 @@ MindMap.prototype.mouseMove = function(e)
 		else
 		{
 			this.references[j].selected=false;
-			for (var i = 0; i < this.references[j].node.length; i++)
+			for (var i in this.references[j].node)
     		{			
     			this.references[j].node[i].selected=false;
     		}
@@ -755,7 +712,7 @@ MindMap.prototype.mouseMove = function(e)
     
     if(!flag)
     {
-    	for (var j = 0; j < this.connections.length; j++)
+    	for (var j in this.connections)
     	{
     		if(this.connections[j].contains(this.mousePosition))
     			this.connections[j].selected=true;
@@ -772,7 +729,7 @@ MindMap.prototype.mouseMove = function(e)
 //check if this paper is already in the mind map
 MindMap.prototype.checkNames = function( papername )
 {
-	for (var i = 0; i < this.references.length; i++)
+	for (var i in this.references)
 	{			
 		if(this.references[i].title==papername)
 			return true;
@@ -829,12 +786,12 @@ MindMap.prototype.attachReference = function()
 {
     
 	this.updateMouseAttachment();
-	for (var j = 0; j < this.connections.length; j++)
+	for (var j in this.connections)
 	{
 		this.connections[j].paint(this);
 	}
 		
-		for (var j = 0; j < this.references.length; j++)
+		for (var j in this.references)
 	{
 		this.references[j].paint(this);
 	} 
@@ -950,12 +907,12 @@ MindMap.prototype.roundedRect = function(x,y,width,height,radius, text )
 
 MindMap.prototype.renderMap = function()
 {
-	for (var j = 0; j < this.connections.length; j++)
+	for (var j in this.connections)
 	{
 		this.connections[j].paint(this);
 	}
 	
-	for (var j = 0; j < this.references.length; j++)
+	for (var j in this.references)
 	{
 		this.references[j].paint(this);
 	}
@@ -966,7 +923,7 @@ MindMap.prototype.literaturelist = function()
 	document.getElementById("thelist").value="";
 	var string="";
 	var j;
-	for (var i = 0; i < this.references.length; i++)
+	for (var i in this.references)
 	{   
 		if( (j=this.getPaperIndex(this.references[i].title.split(".  ")[2]) ) >=0 )
 		{
@@ -992,7 +949,7 @@ MindMap.prototype.literaturelist = function()
 
 MindMap.prototype.getPaperIndex = function(title)
 {
-	for (var j = 0; j < jsonPapers.length; j++)
+	for (var j in jsonPapers)
 		if ( jsonPapers[j].title==title )
 			
 			return j;
