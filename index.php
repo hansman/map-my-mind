@@ -128,7 +128,7 @@ session_start();
 		  showusername();
 		  updateDatalist();
 		  	
-		  sm = new StateMachine(states);
+		  sm = new StateMachine();
 		  mindmap = new MindMap(document.getElementById("canvas"));
 		  mindmap.performState();
 		  
@@ -179,12 +179,8 @@ session_start();
 		
 		function getdoi()
 		{
-        	var xmlhttp;
-        	if (window.XMLHttpRequest)
-    		    xmlhttp=new XMLHttpRequest();
-    		else
-    		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-    		
+        	var xmlhttp = new XMLHttpRequest();
+        	    		
 			xmlhttp.onreadystatechange=function()
 		 	{
 		  		if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
@@ -215,11 +211,7 @@ session_start();
 		
 		function submitnewpaper()
 		{
-			var xmlhttp;
-			if (window.XMLHttpRequest)
-    		    xmlhttp=new XMLHttpRequest();
-    		else
-    		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			var xmlhttp = new XMLHttpRequest();
     		
 			var doi=document.getElementById("doifield").value;
 			var author=document.getElementById("author").value;
@@ -268,11 +260,7 @@ session_start();
 		
 		function removepaper()
 		{
-			var xmlhttp;
-			if (window.XMLHttpRequest)
-    		    xmlhttp=new XMLHttpRequest();
-    		else
-    		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			var xmlhttp = new XMLHttpRequest();
     		
 			xmlhttp.onreadystatechange=function()
 			 {
@@ -290,11 +278,7 @@ session_start();
 		
 		function updateDatalist()
 		{
-			var xmlhttp;
-			if (window.XMLHttpRequest)
-    		    xmlhttp=new XMLHttpRequest();
-    		else
-    		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			var xmlhttp = new XMLHttpRequest();
     		
 			document.getElementById('bibliothek').innerHTML = "";
 			document.getElementById('bibliothek2').innerHTML = "";
@@ -328,13 +312,9 @@ session_start();
 		
 		function logout()
 		{
-			var xmlhttp;
-			if (window.XMLHttpRequest)
-    		    xmlhttp=new XMLHttpRequest();
-    		else
-    		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			var xmlhttp = new XMLHttpRequest();
     		
-			sm = new StateMachine(states);
+			sm = new StateMachine();
 			mindmap = new MindMap(document.getElementById("canvas"));
 			mindmap.performState();
 			document.getElementById('bibliothek').innerHTML = "";
@@ -358,11 +338,7 @@ session_start();
 
 		function login()
 		{	
-			var xmlhttp;
-			if (window.XMLHttpRequest)
-    		    xmlhttp=new XMLHttpRequest();
-    		else
-    		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			var xmlhttp = new XMLHttpRequest();
     					
 			var username=document.getElementById("loginusername").value;
 			var password=document.getElementById("loginpassword").value;
@@ -387,7 +363,7 @@ session_start();
 					  document.getElementById('paper').value = "";
 					  document.getElementById('deletepaper').value = "";
 					  document.getElementById('thelist').value = "";
-					  sm = new StateMachine(states);
+					  sm = new StateMachine();
 					  mindmap = new MindMap(document.getElementById("canvas"));
 					  mindmap.performState();
 					  
@@ -402,11 +378,7 @@ session_start();
 
 		function showusername()
 		{	
-			var xmlhttp;
-			if (window.XMLHttpRequest)
-    		    xmlhttp=new XMLHttpRequest();
-    		else
-    		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			var xmlhttp = new XMLHttpRequest();
     		
 			xmlhttp.onreadystatechange=function()
 			 {

@@ -1,99 +1,90 @@
 //Johann Steinbrecher
 //Santa Clara 2012
 
+var StateMachine = function () {
 
-var states = [
-	{
-		'name':'idle',
-		'initial':true,
-		'events':
-		{
-			'clickOnCanvas':'addReference',
-			'clickOnReference':'dragReference',
-			'clickOnNode':'createStartNode',
-			'deletePressed':'deleteObject',
-			'zoomWheel':'zoomState',
-			'clickMousewheel':'panState'
-		}
-	},
-	{
-		'name':'addReference',
-		'events':
-		{
-			'backToIdle':'idle'
-		}
-	},
-	{
-		'name':'dragReference',
-		'events':
-		{
-			'mouseUp':'endDragReference'
-		}
-	},
-	{
-		'name':'endDragReference',
-		'events':
-		{
-		   'backToIdle':'idle'
-		}
-	
-	},
-	{
-		'name':'createStartNode',
-		'events':
-		{
-		   'proceedToDrawLine':'drawLine'
-		}
-	
-	},
-	{
-		'name':'drawLine',
-		'events':
-		{
-		   'clickOnNode':'addConnection',
-		   'clickOnCanvas':'idle'
-		}
-	
-	},
-	{
-		'name':'addConnection',
-		'events':
-		{
-		   'backToIdle':'idle'
-		}	
-	},
-	{
-		'name':'deleteObject',
-		'events':
-		{
-		   'backToIdle':'idle'
-		}	
-	},
-	{
-		'name':'zoomState',
-		'events':
-		{
-		   'backToIdle':'idle'
-		}	
-	},
-	{
-		'name':'panState',
-		'events':
-		{
-		   'mouseUp':'idle'
-		}	
-	}
-];
-
-
-
-
-
-
-function StateMachine(states){
-
-	this.states = states;
-	
+	this.states = [
+	           	{
+	        		'name':'idle',
+	        		'initial':true,
+	        		'events':
+	        		{
+	        			'clickOnCanvas':'addRef',
+	        			'clickOnRef':'dragRef',
+	        			'clickOnNode':'createStartNode',
+	        			'deletePressed':'deleteObject',
+	        			'zoomWheel':'zoomState',
+	        			'clickMousewheel':'panState'
+	        		}
+	        	},
+	        	{
+	        		'name':'addRef',
+	        		'events':
+	        		{
+	        			'backToIdle':'idle'
+	        		}
+	        	},
+	        	{
+	        		'name':'dragRef',
+	        		'events':
+	        		{
+	        			'mouseUp':'endDragRef'
+	        		}
+	        	},
+	        	{
+	        		'name':'endDragRef',
+	        		'events':
+	        		{
+	        		   'backToIdle':'idle'
+	        		}
+	        	
+	        	},
+	        	{
+	        		'name':'createStartNode',
+	        		'events':
+	        		{
+	        		   'proceedToDrawLine':'drawLine'
+	        		}
+	        	
+	        	},
+	        	{
+	        		'name':'drawLine',
+	        		'events':
+	        		{
+	        		   'clickOnNode':'addCon',
+	        		   'clickOnCanvas':'idle'
+	        		}
+	        	
+	        	},
+	        	{
+	        		'name':'addCon',
+	        		'events':
+	        		{
+	        		   'backToIdle':'idle'
+	        		}	
+	        	},
+	        	{
+	        		'name':'deleteObject',
+	        		'events':
+	        		{
+	        		   'backToIdle':'idle'
+	        		}	
+	        	},
+	        	{
+	        		'name':'zoomState',
+	        		'events':
+	        		{
+	        		   'backToIdle':'idle'
+	        		}	
+	        	},
+	        	{
+	        		'name':'panState',
+	        		'events':
+	        		{
+	        		   'mouseUp':'idle'
+	        		}	
+	        	}
+	        ];
 	
 	
 	this.indexes = {}; 
@@ -106,23 +97,23 @@ function StateMachine(states){
 			this.currentState = this.states[i];
 		}
 	}
-	
-	
-	this.consumeEvent = function(e)
+};
+
+
+
+StateMachine.prototype.consumeEvent = function(e)
+{
+	if(this.currentState.events[e])
 	{
-		if(this.currentState.events[e])
-		{
-			this.previousState = this.currentState;
-			this.currentState = this.states[this.indexes[this.currentState.events[e]]] ;
-		}
-	};
-	
-	this.getStatus = function()
-	{
-		return this.currentState.name;
-	};
-	
-}
+		this.previousState = this.currentState;
+		this.currentState = this.states[this.indexes[this.currentState.events[e]]] ;
+	}
+};
+
+StateMachine.prototype.getStatus = function()
+{
+	return this.currentState.name;
+};
 
 
 Function.prototype.bind = function(obj)
@@ -135,35 +126,35 @@ Function.prototype.bind = function(obj)
 };
 
 
-var SinglePoint = function(x,y)
+var Point = function(x,y)
 {
 	this.x =x;
 	this.y =y;
 };
 
 
-var Rectangle = function(x, y, width, height)
+var Rect = function(x, y, w, h)
 {
 	this.x = x;
 	this.y = y;
-	this.width = width;
-	this.height = height;
+	this.width = w;
+	this.height = h;
 };
 
 
 
-Rectangle.prototype.areacontains = function(testpoint)
+Rect.prototype.areacontains = function(p)
 {
-	return ( (testpoint.x >= this.x-3) && (testpoint.x <= (this.x + this.width+3)) && (testpoint.y >= this.y-3) && (testpoint.y <= (this.y + this.height + 3 )));
+	return ( (p.x >= this.x-3) && (p.x <= (this.x + this.width+3)) && (p.y >= this.y-3) && (p.y <= (this.y + this.height + 3 )));
 };
 
-Rectangle.prototype.contains = function(testpoint)
+Rect.prototype.contains = function(p)
 {
-	return ( (testpoint.x >= this.x) && (testpoint.x <= (this.x + this.width)) && (testpoint.y >= this.y) && (testpoint.y <= (this.y + this.height )));
+	return ( (p.x >= this.x) && (p.x <= (this.x + this.width)) && (p.y >= this.y) && (p.y <= (this.y + this.height )));
 };
 
 
-var Reference = function(targetpoint,title,authorandyear,theMindMap)
+var Ref = function(start,title,authorandyear,map)
 {
   this.drag=false;
   this.authorandyear=authorandyear;
@@ -172,67 +163,67 @@ var Reference = function(targetpoint,title,authorandyear,theMindMap)
   this.line2;
   this.nodesize=6;
   this.radius=16;
-  this.rectangle = new Rectangle(targetpoint.x,targetpoint.y,theMindMap.currentwidth,theMindMap.currentheight); 
+  this.frame = new Rect(start.x,start.y,map.currentwidth,map.currentheight); 
   this.node = new Array(4);
-  this.node[0] = new Node(targetpoint.x- this.nodesize/2,targetpoint.y + theMindMap.currentheight/2 - this.nodesize/2,this.nodesize,this.nodesize); 
-  this.node[1] = new Node(targetpoint.x+theMindMap.currentwidth-this.nodesize/2,targetpoint.y + theMindMap.currentheight/2 - this.nodesize/2 ,this.nodesize,this.nodesize);
-  this.node[2] = new Node(targetpoint.x + theMindMap.currentwidth/2 - this.nodesize/2,targetpoint.y- this.nodesize/2,this.nodesize,this.nodesize);
-  this.node[3] = new Node(targetpoint.x + theMindMap.currentwidth/2 - this.nodesize/2,targetpoint.y + theMindMap.currentwidth/2 - this.nodesize/2,this.nodesize,this.nodesize);  
+  this.node[0] = new Node(start.x- this.nodesize/2,start.y + map.currentheight/2 - this.nodesize/2,this.nodesize,this.nodesize); 
+  this.node[1] = new Node(start.x+map.currentwidth-this.nodesize/2,start.y + map.currentheight/2 - this.nodesize/2 ,this.nodesize,this.nodesize);
+  this.node[2] = new Node(start.x + map.currentwidth/2 - this.nodesize/2,start.y- this.nodesize/2,this.nodesize,this.nodesize);
+  this.node[3] = new Node(start.x + map.currentwidth/2 - this.nodesize/2,start.y + map.currentwidth/2 - this.nodesize/2,this.nodesize,this.nodesize);  
   
   this.selected=false;
   
-  this.oldPosition=targetpoint;
+  this.oldPosition=start;
 
 };
 
 
 
-Reference.prototype.zoom = function(delta, mouse)
+Ref.prototype.zoom = function(delta, mouse)
 {
 
-    var newwidth = this.rectangle.width*(1+delta);
-    var newheight = this.rectangle.height*(1+delta);
+    var newwidth = this.frame.width*(1+delta);
+    var newheight = this.frame.height*(1+delta);
 
-    var deltax = (this.rectangle.x + newwidth/2 - mouse.x)*(1+delta);
-    var deltay = (this.rectangle.y + newheight/2 - mouse.y)*(1+delta);
+    var deltax = (this.frame.x + newwidth/2 - mouse.x)*(1+delta);
+    var deltay = (this.frame.y + newheight/2 - mouse.y)*(1+delta);
 
-    this.rectangle.x = mouse.x + deltax - newwidth/2;
-    this.rectangle.y = mouse.y + deltay - newheight/2; 
+    this.frame.x = mouse.x + deltax - newwidth/2;
+    this.frame.y = mouse.y + deltay - newheight/2; 
 
-    this.node[0].rectangle.x = this.rectangle.x -3;
-    this.node[0].rectangle.y = this.rectangle.y + newheight/2 - 3;
+    this.node[0].frame.x = this.frame.x -3;
+    this.node[0].frame.y = this.frame.y + newheight/2 - 3;
     
-    this.node[1].rectangle.x = this.rectangle.x + newwidth - 3;
-    this.node[1].rectangle.y = this.rectangle.y + newheight/2 - 3;
+    this.node[1].frame.x = this.frame.x + newwidth - 3;
+    this.node[1].frame.y = this.frame.y + newheight/2 - 3;
      
-    this.node[2].rectangle.x = this.rectangle.x + newwidth/2 - 3;
-    this.node[2].rectangle.y = this.rectangle.y -3;
+    this.node[2].frame.x = this.frame.x + newwidth/2 - 3;
+    this.node[2].frame.y = this.frame.y -3;
     
-    this.node[3].rectangle.x = this.rectangle.x + newwidth/2 - 3;
-    this.node[3].rectangle.y = this.rectangle.y + newheight -3;
+    this.node[3].frame.x = this.frame.x + newwidth/2 - 3;
+    this.node[3].frame.y = this.frame.y + newheight -3;
     
-	this.rectangle.width = newwidth;
-	this.rectangle.height = newheight;
+	this.frame.width = newwidth;
+	this.frame.height = newheight;
 
 };
 
-Reference.prototype.paint = function(theMindMap)
+Ref.prototype.paint = function(map)
 {
 	
-	theMindMap.context.lineWidth = 1;
-	theMindMap.context.fillStyle = "#ffffff";
+	map.ctxt.lineWidth = 1;
+	map.ctxt.fillStyle = "#ffffff";
 	if(this.selected  )
-		{theMindMap.context.strokeStyle = "#FF0000";}
+		{map.ctxt.strokeStyle = "#FF0000";}
  	else
- 		{theMindMap.context.strokeStyle = "#000000";}
+ 		{map.ctxt.strokeStyle = "#000000";}
  		
-	theMindMap.roundedRect(this.rectangle.x, this.rectangle.y , this.rectangle.width , this.rectangle.height , 16, this.title );
+	map.roundedRect(this.frame.x, this.frame.y , this.frame.width , this.frame.height , 16, this.title );
 		
     if(this.selected)
     {
      for (var j in this.node)
      {
-    	this.node[j].paint(theMindMap);
+    	this.node[j].paint(map);
      }
     }
     
@@ -244,27 +235,27 @@ Reference.prototype.paint = function(theMindMap)
 var Node = function(x,y,width,height)
 {
    this.selected=false;
-   this.rectangle = new Rectangle(x,y,width,height);
+   this.frame = new Rect(x,y,width,height);
    
 };
 
 
-Node.prototype.paint = function(theMindMap)
+Node.prototype.paint = function(map)
 {
-   theMindMap.context.lineWidth = 1;
+	map.ctxt.lineWidth = 1;
    if(this.selected==true)
-   	{theMindMap.context.fillStyle = "#00FF00";}
+   	{map.ctxt.fillStyle = "#00FF00";}
    else
-   	{theMindMap.context.fillStyle = "#FF0000";}
+   	{map.ctxt.fillStyle = "#FF0000";}
    	
    	
-   theMindMap.context.strokeStyle = "#FF0000";
-   theMindMap.context.fillRect(this.rectangle.x , this.rectangle.y , this.rectangle.width , this.rectangle.height );
-   theMindMap.context.strokeRect(this.rectangle.x , this.rectangle.y , this.rectangle.width, this.rectangle.height);
+   map.ctxt.strokeStyle = "#FF0000";
+   map.ctxt.fillRect(this.frame.x , this.frame.y , this.frame.width , this.frame.height );
+   map.ctxt.strokeRect(this.frame.x , this.frame.y , this.frame.width, this.frame.height);
 };
 
 
-var Connection = function(from,to)
+var Con = function(from,to)
 {
   this.from = from;
   this.to = to;
@@ -274,27 +265,27 @@ var Connection = function(from,to)
 
 
 
-Connection.prototype.paint = function(theMindMap)
+Con.prototype.paint = function(map)
 {
-  	theMindMap.context.lineWidth = 1;
-	theMindMap.context.fillStyle = "#ffffff";
+	map.ctxt.lineWidth = 1;
+	map.ctxt.fillStyle = "#ffffff";
 	
 	if(this.selected)
-		theMindMap.context.strokeStyle = "#FF0000";
+		map.ctxt.strokeStyle = "#FF0000";
 	else
-		theMindMap.context.strokeStyle = "#000000";
+		map.ctxt.strokeStyle = "#000000";
 	
-	theMindMap.context.beginPath();
-	theMindMap.context.moveTo(this.from.rectangle.x+3 , this.from.rectangle.y+3);
-	theMindMap.context.lineTo(this.to.rectangle.x+3,this.to.rectangle.y+3);
-	theMindMap.context.closePath();
-	theMindMap.context.stroke();
+	map.ctxt.beginPath();
+	map.ctxt.moveTo(this.from.frame.x+3 , this.from.frame.y+3);
+	map.ctxt.lineTo(this.to.frame.x+3,this.to.frame.y+3);
+	map.ctxt.closePath();
+	map.ctxt.stroke();
 };
 
-Connection.prototype.contains = function(testpoint)
+Con.prototype.contains = function(testpoint)
 {
-	var linederivation = ( this.to.rectangle.x+3 - (this.from.rectangle.x+3) ) / ( this.to.rectangle.y +3 - (this.from.rectangle.y+3) );
-	var testderivation = ( testpoint.x +3 - (this.from.rectangle.x+3) ) / (testpoint.y +3 - (this.from.rectangle.y+3));
+	var linederivation = ( this.to.frame.x+3 - (this.from.frame.x+3) ) / ( this.to.frame.y +3 - (this.from.frame.y+3) );
+	var testderivation = ( testpoint.x +3 - (this.from.frame.x+3) ) / (testpoint.y +3 - (this.from.frame.y+3));
 	
 	if( (  testderivation - linederivation < 0.3 ) && (  testderivation - linederivation > -0.3 )  )
 		return true;
@@ -307,8 +298,9 @@ var MindMap = function(theCanvas)
 {
     this.canvas = theCanvas;
     this.canvas.focus();
+    this.ctxt = this.canvas.getContext("2d");
     this.defaultdisplay = true;
-    this.mousePosition = new SinglePoint(0, 0);
+    this.mousePosition = new Point(0, 0);
     this.startNode = new Node(0,0,0,0,0);
     
     this.zoomdelta = 0;
@@ -317,36 +309,23 @@ var MindMap = function(theCanvas)
     
     this.draghelper=false;
     
-    this.current='reference';
+    this.current='Ref';
     
-	this.references = [];
-	this.connections = [];
-	this.context = this.canvas.getContext("2d");
-	this.settings = { background: "#fff", connection: "#000", selection: "#000", node: "#31456b", nodeBorder: "#fff", nodeHoverBorder: "#000", nodeHover: "#0c0" };
+	this.refs = [];
+	this.cons = [];
+	this.settings = { background: "#fff", Con: "#000", selection: "#000", node: "#31456b", nodeBorder: "#fff", nodeHoverBorder: "#000", nodeHover: "#0c0" };
   
   
   	this.mouseDownHandler = this.mouseDown.bind(this);
 	this.mouseUpHandler = this.mouseUp.bind(this);
-	this.mouseMoveHandler = this.mouseMove.bind(this);
-	
-	this.touchStartHandler = this.touchStart.bind(this);
-	this.touchEndHandler = this.touchEnd.bind(this);
-	this.touchMoveHandler = this.touchMove.bind(this);
-	
-	this.keyHandler = this.key.bind(this);
-	
+	this.mouseMoveHandler = this.mouseMove.bind(this);	
+	this.keyHandler = this.key.bind(this);	
 	this.mousewheelHandler = this.mousewheel.bind(this);
 
 	this.canvas.addEventListener("mousedown", this.mouseDownHandler, false);
 	this.canvas.addEventListener("mouseup", this.mouseUpHandler, false);
-	this.canvas.addEventListener("mousemove", this.mouseMoveHandler, false);
-	
-	this.canvas.addEventListener("touchstart", this.touchStartHandler, false);
-	this.canvas.addEventListener("touchend", this.touchEndHandler, false);
-	this.canvas.addEventListener("touchmove", this.touchMoveHandler, false);
-	
-	this.canvas.addEventListener("keydown", this.keyHandler, false);
-	
+	this.canvas.addEventListener("mousemove", this.mouseMoveHandler, false);	
+	this.canvas.addEventListener("keydown", this.keyHandler, false);	
 	this.canvas.addEventListener("DOMMouseScroll",this.mousewheelHandler,false);
 	this.canvas.addEventListener("mousewheel",this.mousewheelHandler,false);
 
@@ -361,7 +340,7 @@ MindMap.prototype.performState = function()
 {
 
    this.canvas.style.background = this.settings.background;
-   this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+   this.ctxt.clearRect(0, 0, this.canvas.width, this.canvas.height);
    
    
    switch ( sm.getStatus() ) 
@@ -381,51 +360,47 @@ MindMap.prototype.performState = function()
     				
                    break;
  
-    case "addReference": 	if( document.getElementById("paper").value!="" )
+    case "addRef": 	if( document.getElementById("paper").value!="" )
     						{
     						  if( !this.checkNames( document.getElementById("paper").value ) )
-    						  {
+    						  {  
     							  
-    							  
-    							  
-    						  var tempPoint = new SinglePoint(this.mousePosition.x - this.currentwidth/2 , this.mousePosition.y - this.currentheight/2 );
-							  this.references.push(new Reference(tempPoint, document.getElementById("paper").value , document.getElementById("paper").value, this));
-							
-							  document.getElementById("paper").value="";
-							
-							  this.literaturelist();
+    							  var tempPoint = new Point(this.mousePosition.x - this.currentwidth/2 , this.mousePosition.y - this.currentheight/2 );
+    							  this.refs.push(new Ref(tempPoint, document.getElementById("paper").value , document.getElementById("paper").value, this));
+    							  document.getElementById("paper").value="";
+    							  this.literaturelist();
     						  }
     						}
     						this.renderMap();
     						sm.consumeEvent('backToIdle');
                      		break;
                      		
-    case "dragReference":		
-    						for (var j in this.references)
+    case "dragRef":		
+    						for (var j in this.refs)
     						{
-    					 	  if(this.references[j].drag)
+    					 	  if(this.refs[j].drag)
 							  {	
 							  
 							    var deltax = 0;
 							    var deltay = 0;
  							    if(!this.draghelper)
 								{
-									deltax = this.mousePosition.x - this.references[j].oldPosition.x;
-     							    deltay = this.mousePosition.y - this.references[j].oldPosition.y;
+									deltax = this.mousePosition.x - this.refs[j].oldPosition.x;
+     							    deltay = this.mousePosition.y - this.refs[j].oldPosition.y;
      							    
      							}
      							this.draghelper=false;
      							
-								this.references[j].rectangle.x += deltax;
-								this.references[j].rectangle.y += deltay;
+								this.refs[j].frame.x += deltax;
+								this.refs[j].frame.y += deltay;
 								
-								for (var i in this.references[j].node)
+								for (var i in this.refs[j].node)
     							{
-									this.references[j].node[i].rectangle.x += deltax;
-									this.references[j].node[i].rectangle.y += deltay;
+									this.refs[j].node[i].frame.x += deltax;
+									this.refs[j].node[i].frame.y += deltay;
     							}		
 			
-								this.references[j].oldPosition=this.mousePosition;
+								this.refs[j].oldPosition=this.mousePosition;
 								break;
 								
 							  }
@@ -437,9 +412,9 @@ MindMap.prototype.performState = function()
 							break;
 							
 							
-	case "endDragReference": for (var j in this.references)
+	case "endDragRef": for (var j in this.refs)
     						{  						
-    						  this.references[j].drag=false;   
+    						  this.refs[j].drag=false;   
     						}
     						
 	                        this.renderMap();
@@ -449,13 +424,13 @@ MindMap.prototype.performState = function()
     						
 							break;
 							
-	case "createStartNode":	for (var j in this.references)
+	case "createStartNode":	for (var j in this.refs)
     						{
-								for (var i in this.references[j].node)
+								for (var i in this.refs[j].node)
 								{
-									if(this.references[j].node[i].selected)
+									if(this.refs[j].node[i].selected)
 									{
-										this.startNode=this.references[j].node[i];
+										this.startNode=this.refs[j].node[i];
 										sm.consumeEvent('proceedToDrawLine');
 										break;
 									}
@@ -463,29 +438,26 @@ MindMap.prototype.performState = function()
 								}
     						}
 			
-	case "drawLine":		this.context.lineWidth = 1;
-							this.context.fillStyle = "#ffffff";
-							this.context.strokeStyle = "#000000";
-							this.context.beginPath();
-							this.context.moveTo(this.startNode.rectangle.x +3 , this.startNode.rectangle.y +3);
-							this.context.lineTo(this.mousePosition.x,this.mousePosition.y);
-							this.context.closePath();
-							this.context.stroke(); 
+	case "drawLine":		this.ctxt.lineWidth = 1;
+							this.ctxt.fillStyle = "#ffffff";
+							this.ctxt.strokeStyle = "#000000";
+							this.ctxt.beginPath();
+							this.ctxt.moveTo(this.startNode.frame.x +3 , this.startNode.frame.y +3);
+							this.ctxt.lineTo(this.mousePosition.x,this.mousePosition.y);
+							this.ctxt.closePath();
+							this.ctxt.stroke(); 
 							
 							this.renderMap();
-    
-    						
-							
     						break;
     						
-    case "addConnection":   
-    						for (var j in this.references)
+    case "addCon":   
+    						for (var j in this.refs)
     						{
-								for (var i in this.references[j].node)
+								for (var i in this.refs[j].node)
 								{
-									if(this.references[j].node[i].selected)
+									if(this.refs[j].node[i].selected)
 									{
-										this.connections.push( new Connection(this.startNode,this.references[j].node[i]));
+										this.cons.push( new Con(this.startNode,this.refs[j].node[i]));
 										sm.consumeEvent('backToIdle');
 									}
 								}
@@ -498,9 +470,9 @@ MindMap.prototype.performState = function()
     case "deleteObject":	var refkey=null;
     						var delflag=true;
     	
-    						for(refkey in this.references) 
+    						for(refkey in this.refs) 
     						{
-    							if(this.references[refkey].selected)
+    							if(this.refs[refkey].selected)
     						    {      								
     								break;
     						    }
@@ -509,11 +481,11 @@ MindMap.prototype.performState = function()
     						while(delflag)
     						{
     						 delflag=false;
-    						 for (var j in this.connections)
+    						 for (var j in this.cons)
     						 {
-    							for (var i in this.references[refkey].node)
+    							for (var i in this.refs[refkey].node)
     							{
-    							   if( (this.references[refkey].node[i] == this.connections[j].from) || (this.references[refkey].node[i] == this.connections[j].to) )	
+    							   if( (this.refs[refkey].node[i] == this.cons[j].from) || (this.refs[refkey].node[i] == this.cons[j].to) )	
     							   {   
     								   delflag=true;
     							   }
@@ -521,13 +493,13 @@ MindMap.prototype.performState = function()
     							
     							if(delflag)
     							{
-    								this.connections.splice(j,1);
+    								this.cons.splice(j,1);
     								break;
     							}
     						 }
     						}
     						
-    						this.references.splice(refkey,1);
+    						this.refs.splice(refkey,1);
    							this.renderMap();    
     						sm.consumeEvent('backToIdle');
     						break; 
@@ -540,9 +512,9 @@ MindMap.prototype.performState = function()
 							  this.currentwidth = this.currentwidth*(1+this.zoomdelta/10);
 							  this.currentheight = this.currentheight*(1+this.zoomdelta/10);
 	    
-    						  for (var j in this.references)
+    						  for (var j in this.refs)
     						  {
-								this.references[j].zoom(this.zoomdelta/10, this.mousePosition);
+								this.refs[j].zoom(this.zoomdelta/10, this.mousePosition);
     						  }
     						
     						  
@@ -554,29 +526,29 @@ MindMap.prototype.performState = function()
     						break; 
     						
     case "panState":		
-    	                    if(this.references[0])
+    	                    if(this.refs[0])
     	                    {
     						  var deltax = 0;
 							  var deltay = 0;
  							  if(!this.draghelper)
 							  {
-								deltax = this.mousePosition.x - this.references[0].oldPosition.x;
-   							    deltay = this.mousePosition.y - this.references[0].oldPosition.y;
+								deltax = this.mousePosition.x - this.refs[0].oldPosition.x;
+   							    deltay = this.mousePosition.y - this.refs[0].oldPosition.y;
    							  }
    							  this.draghelper=false;
 							
-							  for (var j in this.references)
+							  for (var j in this.refs)
     						  {
-    							this.references[j].rectangle.x += deltax;
-								this.references[j].rectangle.y += deltay;
-								for (var i in this.references[j].node)
+    							this.refs[j].frame.x += deltax;
+								this.refs[j].frame.y += deltay;
+								for (var i in this.refs[j].node)
 								{
-									this.references[j].node[i].rectangle.x += deltax;
-									this.references[j].node[i].rectangle.y += deltay;
+									this.refs[j].node[i].frame.x += deltax;
+									this.refs[j].node[i].frame.y += deltay;
 								}
     						  }
 							
-							  this.references[0].oldPosition=this.mousePosition;
+							  this.refs[0].oldPosition=this.mousePosition;
     	                    }
 							this.renderMap();
     						break;
@@ -615,12 +587,12 @@ MindMap.prototype.mouseDown = function(e)
   	 var objectClicked = false;
 	
 	 //check if an object got clicked
-	 for (var j in this.references)
+	 for (var j in this.refs)
      {
     
-       for (var i in this.references[j].node)
+       for (var i in this.refs[j].node)
        {
-        if(this.references[j].node[i].selected==true)
+        if(this.refs[j].node[i].selected==true)
     	{
     	    objectClicked=true;
     	    sm.consumeEvent('clickOnNode');   	    
@@ -628,21 +600,22 @@ MindMap.prototype.mouseDown = function(e)
     	 }
        }
        
-       //check references
-	   if(this.references[j].selected==true && !objectClicked)
+       //check Refs
+	   if(this.refs[j].selected==true && !objectClicked)
 	   {
-	      objectClicked=true;document.getElementById("paper").value;
-	      this.references[j].drag=true;
-	      sm.consumeEvent('clickOnReference');
+	      objectClicked=true;
+	      document.getElementById("paper").value;
+	      this.refs[j].drag=true;
+	      sm.consumeEvent('clickOnRef');
 	      this.draghelper=true;
-	      for (var j in this.connections)
+	      for (var j in this.Cons)
 			{
-				this.connections[j].paint(this);
+				this.cons[j].paint(this);
 			}
 				
-		  for (var j in this.references)
+		  for (var j in this.refs)
 			{
-				this.references[j].paint(this);
+				this.refs[j].paint(this);
 			} 
 	   }
     }
@@ -676,13 +649,9 @@ MindMap.prototype.mouseDown = function(e)
 
 MindMap.prototype.mouseUp = function(e)
 {
-	e.preventDefault(); 
-	
-    
+	e.preventDefault();     
     sm.consumeEvent('mouseUp');
     this.performState();
-    
-    
     this.stopEvent(e);
 };
 
@@ -695,39 +664,39 @@ MindMap.prototype.mouseMove = function(e)
 	var flag = false;
 
 	//mark selected objects
-	for (var j in this.references)
+	for (var j in this.refs)
     {
-		if(this.references[j].rectangle.areacontains(this.mousePosition))
+		if(this.refs[j].frame.areacontains(this.mousePosition))
 		{
-		    if(this.references[j].rectangle.contains(this.mousePosition))
+		    if(this.refs[j].frame.contains(this.mousePosition))
 		    {
-				this.references[j].selected=true;
+				this.refs[j].selected=true;
 				flag=true;
 			}
 		    else
 		 	{
-				this.references[j].selected=false;			
+				this.refs[j].selected=false;			
 			}
 			
-			for (var i in this.references[j].node)
+			for (var i in this.refs[j].node)
     		{
-    		  if (this.references[j].node[i].rectangle.contains(this.mousePosition))
+    		  if (this.refs[j].node[i].frame.contains(this.mousePosition))
     		  {  
-    		    this.references[j].node[i].selected=true;
+    		    this.refs[j].node[i].selected=true;
     		    flag=true;
     		  }
     		  else
     		  {
-    		    this.references[j].node[i].selected=false;    		  
+    		    this.refs[j].node[i].selected=false;    		  
     		  }
 			}		    
 		}
 		else
 		{
-			this.references[j].selected=false;
-			for (var i in this.references[j].node)
+			this.refs[j].selected=false;
+			for (var i in this.refs[j].node)
     		{			
-    			this.references[j].node[i].selected=false;
+    			this.refs[j].node[i].selected=false;
     		}
 		}
 						
@@ -735,12 +704,12 @@ MindMap.prototype.mouseMove = function(e)
     
     if(!flag)
     {
-    	for (var j in this.connections)
+    	for (var j in this.cons)
     	{
-    		if(this.connections[j].contains(this.mousePosition))
-    			this.connections[j].selected=true;
+    		if(this.cons[j].contains(this.mousePosition))
+    			this.cons[j].selected=true;
     		else
-    			this.connections[j].selected=false;
+    			this.cons[j].selected=false;
     	}
     }
     
@@ -752,31 +721,12 @@ MindMap.prototype.mouseMove = function(e)
 //check if this paper is already in the mind map
 MindMap.prototype.checkNames = function( papername )
 {
-	for (var i in this.references)
+	for (var i in this.refs)
 	{			
-		if(this.references[i].title==papername)
+		if(this.refs[i].title==papername)
 			return true;
 	}
 	return false;
-};
-
-	
-MindMap.prototype.touchStart = function(e)
-{
-
-  this.stopEvent(e);
-};
-
-MindMap.prototype.touchEnd = function(e)
-{
-
-  this.stopEvent(e);
-};
-
-MindMap.prototype.touchMove = function(e)
-{
-
-  this.stopEvent(e);
 };
 
 
@@ -802,65 +752,48 @@ MindMap.prototype.stopEvent = function(e)
 MindMap.prototype.updateMousePosition = function(e)
 {
 	this.shiftKey = e.shiftKey;
-	this.mousePosition = new SinglePoint(e.pageX - this.canvas.offsetLeft, e.pageY - this.canvas.offsetTop);
+	this.mousePosition = new Point(e.pageX - this.canvas.offsetLeft, e.pageY - this.canvas.offsetTop);
 };
 
-MindMap.prototype.attachReference = function()
+MindMap.prototype.attachRef = function()
 {
     
 	this.updateMouseAttachment();
-	for (var j in this.connections)
+	for (var j in this.cons)
 	{
-		this.connections[j].paint(this);
+		this.cons[j].paint(this);
 	}
 		
-		for (var j in this.references)
+		for (var j in this.refs)
 	{
-		this.references[j].paint(this);
+		this.refs[j].paint(this);
 	} 
 };
 
 
-MindMap.prototype.dispose = function()
+MindMap.prototype.roundedRect = function(x,y,w,h,r, text )
 {
-	if (this.canvas !== null)
-	{
-		this.canvas.removeEventListener("mousedown", this.mouseDownHandler);
-		this.canvas.removeEventListener("mouseup", this.mouseUpHandler);
-		this.canvas.removeEventListener("mousemove", this.mouseMoveHandler);
-		this.canvas.removeEventListener("touchstart", this.touchStartHandler);
-		this.canvas.removeEventListener("touchend", this.touchEndHandler);
-		this.canvas.removeEventListener("touchmove", this.touchMoveHandler);
-		this.canvas.removeEventListener("key", this.keyHandler);	
-		this.canvas = null;
-		this.context = null;
-	}
-};
-
-
-MindMap.prototype.roundedRect = function(x,y,width,height,radius, text )
-{
-	this.context.lineWidth = 1;
-	this.context.fillStyle = "#ffffff";
-	this.context.strokeStyle = "#000000";
+	this.ctxt.lineWidth = 1;
+	this.ctxt.fillStyle = "#ffffff";
+	this.ctxt.strokeStyle = "#000000";
 	 
-	this.context.beginPath();
-	this.context.moveTo(x + radius, y);
-	this.context.lineTo(x + width - radius, y);
-	this.context.quadraticCurveTo(x + width, y, x + width, y + radius);
-	this.context.lineTo(x + width, y + height - radius);
-	this.context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-	this.context.lineTo(x + radius, y + height);
-	this.context.quadraticCurveTo(x, y + height, x, y + height - radius);
-	this.context.lineTo(x, y + radius);
-	this.context.quadraticCurveTo(x, y, x + radius, y);
-	this.context.closePath();
-	this.context.fill();
-	this.context.stroke();
+	this.ctxt.beginPath();
+	this.ctxt.moveTo(x + r, y);
+	this.ctxt.lineTo(x + w - r, y);
+	this.ctxt.quadraticCurveTo(x + w, y, x + w, y + r);
+	this.ctxt.lineTo(x + w, y + h - r);
+	this.ctxt.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+	this.ctxt.lineTo(x + r, y + h);
+	this.ctxt.quadraticCurveTo(x, y + h, x, y + h - r);
+	this.ctxt.lineTo(x, y + r);
+	this.ctxt.quadraticCurveTo(x, y, x + r, y);
+	this.ctxt.closePath();
+	this.ctxt.fill();
+	this.ctxt.stroke();
 	
 	if(text)
 	{
- 	  var textsize=width/15;
+ 	  var textsize=w/15;
 	  var temp = text.split(",")[0];
 	  var etal="";
 	  if(temp[1])
@@ -872,21 +805,21 @@ MindMap.prototype.roundedRect = function(x,y,width,height,radius, text )
 	  var year = text.split(".  ")[1];
 	  var title = text.split(".  ")[2];
 	
-	  this.context.fillStyle = "blue";
-	  this.context.font = "italic "+textsize+"pt Arial";
-      this.context.lineWidth = 1;
-	  this.context.fillText( author , x + width/2 - this.context.measureText(author).width/2, y+height/6);
+	  this.ctxt.fillStyle = "blue";
+	  this.ctxt.font = "italic "+textsize+"pt Arial";
+      this.ctxt.lineWidth = 1;
+	  this.ctxt.fillText( author , x + w/2 - this.ctxt.measureText(author).width/2, y+h/6);
 	
-	  this.context.fillStyle = "blue";
-	  this.context.font = "italic "+textsize+"pt Arial";
-      this.context.lineWidth = 1;
-	  this.context.fillText( year , x + width/2 - this.context.measureText(year).width/2, y+height/3);
+	  this.ctxt.fillStyle = "blue";
+	  this.ctxt.font = "italic "+textsize+"pt Arial";
+      this.ctxt.lineWidth = 1;
+	  this.ctxt.fillText( year , x + w/2 - this.ctxt.measureText(year).width/2, y+h/3);
 
 	  title = "\""+title+"\"";
-	  textsize=width/20;
-      this.context.fillStyle = 'green';
-      this.context.font = "italic "+textsize+"pt Calibri";
-      this.context.lineWidth = 1;
+	  textsize=w/20;
+      this.ctxt.fillStyle = 'green';
+      this.ctxt.font = "italic "+textsize+"pt Calibri";
+      this.ctxt.lineWidth = 1;
     	
       var wc = title.split(" ");
       var line = "";
@@ -897,11 +830,11 @@ MindMap.prototype.roundedRect = function(x,y,width,height,radius, text )
       {
         var test = line + wc[i] + " ";
             
-        if(this.context.measureText(test).width > width * 0.98 ) 
+        if(this.ctxt.measureText(test).width > w * 0.98 ) 
         { 
-          if( lineheight < height/2 )
+          if( lineheight < h/2 )
           {
-            this.context.fillText(line, x + width/2 - this.context.measureText(line).width/2, y + height/2 + lineheight);
+            this.ctxt.fillText(line, x + w/2 - this.ctxt.measureText(line).width/2, y + h/2 + lineheight);
             line = wc[i] + " ";
             lineheight += textsize+5;
             
@@ -912,32 +845,32 @@ MindMap.prototype.roundedRect = function(x,y,width,height,radius, text )
        	  line = test;
         }
       }
-      if( lineheight < height/2 )
+      if( lineheight < h/2 )
       {
-    	  this.context.fillText(line, x + width/2 - this.context.measureText(line).width/2, y + height/2 + lineheight);
+    	  this.ctxt.fillText(line, x + w/2 - this.ctxt.measureText(line).width/2, y + h/2 + lineheight);
       }
 	}
 	else
 	{
-		  this.context.fillStyle = "orange";
-		  var textsize=width/20;
-		  this.context.font = "italic "+textsize+"pt Arial";
-	      this.context.lineWidth = 1;
+		  this.ctxt.fillStyle = "orange";
+		  var textsize=w/20;
+		  this.ctxt.font = "italic "+textsize+"pt Arial";
+	      this.ctxt.lineWidth = 1;
 	      var string = "Please select a paper ...";
-		  this.context.fillText( string , x + width/2 - this.context.measureText(string).width/2, y+height/6);
+		  this.ctxt.fillText( string , x + w/2 - this.ctxt.measureText(string).width/2, y+h/6);
 	}
 };
 
 MindMap.prototype.renderMap = function()
 {
-	for (var j in this.connections)
+	for (var j in this.cons)
 	{
-		this.connections[j].paint(this);
+		this.cons[j].paint(this);
 	}
 	
-	for (var j in this.references)
+	for (var j in this.refs)
 	{
-		this.references[j].paint(this);
+		this.refs[j].paint(this);
 	}
 };
 
@@ -946,9 +879,9 @@ MindMap.prototype.literaturelist = function()
 	document.getElementById("thelist").value="";
 	var string="";
 	var j;
-	for (var i in this.references)
+	for (var i in this.refs)
 	{   
-		if( (j=this.getPaperIndex(this.references[i].title.split(".  ")[2]) ) >=0 )
+		if( (j=this.getPaperIndex(this.refs[i].title.split(".  ")[2]) ) >=0 )
 		{
 			  string += jsonPapers[j].author + ", " +  jsonPapers[j].title + ", ";
 			  if(jsonPapers[j].publisher)
@@ -990,7 +923,7 @@ MindMap.prototype.createJsonObject = function()
 			return j;
 	
 	return -1; */
-	return { "reference": {
+	return { "Ref": {
 		           "0":{
 		        	   "title":"firsttitle",
 		        	   "position":"theposition"
@@ -1000,7 +933,7 @@ MindMap.prototype.createJsonObject = function()
 			           "position":"the2position"
 			           }	            
 				}, 
-			 "connection": {"name": "somename"},
+			 "Con": {"name": "somename"},
 			 "metadata": {"zoom": "15"}
 	};
 };
