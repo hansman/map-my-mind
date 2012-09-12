@@ -335,7 +335,7 @@ MindMap.prototype.performState = function()
     				
                     break;
  
-    case "addRef": 	if( document.getElementById("paper").value!="" )
+    case "addRef": 			if( document.getElementById("paper").value!="" )
     						{
     						  if( !this.checkNames( document.getElementById("paper").value ) )
     						  {      							  
@@ -456,6 +456,7 @@ MindMap.prototype.performState = function()
     						
     						this.refs.splice(refkey,1);
    							this.renderMap();    
+   							this.literaturelist();
     						sm.consumeEvent('backToIdle');
     						break; 
     						
@@ -513,11 +514,8 @@ MindMap.prototype.mousewheel = function(e)
   	
 	e.preventDefault();
 	this.zoomdelta = e.wheelDelta ? e.wheelDelta/40 : e.detail ? -e.detail : 0;
-
     sm.consumeEvent('zoomWheel');
-
-    mindmap.performState();
-	
+    mindmap.performState();	
 	this.stopEvent(e);
 	return null;
 };
