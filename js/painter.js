@@ -1,6 +1,10 @@
 //Johann Steinbrecher
 //Santa Clara 2012
 
+var nsize = 3;   //Node size
+var refw = 200;
+var refh = 100;
+
 var StateMachine = function () {
 
 	this.states = [
@@ -145,7 +149,7 @@ var Rect = function(x, y, w, h)
 
 Rect.prototype.areacontains = function(p)
 {
-	return ( (p.x >= this.x-3) && (p.x <= (this.x + this.width+3)) && (p.y >= this.y-3) && (p.y <= (this.y + this.height + 3 )));
+	return ( (p.x >= this.x-nsize) && (p.x <= (this.x + this.width+nsize)) && (p.y >= this.y-nsize) && (p.y <= (this.y + this.height + nsize )));
 };
 
 Rect.prototype.contains = function(p)
@@ -154,25 +158,20 @@ Rect.prototype.contains = function(p)
 };
 
 
-var Ref = function(start,title,authorandyear,map)
+var Ref = function(start,title,map)
 {
   this.drag=false;
-  this.authorandyear=authorandyear;
   this.title=title;
-  this.line1;
-  this.line2;
-  this.nodesize=6;
   this.radius=16;
-  this.frame = new Rect(start.x,start.y,map.currentwidth,map.currentheight); 
-  this.node = new Array(4);
-  this.node[0] = new Node(start.x- this.nodesize/2,start.y + map.currentheight/2 - this.nodesize/2,this.nodesize,this.nodesize); 
-  this.node[1] = new Node(start.x+map.currentwidth-this.nodesize/2,start.y + map.currentheight/2 - this.nodesize/2 ,this.nodesize,this.nodesize);
-  this.node[2] = new Node(start.x + map.currentwidth/2 - this.nodesize/2,start.y- this.nodesize/2,this.nodesize,this.nodesize);
-  this.node[3] = new Node(start.x + map.currentwidth/2 - this.nodesize/2,start.y + map.currentwidth/2 - this.nodesize/2,this.nodesize,this.nodesize);  
+  this.frame = new Rect(start.x,start.y,map.livew,map.liveh); 
+  this.node = [4];
+  this.node[0] = new Node(start.x- nsize,start.y + map.liveh/2 - nsize,nsize*2,nsize*2); 
+  this.node[1] = new Node(start.x+map.livew-nsize,start.y + map.liveh/2 - nsize ,nsize*2,nsize*2);
+  this.node[2] = new Node(start.x + map.livew/2 - nsize,start.y- nsize,nsize*2,nsize*2);
+  this.node[3] = new Node(start.x + map.livew/2 - nsize,start.y + map.livew/2 - nsize,nsize*2,nsize*2);  
   
-  this.selected=false;
-  
-  this.oldPosition=start;
+  this.sel=false;  
+  this.oldstart=start;
 
 };
 
@@ -189,22 +188,17 @@ Ref.prototype.zoom = function(delta, mouse)
 
     this.frame.x = mouse.x + deltax - newwidth/2;
     this.frame.y = mouse.y + deltay - newheight/2; 
-
-    this.node[0].frame.x = this.frame.x -3;
-    this.node[0].frame.y = this.frame.y + newheight/2 - 3;
-    
-    this.node[1].frame.x = this.frame.x + newwidth - 3;
-    this.node[1].frame.y = this.frame.y + newheight/2 - 3;
-     
-    this.node[2].frame.x = this.frame.x + newwidth/2 - 3;
-    this.node[2].frame.y = this.frame.y -3;
-    
-    this.node[3].frame.x = this.frame.x + newwidth/2 - 3;
-    this.node[3].frame.y = this.frame.y + newheight -3;
-    
 	this.frame.width = newwidth;
 	this.frame.height = newheight;
 
+    this.node[0].frame.x = this.frame.x - nsize;
+    this.node[0].frame.y = this.frame.y + newheight/2 - nsize;    
+    this.node[1].frame.x = this.frame.x + newwidth - nsize;
+    this.node[1].frame.y = this.frame.y + newheight/2 - nsize;     
+    this.node[2].frame.x = this.frame.x + newwidth/2 - nsize;
+    this.node[2].frame.y = this.frame.y -nsize;    
+    this.node[3].frame.x = this.frame.x + newwidth/2 - nsize;
+    this.node[3].frame.y = this.frame.y + newheight -nsize;
 };
 
 Ref.prototype.paint = function(map)
@@ -212,21 +206,16 @@ Ref.prototype.paint = function(map)
 	
 	map.ctxt.lineWidth = 1;
 	map.ctxt.fillStyle = "#ffffff";
-	if(this.selected  )
-		{map.ctxt.strokeStyle = "#FF0000";}
+	if(this.sel  )
+		 map.ctxt.strokeStyle = "#FF0000";
  	else
- 		{map.ctxt.strokeStyle = "#000000";}
+ 		 map.ctxt.strokeStyle = "#000000";
  		
 	map.roundedRect(this.frame.x, this.frame.y , this.frame.width , this.frame.height , 16, this.title );
 		
-    if(this.selected)
-    {
-     for (var j in this.node)
-     {
-    	this.node[j].paint(map);
-     }
-    }
-    
+    if(this.sel)
+      for (var j in this.node)
+    	this.node[j].paint(map);   
     
 
 };
@@ -234,20 +223,18 @@ Ref.prototype.paint = function(map)
 
 var Node = function(x,y,width,height)
 {
-   this.selected=false;
-   this.frame = new Rect(x,y,width,height);
-   
+   this.sel=false;
+   this.frame = new Rect(x,y,width,height);   
 };
 
 
 Node.prototype.paint = function(map)
 {
-	map.ctxt.lineWidth = 1;
-   if(this.selected==true)
-   	{map.ctxt.fillStyle = "#00FF00";}
+   map.ctxt.lineWidth = 1;
+   if(this.sel==true)
+   	map.ctxt.fillStyle = "#00FF00";
    else
-   	{map.ctxt.fillStyle = "#FF0000";}
-   	
+   	map.ctxt.fillStyle = "#FF0000";   	
    	
    map.ctxt.strokeStyle = "#FF0000";
    map.ctxt.fillRect(this.frame.x , this.frame.y , this.frame.width , this.frame.height );
@@ -258,9 +245,8 @@ Node.prototype.paint = function(map)
 var Con = function(from,to)
 {
   this.from = from;
-  this.to = to;
-  
-  this.selected=false;
+  this.to = to;  
+  this.sel=false;
 };
 
 
@@ -270,24 +256,24 @@ Con.prototype.paint = function(map)
 	map.ctxt.lineWidth = 1;
 	map.ctxt.fillStyle = "#ffffff";
 	
-	if(this.selected)
+	if(this.sel)
 		map.ctxt.strokeStyle = "#FF0000";
 	else
 		map.ctxt.strokeStyle = "#000000";
 	
 	map.ctxt.beginPath();
-	map.ctxt.moveTo(this.from.frame.x+3 , this.from.frame.y+3);
-	map.ctxt.lineTo(this.to.frame.x+3,this.to.frame.y+3);
+	map.ctxt.moveTo(this.from.frame.x + nsize , this.from.frame.y + nsize);
+	map.ctxt.lineTo(this.to.frame.x + nsize,this.to.frame.y + nsize);
 	map.ctxt.closePath();
 	map.ctxt.stroke();
 };
 
-Con.prototype.contains = function(testpoint)
+Con.prototype.contains = function(p)
 {
-	var linederivation = ( this.to.frame.x+3 - (this.from.frame.x+3) ) / ( this.to.frame.y +3 - (this.from.frame.y+3) );
-	var testderivation = ( testpoint.x +3 - (this.from.frame.x+3) ) / (testpoint.y +3 - (this.from.frame.y+3));
+	var linederivation = ( this.to.frame.x + nsize - (this.from.frame.x + nsize) ) / ( this.to.frame.y + nsize - (this.from.frame.y + nsize) );
+	var testderivation = ( p.x + nsize - (this.from.frame.x + nsize) ) / (p.y + nsize - (this.from.frame.y + nsize));
 	
-	if( (  testderivation - linederivation < 0.3 ) && (  testderivation - linederivation > -0.3 )  )
+	if( (  testderivation - linederivation < 0.3 ) && (  testderivation - linederivation > - 0.3 )  )
 		return true;
  	else
  		return false;	
@@ -304,16 +290,14 @@ var MindMap = function(theCanvas)
     this.startNode = new Node(0,0,0,0,0);
     
     this.zoomdelta = 0;
-    this.currentwidth=200;
-    this.currentheight=100;
+    this.livew=refw;
+    this.liveh=refh;
     
     this.draghelper=false;
     
-    this.current='Ref';
-    
 	this.refs = [];
 	this.cons = [];
-	this.settings = { background: "#fff", Con: "#000", selection: "#000", node: "#31456b", nodeBorder: "#fff", nodeHoverBorder: "#000", nodeHover: "#0c0" };
+	this.settings = { background: "#fff"};
   
   
   	this.mouseDownHandler = this.mouseDown.bind(this);
@@ -331,11 +315,6 @@ var MindMap = function(theCanvas)
 
 };
 
-
-
-
-
-
 MindMap.prototype.performState = function()
 {
 
@@ -348,25 +327,20 @@ MindMap.prototype.performState = function()
     case "idle": 	
     				var text;
     				if ( document.getElementById("paper").value )
-    				{
     					text = document.getElementById("paper").value;
-    				}
     				else
-    				{
     				    text = "";
-    				}
-   					this.roundedRect(this.mousePosition.x - this.currentwidth/2, this.mousePosition.y - this.currentheight/2 , this.currentwidth , this.currentheight , 16, text );
+   					this.roundedRect(this.mousePosition.x - this.livew/2, this.mousePosition.y - this.liveh/2 , this.livew , this.liveh , 16, text );
 					this.renderMap();  
     				
-                   break;
+                    break;
  
     case "addRef": 	if( document.getElementById("paper").value!="" )
     						{
     						  if( !this.checkNames( document.getElementById("paper").value ) )
-    						  {  
-    							  
-    							  var tempPoint = new Point(this.mousePosition.x - this.currentwidth/2 , this.mousePosition.y - this.currentheight/2 );
-    							  this.refs.push(new Ref(tempPoint, document.getElementById("paper").value , document.getElementById("paper").value, this));
+    						  {      							  
+    							  var tempPoint = new Point(this.mousePosition.x - this.livew/2 , this.mousePosition.y - this.liveh/2 );
+    							  this.refs.push(new Ref(tempPoint, document.getElementById("paper").value, this));
     							  document.getElementById("paper").value="";
     							  this.literaturelist();
     						  }
@@ -375,22 +349,19 @@ MindMap.prototype.performState = function()
     						sm.consumeEvent('backToIdle');
                      		break;
                      		
-    case "dragRef":		
-    						for (var j in this.refs)
+    case "dragRef": 		for (var j in this.refs)
     						{
     					 	  if(this.refs[j].drag)
-							  {	
-							  
+							  {								  
 							    var deltax = 0;
 							    var deltay = 0;
  							    if(!this.draghelper)
 								{
-									deltax = this.mousePosition.x - this.refs[j].oldPosition.x;
-     							    deltay = this.mousePosition.y - this.refs[j].oldPosition.y;
-     							    
+									deltax = this.mousePosition.x - this.refs[j].oldstart.x;
+     							    deltay = this.mousePosition.y - this.refs[j].oldstart.y;     							    
      							}
-     							this.draghelper=false;
-     							
+ 							    
+     							this.draghelper=false;     							
 								this.refs[j].frame.x += deltax;
 								this.refs[j].frame.y += deltay;
 								
@@ -400,35 +371,27 @@ MindMap.prototype.performState = function()
 									this.refs[j].node[i].frame.y += deltay;
     							}		
 			
-								this.refs[j].oldPosition=this.mousePosition;
+								this.refs[j].oldstart=this.mousePosition;
 								break;
 								
 							  }
 							}
 							
-    						this.renderMap();
-    
-    						 
-							break;
+    						this.renderMap();    						 
+							break;							
 							
-							
-	case "endDragRef": for (var j in this.refs)
-    						{  						
+	case "endDragRef": 		for (var j in this.refs)					
     						  this.refs[j].drag=false;   
-    						}
     						
-	                        this.renderMap();
-    
-    						 
-    						sm.consumeEvent('backToIdle');
-    						
+	                        this.renderMap();    						 
+    						sm.consumeEvent('backToIdle');    						
 							break;
 							
 	case "createStartNode":	for (var j in this.refs)
     						{
 								for (var i in this.refs[j].node)
 								{
-									if(this.refs[j].node[i].selected)
+									if(this.refs[j].node[i].sel)
 									{
 										this.startNode=this.refs[j].node[i];
 										sm.consumeEvent('proceedToDrawLine');
@@ -442,7 +405,7 @@ MindMap.prototype.performState = function()
 							this.ctxt.fillStyle = "#ffffff";
 							this.ctxt.strokeStyle = "#000000";
 							this.ctxt.beginPath();
-							this.ctxt.moveTo(this.startNode.frame.x +3 , this.startNode.frame.y +3);
+							this.ctxt.moveTo(this.startNode.frame.x + nsize, this.startNode.frame.y + nsize);
 							this.ctxt.lineTo(this.mousePosition.x,this.mousePosition.y);
 							this.ctxt.closePath();
 							this.ctxt.stroke(); 
@@ -455,7 +418,7 @@ MindMap.prototype.performState = function()
     						{
 								for (var i in this.refs[j].node)
 								{
-									if(this.refs[j].node[i].selected)
+									if(this.refs[j].node[i].sel)
 									{
 										this.cons.push( new Con(this.startNode,this.refs[j].node[i]));
 										sm.consumeEvent('backToIdle');
@@ -471,12 +434,8 @@ MindMap.prototype.performState = function()
     						var delflag=true;
     	
     						for(refkey in this.refs) 
-    						{
-    							if(this.refs[refkey].selected)
-    						    {      								
-    								break;
-    						    }
-    						}						
+    							if(this.refs[refkey].sel)   								
+    								break;    							
     						
     						while(delflag)
     						{
@@ -484,12 +443,8 @@ MindMap.prototype.performState = function()
     						 for (var j in this.cons)
     						 {
     							for (var i in this.refs[refkey].node)
-    							{
     							   if( (this.refs[refkey].node[i] == this.cons[j].from) || (this.refs[refkey].node[i] == this.cons[j].to) )	
-    							   {   
     								   delflag=true;
-    							   }
-    							}
     							
     							if(delflag)
     							{
@@ -505,21 +460,14 @@ MindMap.prototype.performState = function()
     						break; 
     						
     case "zoomState":		//alert("zoom value "+this.zoomdelta);
-    						if( (this.currentheight <= 36) && (this.zoomdelta<0) )
-    						{}
-    						else
+    						if( !((this.liveh <= 36) && (this.zoomdelta<0)) )
     						{
-							  this.currentwidth = this.currentwidth*(1+this.zoomdelta/10);
-							  this.currentheight = this.currentheight*(1+this.zoomdelta/10);
-	    
+							  this.livew = this.livew*(1+this.zoomdelta/10);
+							  this.liveh = this.liveh*(1+this.zoomdelta/10);	    
     						  for (var j in this.refs)
-    						  {
-								this.refs[j].zoom(this.zoomdelta/10, this.mousePosition);
-    						  }
-    						
-    						  
+    							  this.refs[j].zoom(this.zoomdelta/10, this.mousePosition);
     						}
-    						this.roundedRect(this.mousePosition.x - this.currentwidth/2, this.mousePosition.y - this.currentheight/2 , this.currentwidth , this.currentheight , 16, document.getElementById("paper").value );
+    						this.roundedRect(this.mousePosition.x - this.livew/2, this.mousePosition.y - this.liveh/2 , this.livew , this.liveh , 16, document.getElementById("paper").value );
    							this.renderMap();
     
     						sm.consumeEvent('backToIdle');
@@ -532,8 +480,8 @@ MindMap.prototype.performState = function()
 							  var deltay = 0;
  							  if(!this.draghelper)
 							  {
-								deltax = this.mousePosition.x - this.refs[0].oldPosition.x;
-   							    deltay = this.mousePosition.y - this.refs[0].oldPosition.y;
+								deltax = this.mousePosition.x - this.refs[0].oldstart.x;
+   							    deltay = this.mousePosition.y - this.refs[0].oldstart.y;
    							  }
    							  this.draghelper=false;
 							
@@ -548,7 +496,7 @@ MindMap.prototype.performState = function()
 								}
     						  }
 							
-							  this.refs[0].oldPosition=this.mousePosition;
+							  this.refs[0].oldstart=this.mousePosition;
     	                    }
 							this.renderMap();
     						break;
@@ -582,67 +530,56 @@ MindMap.prototype.mouseDown = function(e)
 	this.updateMousePosition(e);
 	
 	if(e.which==1)   //left button
-	{
-		
-  	 var objectClicked = false;
-	
-	 //check if an object got clicked
-	 for (var j in this.refs)
-     {
-    
-       for (var i in this.refs[j].node)
-       {
-        if(this.refs[j].node[i].selected==true)
-    	{
-    	    objectClicked=true;
-    	    sm.consumeEvent('clickOnNode');   	    
-    	    break;
-    	 }
-       }
-       
-       //check Refs
-	   if(this.refs[j].selected==true && !objectClicked)
-	   {
-	      objectClicked=true;
-	      document.getElementById("paper").value;
-	      this.refs[j].drag=true;
-	      sm.consumeEvent('clickOnRef');
-	      this.draghelper=true;
-	      for (var j in this.Cons)
+	{		
+		var objClicked = false;
+		//check if an object got clicked
+		for (var j in this.refs)
+		{
+			for (var i in this.refs[j].node)
 			{
-				this.cons[j].paint(this);
+				if(this.refs[j].node[i].sel==true)
+				{
+					objClicked=true;
+					sm.consumeEvent('clickOnNode');   	    
+					break;
+				}
 			}
-				
-		  for (var j in this.refs)
+       
+			//check Refs
+			if(this.refs[j].sel==true && !objClicked)
 			{
-				this.refs[j].paint(this);
-			} 
-	   }
-    }
+				objClicked=true;
+				document.getElementById("paper").value;
+				this.refs[j].drag=true;
+				sm.consumeEvent('clickOnRef');
+				this.draghelper=true;
+				for (var j in this.cons)
+					this.cons[j].paint(this);
+				
+				for (var j in this.refs)
+					this.refs[j].paint(this);
+			}
+		}
 	
-	if(objectClicked==false)
+		if(objClicked==false)
+		{
+			sm.consumeEvent('clickOnCanvas');
+		}		
+	}
+	else if(e.which == 2)  //mousewheel
 	{
-		sm.consumeEvent('clickOnCanvas');
-	}		
-   }
-   else if(e.which == 2)  //mousewheel
-   {
-      this.draghelper=true;
-      sm.consumeEvent('clickMousewheel');
-   }
-   else
-   {
-     this.stopEvent(e);
-	 return null;
-   }
+		this.draghelper=true;
+		sm.consumeEvent('clickMousewheel');
+	}
+	else
+	{
+		this.stopEvent(e);
+		return null;
+	}
    
-   
-   
- 	 mindmap.performState();
-	
-	 this.stopEvent(e);
-	 return null;
-	
+	mindmap.performState();
+	this.stopEvent(e);
+	return null;
 };
 
 
@@ -670,34 +607,32 @@ MindMap.prototype.mouseMove = function(e)
 		{
 		    if(this.refs[j].frame.contains(this.mousePosition))
 		    {
-				this.refs[j].selected=true;
+				this.refs[j].sel=true;
 				flag=true;
 			}
 		    else
 		 	{
-				this.refs[j].selected=false;			
+				this.refs[j].sel=false;			
 			}
 			
 			for (var i in this.refs[j].node)
     		{
     		  if (this.refs[j].node[i].frame.contains(this.mousePosition))
     		  {  
-    		    this.refs[j].node[i].selected=true;
+    		    this.refs[j].node[i].sel=true;
     		    flag=true;
     		  }
     		  else
     		  {
-    		    this.refs[j].node[i].selected=false;    		  
+    		    this.refs[j].node[i].sel=false;    		  
     		  }
 			}		    
 		}
 		else
 		{
-			this.refs[j].selected=false;
-			for (var i in this.refs[j].node)
-    		{			
-    			this.refs[j].node[i].selected=false;
-    		}
+			this.refs[j].sel=false;
+			for (var i in this.refs[j].node)		
+    			this.refs[j].node[i].sel=false;
 		}
 						
     }
@@ -707,12 +642,11 @@ MindMap.prototype.mouseMove = function(e)
     	for (var j in this.cons)
     	{
     		if(this.cons[j].contains(this.mousePosition))
-    			this.cons[j].selected=true;
+    			this.cons[j].sel=true;
     		else
-    			this.cons[j].selected=false;
+    			this.cons[j].sel=false;
     	}
     }
-    
 	
 	this.performState();
 	this.stopEvent(e); 
@@ -733,13 +667,9 @@ MindMap.prototype.checkNames = function( papername )
 MindMap.prototype.key = function(e)
 {
 	if ( (e.keyCode == 46) || (e.keyCode == 8)  ) 
-	{	
-		sm.consumeEvent('deletePressed');
-	}	
-	
+		sm.consumeEvent('deletePressed');	
 	this.performState(); 
 	this.stopEvent(e);
-
 };
 
 MindMap.prototype.stopEvent = function(e)
@@ -757,17 +687,11 @@ MindMap.prototype.updateMousePosition = function(e)
 
 MindMap.prototype.attachRef = function()
 {
-    
 	this.updateMouseAttachment();
 	for (var j in this.cons)
-	{
-		this.cons[j].paint(this);
-	}
-		
-		for (var j in this.refs)
-	{
+		this.cons[j].paint(this);	
+	for (var j in this.refs)
 		this.refs[j].paint(this);
-	} 
 };
 
 
@@ -828,16 +752,14 @@ MindMap.prototype.roundedRect = function(x,y,w,h,r, text )
         
       for(var i = 0; i < wc.length; i++) 
       {
-        var test = line + wc[i] + " ";
-            
+        var test = line + wc[i] + " ";            
         if(this.ctxt.measureText(test).width > w * 0.98 ) 
         { 
           if( lineheight < h/2 )
           {
             this.ctxt.fillText(line, x + w/2 - this.ctxt.measureText(line).width/2, y + h/2 + lineheight);
             line = wc[i] + " ";
-            lineheight += textsize+5;
-            
+            lineheight += textsize+5;            
           }
         }
         else
@@ -864,14 +786,9 @@ MindMap.prototype.roundedRect = function(x,y,w,h,r, text )
 MindMap.prototype.renderMap = function()
 {
 	for (var j in this.cons)
-	{
 		this.cons[j].paint(this);
-	}
-	
 	for (var j in this.refs)
-	{
 		this.refs[j].paint(this);
-	}
 };
 
 MindMap.prototype.literaturelist = function()
@@ -906,10 +823,8 @@ MindMap.prototype.literaturelist = function()
 MindMap.prototype.getPaperIndex = function(title)
 {
 	for (var j in jsonPapers)
-		if ( jsonPapers[j].title==title )
-			
-			return j;
-	
+		if ( jsonPapers[j].title==title )			
+			return j;	
 	return -1;
 };
 
