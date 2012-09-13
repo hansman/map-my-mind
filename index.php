@@ -126,7 +126,8 @@ session_start();
 		  });
 
 		  showusername();
-		  updateDatalist();
+		  //updateDatalist();
+		  ajaxcall("paperdata",null);
 		  	
 		  sm = new StateMachine();
 		  mindmap = new MindMap(document.getElementById("canvas"));
@@ -177,38 +178,6 @@ session_start();
 
 		
 		
-		function getdoi()
-		{
-        	var xmlhttp = new XMLHttpRequest();
-        	    		
-			xmlhttp.onreadystatechange=function()
-		 	{
-		  		if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
-		  		{
-		      		var myArray = eval( xmlhttp.responseText );
-		      		document.getElementById("author").value=myArray[0];
-		      		document.getElementById("title").value=myArray[1];
-		      		document.getElementById("date").value=myArray[2];
-		      		document.getElementById("publisher").value=myArray[3];
-		      		document.getElementById("month").value=myArray[4];
-		      		document.getElementById("volume").value=myArray[5];
-		      		document.getElementById("issue").value=myArray[6];
-		      		document.getElementById("startpage").value=myArray[7];
-		      		document.getElementById("lastpage").value=myArray[8];
-		      	}
-		 	}
-		  
-		 	var doifield = document.getElementById("doifield").value;  
-		 	var doiparser = doifield.split(".org/");
-			if (doiparser[1])
-			{
-				doifield=doiparser[1];
-			}
-	  
-		 	xmlhttp.open("GET","php/doihandler.php?doi="+doifield,true);
-		 	xmlhttp.send();
-       	}
-		
 		function submitnewpaper()
 		{
 			var xmlhttp = new XMLHttpRequest();
@@ -235,7 +204,7 @@ session_start();
 			 	{
 			  		if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 			  		{	  
-				 		updateDatalist();
+				 		ajaxcall("paperdata",null);
 			     		if (xmlhttp.responseText)
 			     	 		document.getElementById("newpaperwarning").innerHTML=xmlhttp.responseText;
 				 	}
@@ -253,7 +222,6 @@ session_start();
 				document.getElementById("startpage").value="";
 				document.getElementById("lastpage").value="";
 				
-				updateDatalist();
 			}
 		}
 		
@@ -269,45 +237,12 @@ session_start();
 			     //console.log(xmlhttp.responseText);
 			     document.getElementById('deletepaper').value="";
 			     document.getElementById('paper').value="";
-				 updateDatalist();
+				 //updateDatalist();
+			     ajaxcall("paperdata",null);
 			  }
 			 }
 			 xmlhttp.open("GET","php/removepaper.php?title="+document.getElementById('deletepaper').value.split(".  ")[2],true);
 			 xmlhttp.send(); 			 
-		}
-		
-		function updateDatalist()
-		{
-			var xmlhttp = new XMLHttpRequest();
-    		
-			document.getElementById('bibliothek').innerHTML = "";
-			document.getElementById('bibliothek2').innerHTML = "";
-			
-			xmlhttp.onreadystatechange=function()
-			 {
-			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
-			  { 
-
-				document.getElementById('bibliothek').innerHTML = '';
-				document.getElementById('bibliothek2').innerHTML = '';
-				  
-				jsonPapers = eval( '(' + xmlhttp.responseText + ')' );
-				var tag;
-				
-                 //console.log(jsonPapers.length);
-                 
-				for (var i=0; i<jsonPapers.length;i++) 
-				{ 
-					tag = '<option label="'+ jsonPapers[i].title +'" value="' + jsonPapers[i].author + '.  ' + jsonPapers[i].date + '.  ' + jsonPapers[i].title + '" />';
-					//console.log(tag);
-					document.getElementById('bibliothek').innerHTML += tag;
-					document.getElementById('bibliothek2').innerHTML += tag;
-				}
-				
-			  }
-			 }
-			 xmlhttp.open("GET","php/getpapers.php",true);
-			 xmlhttp.send(); 
 		}
 		
 		function logout()
@@ -327,7 +262,8 @@ session_start();
 			 {
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 			  { 
-				  updateDatalist();
+				  //updateDatalist();
+				  ajaxcall("paperdata",null);
 				  showusername();
 			  }
 			 }
@@ -355,7 +291,8 @@ session_start();
 				  else
 				  {
 					  //alert(xmlhttp.responseText);
-					  updateDatalist();
+					  //updateDatalist();
+					  ajaxcall("paperdata",null);
 					  showusername();
 					  
 					  $('#login').slideUp('slow', function() {window.location.reload();});
@@ -395,6 +332,73 @@ session_start();
 			 xmlhttp.open("GET","php/getuser.php",true);
 			 xmlhttp.send();
 		}
+
+
+
+
+		function ajaxcall(type, args)
+		{
+
+		
+			var xmlhttp = new XMLHttpRequest();
+
+			xmlhttp.onreadystatechange=function()
+			{
+				if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
+				  { 
+						console.log(xmlhttp.responseText);
+
+						switch(type)
+						{
+							case "paperdata":	document.getElementById('bibliothek').innerHTML = '';
+												document.getElementById('bibliothek2').innerHTML = '';
+							  
+												jsonPapers = eval( '(' + xmlhttp.responseText + ')' );
+												var tag;			                 
+												for (var i=0; i<jsonPapers.length;i++) 
+												{ 
+													tag = '<option label="'+ jsonPapers[i].title +'" value="' + jsonPapers[i].author + '.  ' + jsonPapers[i].date + '.  ' + jsonPapers[i].title + '" />';
+													document.getElementById('bibliothek').innerHTML += tag;
+													document.getElementById('bibliothek2').innerHTML += tag;
+												}
+												break;
+							case "getdoi":      var paperMeta = eval( xmlhttp.responseText );
+				      							document.getElementById("author").value=paperMeta[0];
+				      							document.getElementById("title").value=paperMeta[1];
+				      							document.getElementById("date").value=paperMeta[2];
+				      							document.getElementById("publisher").value=paperMeta[3];
+				      							document.getElementById("month").value=paperMeta[4];
+				      							document.getElementById("volume").value=paperMeta[5];
+				      							document.getElementById("issue").value=paperMeta[6];
+				      							document.getElementById("startpage").value=paperMeta[7];
+				      							document.getElementById("lastpage").value=paperMeta[8];
+												break;
+
+						}
+				  }
+			}
+
+			if(type=="getdoi")
+			{
+				var args = args.split(".org/");
+				if (args[1])
+				{
+					args=args[1];
+				}
+			}
+
+			xmlhttp.open("GET","php/ajax.php?type="+type+"&args[]="+args,true);
+			xmlhttp.send();
+		}
+		
+
+
+
+
+
+
+
+		
 
 				
 		$(function() {
@@ -447,7 +451,7 @@ session_start();
     
       <label id="doilabel" for="doifield">DOI</label>
       <input class="refform" id="doifield" name="doifield" type="text" placeholder="Enter doi, i.e. 'http://dx.doi.org/10.1023/A:1015460304860' OR '10.1023/A:1015460304860' OR '___.org/10.1023/A:1015460304860' " />
-      <input id="getpaperbtn" class="buttons" type="button" value="Get Paper" onclick="getdoi();" />
+      <input id="getpaperbtn" class="buttons" type="button" value="Get Paper" onclick="ajaxcall('getdoi',document.getElementById('doifield').value);" />
 			
 		<ul>	
 		    <div>
