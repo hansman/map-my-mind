@@ -1,26 +1,19 @@
 <?php 
 
-    include_once 'SQLcontainer.php';
+    include_once 'EngineContainer.php';
 
-	class PaperData extends SQLcontainer
+	class PaperData extends EngineContainer
 	{
-		
-		
 		
 		public function run()
 		{
+			$this->connect();
+			$this->loadsess();
 			
-			session_start();
-			
-			if(isset($_SESSION['activeID']))
-				$userid=$_SESSION['activeID'];
-			else
-				$userid="guest";
-			
-			$query = "lock table lit_". $userid ." read";
+			$query = "lock table lit_". $this->userid ." read";
 			mysql_query($query);
 			
-			$query = "select doi, author, title, date, month, publisher, volume, issue, startpage, lastpage from lit_".$userid;
+			$query = "select doi, author, title, date, month, publisher, volume, issue, startpage, lastpage from lit_".$this->userid;
 			
 			$result=mysql_query($query);		
 			
@@ -34,14 +27,6 @@
 			mysql_query($query);
 			
 			return json_encode($jsonrows);
-			
-			
-			
 		}
-		
-		
 	}
-
-
-
 ?>

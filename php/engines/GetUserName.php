@@ -1,15 +1,13 @@
 <?php 
 
-class GetUserName
+include_once 'EngineContainer.php';
+
+class GetUserName extends EngineContainer
 {
 	public function run()
 	{
-		session_start();
-		
-		if(isset($_SESSION['activeuser']))
-			echo $_SESSION['activeuser'];
-		else
-			echo "guest";		
+			$this->loadsess();
+			echo $this->usernm;		
 	}
 }
 

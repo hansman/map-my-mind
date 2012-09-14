@@ -39,7 +39,7 @@ session_start();
     <div id="actions">
         <div class="slidespacer" id="warningtext"></div>        
         <div id="loginoptions">
-        	<a href="#" id="submitlogin" onclick="ajaxcall('login',[document.getElementById('loginusername').value,document.getElementById('loginpassword').value])">Log in</a>
+        	<a href="#" id="submitlogin" onclick="ajaxcall('login',[$('#loginusername').val(),$('#loginpassword').val()])">Log in</a>
         	<a href="signup.php" id="signup">Sign up</a>
 			<a href="forgotpswd.php">Forgot password</a>
 			<a href="#">Manage account</a>
@@ -50,15 +50,14 @@ session_start();
 	</form>
 	 
 	<form id="managemaps" class="slidedowns">
-    <div id="inputs">      
-          <label id="SaveMapLabel" for="SaveMap">Save this map as:</label>   
+      <div id="inputs">      
+        <label id="SaveMapLabel" for="SaveMap">Save this map as:</label>   
         <input id="SaveMap" type="text" name="SaveMap" placeholder="Save map as ..." required/>
         <span onclick="savemap()">Save Map</span>   
-    </div>
-    
-    <div id="actions">
-        <div class="slidespacer" id="warningtext"></div>        
-    </div>
+      </div>    
+      <div id="actions">
+      	<div class="slidespacer" id="warningtext"></div>        
+      </div>
 	</form>
 		
     <script type="text/javascript">
@@ -73,9 +72,7 @@ session_start();
 		{		
 		  ajaxcall("getusername",null);
 		  ajaxcall("paperdata",null);
-
-		  handlers();
-		  	
+		  handlers();		  	
 		  sm = new StateMachine();
 		  mindmap = new MindMap(document.getElementById("canvas"));
 		  mindmap.performState();
@@ -93,49 +90,46 @@ session_start();
 
 						switch(type)
 						{
-							case "paperdata":	document.getElementById('bibliothek').innerHTML = '';
-												document.getElementById('bibliothek2').innerHTML = '';
-							  
+							case "paperdata":	$(".dlbib").text('');							  
 												jsonPapers = eval( '(' + xmlhttp.responseText + ')' );
 												var tag;			                 
 												for (var i=0; i<jsonPapers.length;i++) 
 												{ 
 													tag = '<option label="'+ jsonPapers[i].title +'" value="' + jsonPapers[i].author + '.  ' + jsonPapers[i].date + '.  ' + jsonPapers[i].title + '" />';
-													document.getElementById('bibliothek').innerHTML += tag;
-													document.getElementById('bibliothek2').innerHTML += tag;
+													$(".dlbib").append(tag);
 												}
 												break;
 							case "getdoi":      var paperMeta = eval( xmlhttp.responseText );
 				      							document.getElementById("author").value=paperMeta[0].replace(/,/g,' and');
-				      							document.getElementById("title").value=paperMeta[1];
-				      							document.getElementById("date").value=paperMeta[2];
-				      							document.getElementById("publisher").value=paperMeta[3];
-				      							document.getElementById("month").value=paperMeta[4];
-				      							document.getElementById("volume").value=paperMeta[5];
-				      							document.getElementById("issue").value=paperMeta[6];
-				      							document.getElementById("startpage").value=paperMeta[7];
-				      							document.getElementById("lastpage").value=paperMeta[8];
+				      							$("#title").val(paperMeta[1]);
+				      							$("#date").val(paperMeta[2]);
+				      							$("#publisher").val(paperMeta[3]);
+				      							$("#month").val(paperMeta[4]);
+				      							$("#volume").val(paperMeta[5]);
+				      							$("#issue").val(paperMeta[6]);
+				      							$("#startpage").val(paperMeta[7]);
+				      							$("#lastpage").val(paperMeta[8]);
 												break;
 							case "getusername":	document.getElementById('shownname').innerHTML =  xmlhttp.responseText ;
 			  				  					if (xmlhttp.responseText=="guest")
-								  					document.getElementById('loginbutton').innerHTML = "Login";
+								  					$('#loginbutton').text("Login");
 							  					else
-								  					document.getElementById('loginbutton').innerHTML = "Logout";
+								  					$('#loginbutton').text("Logout");
 							  					break; 
 							case "login":		//console.log(xmlhttp.responseText);
 								  				if(xmlhttp.responseText == "Wrong login")
 								  				{
-									  				document.getElementById('warningtext').innerHTML = "Your login data is incorrect ...";
+									  				$('#warningtext').text("Your login data is incorrect ...");
 							  	  				}
 								  				else
 								  				{
 									  				ajaxcall("paperdata",null);
 									  				ajaxcall("getusername",null);									  
 									  				$('#login').slideUp('slow', function() {window.location.reload();});
-									  				document.getElementById('warningtext').innerHTML = "";
-									  				document.getElementById('paper').value = "";
-									  				document.getElementById('deletepaper').value = "";
-									  				document.getElementById('thelist').value = "";
+									  				$('#warningtext').text("");
+									  				$('#paper').val("");
+									  				$('#deletepaper').val("");
+									  				$('#thelist').val("");
 									  				sm = new StateMachine();
 									  				mindmap = new MindMap(document.getElementById("canvas"));
 									  				mindmap.performState();
@@ -144,30 +138,23 @@ session_start();
 							case "logout":		sm = new StateMachine();
 												mindmap = new MindMap(document.getElementById("canvas"));
 												mindmap.performState();
-												document.getElementById('bibliothek').innerHTML = "";
-												document.getElementById('bibliothek2').innerHTML = "";
-												document.getElementById('paper').value = "";
-												document.getElementById('deletepaper').value = "";
-												document.getElementById('thelist').value = "";
+												$(".dlbib").text('');
+												$('#paper').val("");
+												$('#deletepaper').val("");
+												$('#thelist').val("");
 												ajaxcall("paperdata",null);
 												ajaxcall("getusername",null);
 												break;
 							case "newpaper":	if (xmlhttp.responseText)
 				     	 							document.getElementById("newpaperwarning").innerHTML=xmlhttp.responseText;
 												else
+												{
 													ajaxcall("paperdata",null);
-				     							document.getElementById("publisher").value="";
-				     							document.getElementById("title").value="";
-				     							document.getElementById("author").value="";
-				     							document.getElementById("date").value="";
-				     							document.getElementById("month").value="";
-				     							document.getElementById("issue").value="";
-				     							document.getElementById("volume").value="";
-				     							document.getElementById("startpage").value="";
-				     							document.getElementById("lastpage").value="";
+													$(".npform").val('');
+												}				     							
 				     							break;
-							case "rmpaper":		document.getElementById('deletepaper').value="";
-						     					document.getElementById('paper').value="";
+							case "rmpaper":		$('#deletepaper').val("");
+						     					$('paper').val("");
 						     					ajaxcall("paperdata",null);
 						     					break;
 						    default:			alert("Problem selecting the ajax type in index.php");
@@ -214,15 +201,11 @@ session_start();
   <canvas id="canvas" width="1000" height= "400" tabindex="0"></canvas>
   
   <input class="form" id="paper" autocomplete list="bibliothek" type="text" name="bibliothek" placeholder="please select from your library here ..." />
-  <datalist id="bibliothek">
-  </datalist>
-  <p>
-  
-  <article>
-  
+  <datalist id="bibliothek" class="dlbib"></datalist>
+  <p>  
+  <article>  
   <div id="accordionResizer" style=" width:1000px; " class="ui-widget-content">
-  <div id="accordion" class="accordion">
-  
+  <div id="accordion" class="accordion">  
   
   <h3><a>Bibliography</a></h3>
   <div>
@@ -239,58 +222,58 @@ session_start();
     
       <label id="doilabel" for="doifield">DOI</label>
       <input class="refform" id="doifield" name="doifield" type="text" placeholder="Enter doi, i.e. 'http://dx.doi.org/10.1023/A:1015460304860' OR '10.1023/A:1015460304860' OR '___.org/10.1023/A:1015460304860' " />
-      <input id="getpaperbtn" class="buttons" type="button" value="Get Paper" onclick="ajaxcall('getdoi',document.getElementById('doifield').value);" />
+      <input id="getpaperbtn" class="buttons" type="button" value="Get Paper" onclick="ajaxcall('getdoi',$('#doifield').val());" />
 			
 		<ul>	
 		    <div>
         		<label for="author">Author *</label>
-        		<input class="refform" id="author" name="author" type="text" placeholder="Set the author names ..." />	
+        		<input id="author" class="npform" name="author" type="text" placeholder="Set the author names ..." />	
 			</div>
         	<br>
 			<div>
         		<label for="title">Title *</label>
-        		<input class="refform" id="title" name="title "type="text" placeholder="Set the title ..." />  
+        		<input id="title" class="npform" name="title "type="text" placeholder="Set the title ..." />  
         	</div>
         	<br>
 			<div>
         		<label for="date">Year *</label>
-        		<input class="refform" id="date" name="date" type="text" placeholder="Set the year ..." /> 	 		
+        		<input id="date" class="npform" name="date" type="text" placeholder="Set the year ..." /> 	 		
 			</div>
         	<br>
 			<div>
         		<label for="month">Month</label>
-        		<input class="refform" id="month" name="month" type="text" placeholder="Set the month ..." /> 			
+        		<input id="month" class="npform" name="month" type="text" placeholder="Set the month ..." /> 			
 			</div>
         	<br>
 			<div>
         		<label for="publisher">Publisher</label>
-        		<input class="refform" id="publisher" name="publisher" type="text" placeholder="Set the publisher ..." />
+        		<input id="publisher" class="npform" name="publisher" type="text" placeholder="Set the publisher ..." />
 			</div>
         	<br>
 			<div>
         		<label for="volume">Volume</label>
-        		<input class="refform" id="volume" name="volume" type="text" placeholder="Set the volume ..." />
+        		<input id="volume" class="npform" name="volume" type="text" placeholder="Set the volume ..." />
 			</div>
         	<br>
 			<div>
         		<label for="issue">Issue</label>
-        		<input class="refform" id="issue" name="issue" type="text" placeholder="Set the issue ..." />
+        		<input id="issue" class="npform" name="issue" type="text" placeholder="Set the issue ..." />
 			</div>
         	<br>
 			<div>
         		<label for="startpage">Start page</label>
-        		<input class="refform" id="startpage" name="startpage" type="text" placeholder="Set the start page ..." />
+        		<input id="startpage" class="npform" name="startpage" type="text" placeholder="Set the start page ..." />
 			</div>
         	<br>
 			<div>
         		<label for="lastpage">End page</label>
-        		<input class="refform" id="lastpage" name="lastpage" type="text" placeholder="Set the end page ..." />
+        		<input id="lastpage" class="npform" name="lastpage" type="text" placeholder="Set the end page ..." />
 			</div>
 				    
 		</ul>
 		<br>
 		<span id="newpaperwarning">  </span>
-		<input class="buttons" type="button" value="Submit" onclick="ajaxcall('newpaper',[document.getElementById('doifield').value,document.getElementById('author').value,document.getElementById('title').value,document.getElementById('publisher').value,document.getElementById('date').value,document.getElementById('month').value,document.getElementById('volume').value,document.getElementById('issue').value,document.getElementById('startpage').value,document.getElementById('lastpage').value ])" />
+		<input class="buttons" type="button" value="Submit" onclick="ajaxcall('newpaper',[$('#doifield').val(),$('#author').val(),$('#title').val(),$('#publisher').val(),$('#date').val(),$('#month').val(),$('#volume').val(),$('#issue').val(),$('#startpage').val(),$('#lastpage').val() ])" />
        </fieldset>
      </form>
   </div>	
@@ -299,8 +282,7 @@ session_start();
   <h3><a>Remove From Library</a></h3>
   <div>
    <input class="form" id="deletepaper" list="bibliothek" type="text" name="bibliothek" placeholder="please select which entry to delete from your library ..." />  
-   <datalist id="bibliothek2"> 
-   </datalist>  
+   <datalist id="bibliothek2" class="dlbib"></datalist>  
    <input class="buttons" type="button" value="Remove" onclick="ajaxcall('rmpaper',document.getElementById('deletepaper').value.split('.  ')[2])" /> 
   </div>
    

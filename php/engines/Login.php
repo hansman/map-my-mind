@@ -1,8 +1,8 @@
 <?php 
 
-include_once 'SQLcontainer.php';
+include_once 'EngineContainer.php';
 
-class Login extends SQLcontainer
+class Login extends EngineContainer
 {
 	
 	private $pswd;
@@ -10,7 +10,7 @@ class Login extends SQLcontainer
 	
 	function __construct($a)
 	{
-		parent:: __construct();
+		$this->connect();
 		$this->usrn=$a[0];
 		$this->pswd=$a[1];
 	}

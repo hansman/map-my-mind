@@ -1,35 +1,24 @@
 <?php 
 
-    include_once 'SQLcontainer.php';
+    include_once 'EngineContainer.php';
 
-	class RMPaper extends SQLcontainer
+	class RMPaper extends EngineContainer
 	{
 		private $title;
 		
 		function __construct($a)
 		{
-			parent:: __construct();
+			$this->connect();
 			$this->title=trim($a[0]);
 		}
 		
 		public function run()
 		{	
-			session_start();
-			if(isset($_SESSION['activeID']))
-				$userid=$_SESSION['activeID'];
-			else
-				$userid="guest";
-  			
-   			$query ="delete from lit_". $userid ." where title='". $this->title ."'"; 
-
-   			
+			$this->loadsess();
+   			$query ="delete from lit_". $this->userid ." where title='". $this->title ."'"; 
    			$result=mysql_query($query);
    			if (!$result) 
    				die ("Query Failed.");	
-		}		
-		
+		}	
 	}
-
-
-
 ?>

@@ -1,8 +1,8 @@
 <?php 
 
-    include_once 'SQLcontainer.php';
+    include_once 'EngineContainer.php';
 
-	class NewPaper extends SQLcontainer
+	class NewPaper extends EngineContainer
 	{
 		private $doi;
 		private $date;
@@ -17,7 +17,7 @@
 		
 		function __construct($a)
 		{
-			parent:: __construct();
+			$this->connect();
 			$this->doi=trim($a[0]);
 			$this->author=trim($a[1]);
 			$this->title=trim($a[2]);
@@ -33,17 +33,11 @@
 		public function run()
 		{
 			
-			session_start();
-
-			if(isset($_SESSION['activeID']))
-				$userid=$_SESSION['activeID'];
-			else
-				$userid="guest";
-  
-   			$query = "lock table lit_". $userid ." write";
+			$this->loadsess();  
+   			$query = "lock table lit_". $this->userid ." write";
    			mysql_query($query);
    
-   			$query  = "select * from lit_". $userid ." where title='". $this->title ."'";
+   			$query  = "select * from lit_". $this->userid ." where title='". $this->title ."'";
    			$result=mysql_query($query);
    			if(mysql_num_rows($result))
    			{
@@ -51,7 +45,7 @@
    			}
    			else 
    			{   
-     			$query  = "insert into lit_". $userid ."(doi, author, title, date, month, publisher, volume, issue, startpage, lastpage) values ('". $this->doi ."','". $this->author ."','". $this->title ."','". $this->date ."','". $this->month ."','". $this->publisher ."','". $this->volume ."','". $this->issue ."','". $this->startpage ."','". $this->lastpage  ."' );";
+     			$query  = "insert into lit_". $this->userid ."(doi, author, title, date, month, publisher, volume, issue, startpage, lastpage) values ('". $this->doi ."','". $this->author ."','". $this->title ."','". $this->date ."','". $this->month ."','". $this->publisher ."','". $this->volume ."','". $this->issue ."','". $this->startpage ."','". $this->lastpage  ."' );";
  
      			$result=mysql_query($query);
      			if (!$result) die ("Query Failed.");
