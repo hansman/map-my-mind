@@ -4,6 +4,8 @@
 	include_once 'engines/DOIparser.php';
 	include_once 'engines/GetUserName.php';
 	include_once 'engines/Login.php';
+	include_once 'engines/Logout.php';
+	include_once 'engines/NewPaper.php';
 
 	$type = $_GET['type'];		
 	$args=explode(',',$_GET['args']);
@@ -17,6 +19,10 @@
 		case "getusername":	$engine = new GetUserName();
 							break;
 		case "login":		$engine = new Login($args[0],$args[1]);
+							break;
+		case "logout":		$engine = new Logout();
+							break;
+		case "newpaper":	$engine = new NewPaper($args);
 							break;
 		
 		

@@ -86,7 +86,7 @@ session_start();
 			  }
 			  else
 			  {
-                 logout();
+                 ajaxcall("logout",null);
 			  }
 			 });
 
@@ -174,56 +174,6 @@ session_start();
         	
         	xmlhttp.send(jsonString);
         } */
-
-		
-		
-		function submitnewpaper()
-		{
-			var xmlhttp = new XMLHttpRequest();
-    		
-			var doi=document.getElementById("doifield").value;
-			var author=document.getElementById("author").value;
-			var title=document.getElementById("title").value;
-			var publisher=document.getElementById("publisher").value;
-			var date=document.getElementById("date").value;
-			var month=document.getElementById("month").value;
-			var volume=document.getElementById("volume").value;
-			var issue=document.getElementById("issue").value;
-			var startpage=document.getElementById("startpage").value;
-			var lastpage=document.getElementById("lastpage").value;
-
-			if( (!author) || (!title) || (!date))
-			{
-				document.getElementById("newpaperwarning").innerHTML="Please fill out all required fields";
-			}	
-			else
-			{
-					
-				xmlhttp.onreadystatechange=function()
-			 	{
-			  		if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
-			  		{	  
-				 		ajaxcall("paperdata",null);
-			     		if (xmlhttp.responseText)
-			     	 		document.getElementById("newpaperwarning").innerHTML=xmlhttp.responseText;
-				 	}
-			 	}
-			 	xmlhttp.open("GET","php/newpaper.php?doi="+doi+"&author="+author+"&title="+title+"&publisher="+publisher+"&date="+date+"&month="+month+"&volume="+volume+"&issue="+issue+"&startpage="+startpage+"&lastpage="+lastpage,true);
-			 	xmlhttp.send(); 
-			 
-				document.getElementById("publisher").value="";
-				document.getElementById("title").value="";
-				document.getElementById("author").value="";
-				document.getElementById("date").value="";
-				document.getElementById("month").value="";
-				document.getElementById("issue").value="";
-				document.getElementById("volume").value="";
-				document.getElementById("startpage").value="";
-				document.getElementById("lastpage").value="";
-				
-			}
-		}
-		
 		
 		function removepaper()
 		{
@@ -241,31 +191,6 @@ session_start();
 			 }
 			 xmlhttp.open("GET","php/removepaper.php?title="+document.getElementById('deletepaper').value.split(".  ")[2],true);
 			 xmlhttp.send(); 			 
-		}
-		
-		function logout()
-		{
-			var xmlhttp = new XMLHttpRequest();
-    		
-			sm = new StateMachine();
-			mindmap = new MindMap(document.getElementById("canvas"));
-			mindmap.performState();
-			document.getElementById('bibliothek').innerHTML = "";
-			document.getElementById('bibliothek2').innerHTML = "";
-			document.getElementById('paper').value = "";
-			document.getElementById('deletepaper').value = "";
-			document.getElementById('thelist').value = "";
-			
-			xmlhttp.onreadystatechange=function()
-			 {
-			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
-			  { 
-				  ajaxcall("paperdata",null);
-				  ajaxcall("getusername",null);
-			  }
-			 }
-			 xmlhttp.open("GET","php/logout.php",true);
-			 xmlhttp.send();
 		}
 
 		function ajaxcall(type, args)
@@ -292,7 +217,7 @@ session_start();
 												}
 												break;
 							case "getdoi":      var paperMeta = eval( xmlhttp.responseText );
-				      							document.getElementById("author").value=paperMeta[0];
+				      							document.getElementById("author").value=paperMeta[0].replace(/,/g,' and');
 				      							document.getElementById("title").value=paperMeta[1];
 				      							document.getElementById("date").value=paperMeta[2];
 				      							document.getElementById("publisher").value=paperMeta[3];
@@ -309,13 +234,12 @@ session_start();
 								  					document.getElementById('loginbutton').innerHTML = "Logout";
 							  					break; 
 							case "login":		//console.log(xmlhttp.responseText);
-								  				if(xmlhttp.responseText == "failed")
+								  				if(xmlhttp.responseText == "Wrong login")
 								  				{
 									  				document.getElementById('warningtext').innerHTML = "Your login data is incorrect ...";
 							  	  				}
 								  				else
 								  				{
-									  				//alert(xmlhttp.responseText);
 									  				ajaxcall("paperdata",null);
 									  				ajaxcall("getusername",null);									  
 									  				$('#login').slideUp('slow', function() {window.location.reload();});
@@ -328,7 +252,31 @@ session_start();
 									  				mindmap.performState();
 									  			}
 									  			break;  
-
+							case "logout":		sm = new StateMachine();
+												mindmap = new MindMap(document.getElementById("canvas"));
+												mindmap.performState();
+												document.getElementById('bibliothek').innerHTML = "";
+												document.getElementById('bibliothek2').innerHTML = "";
+												document.getElementById('paper').value = "";
+												document.getElementById('deletepaper').value = "";
+												document.getElementById('thelist').value = "";
+												ajaxcall("paperdata",null);
+												ajaxcall("getusername",null);
+												break;
+							case "newpaper":	if (xmlhttp.responseText)
+				     	 							document.getElementById("newpaperwarning").innerHTML=xmlhttp.responseText;
+												else
+													ajaxcall("paperdata",null);
+				     							document.getElementById("publisher").value="";
+				     							document.getElementById("title").value="";
+				     							document.getElementById("author").value="";
+				     							document.getElementById("date").value="";
+				     							document.getElementById("month").value="";
+				     							document.getElementById("issue").value="";
+				     							document.getElementById("volume").value="";
+				     							document.getElementById("startpage").value="";
+				     							document.getElementById("lastpage").value="";
+				     							break;
 							}
 				  }
 			}
@@ -346,16 +294,6 @@ session_start();
 			xmlhttp.send();
 			
 		}
-		
-
-
-
-
-
-
-
-		
-
 				
 		$(function() {
 			$( "#accordion" ).accordion({
@@ -458,10 +396,10 @@ session_start();
 		</ul>
 		<br>
 		<span id="newpaperwarning">  </span>
-		<input class="buttons" type="button" value="Submit" onclick="submitnewpaper()" />
+		<input class="buttons" type="button" value="Submit" onclick="ajaxcall('newpaper',[document.getElementById('doifield').value,document.getElementById('author').value,document.getElementById('title').value,document.getElementById('publisher').value,document.getElementById('date').value,document.getElementById('month').value,document.getElementById('volume').value,document.getElementById('issue').value,document.getElementById('startpage').value,document.getElementById('lastpage').value ])" />
        </fieldset>
      </form>
-  </div>
+  </div>	
   
   
   <h3><a>Remove From Library</a></h3>
