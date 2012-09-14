@@ -8,13 +8,12 @@ class Login extends SQLcontainer
 	private $pswd;
 	private $usrn;
 	
-	function __construct($u, $p)
+	function __construct($a)
 	{
 		parent:: __construct();
-		$this->usrn=$u;
-		$this->pswd=$p;
+		$this->usrn=$a[0];
+		$this->pswd=$a[1];
 	}
-	
 	
 	public function run()
 	{
@@ -40,13 +39,6 @@ class Login extends SQLcontainer
 			}
 		}
 	}
-	
-	
-	
-	
 }
-
-
-
 
 ?>

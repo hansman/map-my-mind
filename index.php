@@ -11,10 +11,10 @@ session_start();
 	<title>MapMyMind</title>
 	
 	<link href="css/dm.css" rel="stylesheet" />	
-	<script src="js/painter.js"></script>
+	<script src="js/painter.js"></script>	
 	<script src="js/jquery-1.7.2.min.js"></script>
 	<script src="js/jquery-ui-1.8.21.custom.min.js"></script>
-	
+	<script src="js/handlers.js"></script>
 	
 	<div id="nav">
 	  <ul>
@@ -23,8 +23,7 @@ session_start();
 	    </div>
 	    <div id="username">
 	    	<span id="shownname"></span>
-	    </div>
-	    
+	    </div>	    
 		<li>
 			<a href="#" id="loginbutton">Login</a>
 		</li>
@@ -66,133 +65,23 @@ session_start();
 
         $("#login").hide();
         $("#managemaps").hide();
-        
 		var mindmap = null;
 		var sm = null;
 		var jsonPapers = null;
 								
 		function document_load()
-		{
-			$("signup").click(function(event){
-		        event.preventDefault();
-		        linkLocation = this.href;
-		        $("body").fadeOut(1000, redirectPage);     
-		    });
-		  
-		  $('#loginbutton').click(function() {
-			  if($('#loginbutton').text() == "Login")
-			  {
-			  	$('#login').slideDown('slow', function() {});
-			  }
-			  else
-			  {
-                 ajaxcall("logout",null);
-			  }
-			 });
-
-		  $('#closelogin').click(function() {
-			  $('#login').slideUp('slow', function() {				  
-			  });
-			  $('#warningtext').text("");
-			 });
-
-		  $("#loginusername").focus(function()
-		  {
-			  $('#warningtext').text("");
-			  $("#loginusername").val("");
-			  $("#loginpassword").val("");
-		  });
-
-
-		  $('#managebutton').click(function() {
-			  $('#managemaps').slideDown('slow', function() {				  
-			  });
-			 });
-
-		  $("#getpaperbtn").click(function()
-				  {
-					  $('#newpaperwarning').text("");
-				  });
-
-		  $("#addlibrary").click(function()
-				  {
-					  $('#newpaperwarning').text("");
-				  });
-		  
-		  $("#loginpassword").focus(function()
-		  {
-			  $('#warningtext').text("");
-			  $("#loginpassword").val("");
-		  });
-
+		{		
 		  ajaxcall("getusername",null);
 		  ajaxcall("paperdata",null);
+
+		  handlers();
 		  	
 		  sm = new StateMachine();
 		  mindmap = new MindMap(document.getElementById("canvas"));
 		  mindmap.performState();
-		  
-		  // Expand Panel
-		  $("#open").click(function()
-		  {
-			$("div#panel").slideDown("slow");
-		  });
-			 
-		  // Collapse Panel
-		  $("#close").click(function()
-		  {
-			$("div#panel").slideUp("slow");
-		  });
-		  		  
 		}
 
-		/* work in progress
-        function savemap()
-        {
-        	var obj = mindmap.createJsonObject();
-        	var jsonString = "jsonString=" + JSON.stringify(obj);
- 
-            
-        	var xmlhttp;	
-   		 	if (window.XMLHttpRequest)
-   		    	xmlhttp=new XMLHttpRequest();
-   		 	else
-   		    	xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-
-   		 	xmlhttp.onreadystatechange=function()
-		 	{
-		  		if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
-		  		{
-			  	  console.log(xmlhttp.responseText);
-		      	  //alert( xmlhttp.responseText );
-		  		}
-		 	}
-   		 	
-        	xmlhttp.open("POST","php/savemap.php",true);
-        	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        	xmlhttp.setRequestHeader("Content-Length",jsonString.length);
-        	
-        	xmlhttp.send(jsonString);
-        } */
-		
-		function removepaper()
-		{
-			var xmlhttp = new XMLHttpRequest();
-    		
-			xmlhttp.onreadystatechange=function()
-			 {
-			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
-			  {  
-			     //console.log(xmlhttp.responseText);
-			     document.getElementById('deletepaper').value="";
-			     document.getElementById('paper').value="";
-			     ajaxcall("paperdata",null);
-			  }
-			 }
-			 xmlhttp.open("GET","php/removepaper.php?title="+document.getElementById('deletepaper').value.split(".  ")[2],true);
-			 xmlhttp.send(); 			 
-		}
-
+				
 		function ajaxcall(type, args)
 		{
 			var xmlhttp = new XMLHttpRequest();
@@ -277,6 +166,11 @@ session_start();
 				     							document.getElementById("startpage").value="";
 				     							document.getElementById("lastpage").value="";
 				     							break;
+							case "rmpaper":		document.getElementById('deletepaper').value="";
+						     					document.getElementById('paper').value="";
+						     					ajaxcall("paperdata",null);
+						     					break;
+						    default:			alert("Problem selecting the ajax type in index.php");
 							}
 				  }
 			}
@@ -407,7 +301,7 @@ session_start();
    <input class="form" id="deletepaper" list="bibliothek" type="text" name="bibliothek" placeholder="please select which entry to delete from your library ..." />  
    <datalist id="bibliothek2"> 
    </datalist>  
-   <input class="buttons" type="button" value="Remove" onclick="removepaper()" /> 
+   <input class="buttons" type="button" value="Remove" onclick="ajaxcall('rmpaper',document.getElementById('deletepaper').value.split('.  ')[2])" /> 
   </div>
    
  </div>
