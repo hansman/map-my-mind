@@ -1,6 +1,6 @@
 <?php 
 
-    include 'SQLcontainer.php';
+    include_once 'SQLcontainer.php';
 
 	class PaperData extends SQLcontainer
 	{

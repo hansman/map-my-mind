@@ -1,7 +1,5 @@
 <?php 
 
-       
-
 	class SQLcontainer
 	{
 	
@@ -18,6 +16,7 @@
 				die('Could not connect: ' . mysql_error());
 			}
 			mysql_select_db("DM");
+			
    	   }
 	
 	   function __destruct() 

@@ -40,7 +40,7 @@ session_start();
     <div id="actions">
         <div class="slidespacer" id="warningtext"></div>        
         <div id="loginoptions">
-        	<a href="#" id="submitlogin" onclick="login()">Log in</a>
+        	<a href="#" id="submitlogin" onclick="ajaxcall('login',[document.getElementById('loginusername').value,document.getElementById('loginpassword').value])">Log in</a>
         	<a href="signup.php" id="signup">Sign up</a>
 			<a href="forgotpswd.php">Forgot password</a>
 			<a href="#">Manage account</a>
@@ -125,8 +125,7 @@ session_start();
 			  $("#loginpassword").val("");
 		  });
 
-		  showusername();
-		  //updateDatalist();
+		  ajaxcall("getusername",null);
 		  ajaxcall("paperdata",null);
 		  	
 		  sm = new StateMachine();
@@ -237,7 +236,6 @@ session_start();
 			     //console.log(xmlhttp.responseText);
 			     document.getElementById('deletepaper').value="";
 			     document.getElementById('paper').value="";
-				 //updateDatalist();
 			     ajaxcall("paperdata",null);
 			  }
 			 }
@@ -262,91 +260,22 @@ session_start();
 			 {
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 			  { 
-				  //updateDatalist();
 				  ajaxcall("paperdata",null);
-				  showusername();
+				  ajaxcall("getusername",null);
 			  }
 			 }
 			 xmlhttp.open("GET","php/logout.php",true);
 			 xmlhttp.send();
 		}
 
-
-		function login()
-		{	
-			var xmlhttp = new XMLHttpRequest();
-    					
-			var username=document.getElementById("loginusername").value;
-			var password=document.getElementById("loginpassword").value;
-			
-			xmlhttp.onreadystatechange=function()
-			 {
-			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
-			  { 
-				  //console.log(xmlhttp.responseText);
-				  if(xmlhttp.responseText == "failed")
-				  {
-					  document.getElementById('warningtext').innerHTML = "Your login data is incorrect ...";
-			  	  }
-				  else
-				  {
-					  //alert(xmlhttp.responseText);
-					  //updateDatalist();
-					  ajaxcall("paperdata",null);
-					  showusername();
-					  
-					  $('#login').slideUp('slow', function() {window.location.reload();});
-					  document.getElementById('warningtext').innerHTML = "";
-					  document.getElementById('paper').value = "";
-					  document.getElementById('deletepaper').value = "";
-					  document.getElementById('thelist').value = "";
-					  sm = new StateMachine();
-					  mindmap = new MindMap(document.getElementById("canvas"));
-					  mindmap.performState();
-					  
-				  } 
-				
-			  }
-			 }
-			 xmlhttp.open("GET","php/login.php?name="+username+"&pass="+password,true);
-			 xmlhttp.send(); 
-		}
-
-
-		function showusername()
-		{	
-			var xmlhttp = new XMLHttpRequest();
-    		
-			xmlhttp.onreadystatechange=function()
-			 {
-			  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
-			  { 
-				  document.getElementById('shownname').innerHTML =  xmlhttp.responseText ;
-				  				  
-				  if (xmlhttp.responseText=="guest")
-					  document.getElementById('loginbutton').innerHTML = "Login";
-				  else
-					  document.getElementById('loginbutton').innerHTML = "Logout";
-			  }
-			 }
-			 xmlhttp.open("GET","php/getuser.php",true);
-			 xmlhttp.send();
-		}
-
-
-
-
 		function ajaxcall(type, args)
 		{
-
-		
 			var xmlhttp = new XMLHttpRequest();
-
 			xmlhttp.onreadystatechange=function()
 			{
 				if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 				  { 
-						console.log(xmlhttp.responseText);
+						//console.log(xmlhttp.responseText);
 
 						switch(type)
 						{
@@ -373,8 +302,34 @@ session_start();
 				      							document.getElementById("startpage").value=paperMeta[7];
 				      							document.getElementById("lastpage").value=paperMeta[8];
 												break;
+							case "getusername":	document.getElementById('shownname').innerHTML =  xmlhttp.responseText ;
+			  				  					if (xmlhttp.responseText=="guest")
+								  					document.getElementById('loginbutton').innerHTML = "Login";
+							  					else
+								  					document.getElementById('loginbutton').innerHTML = "Logout";
+							  					break; 
+							case "login":		//console.log(xmlhttp.responseText);
+								  				if(xmlhttp.responseText == "failed")
+								  				{
+									  				document.getElementById('warningtext').innerHTML = "Your login data is incorrect ...";
+							  	  				}
+								  				else
+								  				{
+									  				//alert(xmlhttp.responseText);
+									  				ajaxcall("paperdata",null);
+									  				ajaxcall("getusername",null);									  
+									  				$('#login').slideUp('slow', function() {window.location.reload();});
+									  				document.getElementById('warningtext').innerHTML = "";
+									  				document.getElementById('paper').value = "";
+									  				document.getElementById('deletepaper').value = "";
+									  				document.getElementById('thelist').value = "";
+									  				sm = new StateMachine();
+									  				mindmap = new MindMap(document.getElementById("canvas"));
+									  				mindmap.performState();
+									  			}
+									  			break;  
 
-						}
+							}
 				  }
 			}
 
@@ -387,8 +342,9 @@ session_start();
 				}
 			}
 
-			xmlhttp.open("GET","php/ajax.php?type="+type+"&args[]="+args,true);
+			xmlhttp.open("GET","php/ajax.php?type="+type+"&args="+args,true);
 			xmlhttp.send();
+			
 		}
 		
 
