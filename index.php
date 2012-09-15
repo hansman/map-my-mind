@@ -85,36 +85,33 @@ session_start();
 				if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 				  { 
 						//console.log(xmlhttp.responseText);
-						switch(type)
+						var jsonResponse = eval( '(' + xmlhttp.responseText + ')' );
+							console.log(jsonResponse.meta.status);
+						
+						switch(jsonResponse.meta.engine)
 						{
-							case "paperdata":	$(".dlbib").text('');							  
-												jsonPapers = eval( '(' + xmlhttp.responseText + ')' );
+							case "paperdata":	$(".dlbib").text('');
 												var tag;			                 
-												for (var i=0; i<jsonPapers.length;i++) 
-												{ 
-													tag = '<option label="'+ jsonPapers[i].title +'" value="' + jsonPapers[i].author + '.  ' + jsonPapers[i].date + '.  ' + jsonPapers[i].title + '" />';
-													$(".dlbib").append(tag);
-												}
+												for (var i=0; i<jsonResponse.data.length;i++) 
+													$(".dlbib").append('<option label="'+ jsonResponse.data[i].title +'" value="' + jsonResponse.data[i].author + '.  ' + jsonResponse.data[i].date + '.  ' + jsonResponse.data[i].title + '" />');
 												break;
-							case "getdoi":      var paperMeta = eval( xmlhttp.responseText );
-				      							document.getElementById("author").value=paperMeta[0].replace(/,/g,' and');
-				      							$("#title").val(paperMeta[1]);
-				      							$("#date").val(paperMeta[2]);
-				      							$("#publisher").val(paperMeta[3]);
-				      							$("#month").val(paperMeta[4]);
-				      							$("#volume").val(paperMeta[5]);
-				      							$("#issue").val(paperMeta[6]);
-				      							$("#startpage").val(paperMeta[7]);
-				      							$("#lastpage").val(paperMeta[8]);
+							case "getdoi":      document.getElementById("author").value=jsonResponse.data[0].replace(/,/g,' and');
+				      							$("#title").val(jsonResponse.data[1]);
+				      							$("#date").val(jsonResponse.data[2]);
+				      							$("#publisher").val(jsonResponse.data[3]);
+				      							$("#month").val(jsonResponse.data[4]);
+				      							$("#volume").val(jsonResponse.data[5]);
+				      							$("#issue").val(jsonResponse.data[6]);
+				      							$("#startpage").val(jsonResponse.data[7]);
+				      							$("#lastpage").val(jsonResponse.data[8]);
 												break;
-							case "getusername":	document.getElementById('shownname').innerHTML =  xmlhttp.responseText ;
-			  				  					if (xmlhttp.responseText=="guest")
+							case "getusername":	$('#shownname').html(jsonResponse.data[0]) ;
+			  				  					if (jsonResponse.data[0]=="guest")
 								  					$('#loginbutton').text("Login");
 							  					else
 								  					$('#loginbutton').text("Logout");
 							  					break; 
-							case "login":		//console.log(xmlhttp.responseText);
-								  				if(xmlhttp.responseText == "Wrong login")
+							case "login":		if(jsonResponse.meta['status'] == "wrong login")
 								  				{
 									  				$('#warningtext').text("Your login data is incorrect ...");
 							  	  				}
@@ -142,8 +139,8 @@ session_start();
 												ajaxcall("paperdata",null);
 												ajaxcall("getusername",null);
 												break;
-							case "newpaper":	if (xmlhttp.responseText)
-				     	 							document.getElementById("newpaperwarning").innerHTML=xmlhttp.responseText;
+							case "newpaper":	if (jsonResponse.meta['status']!='passed')
+				     	 							$("#newpaperwarning").html(jsonResponse.meta['status']);
 												else
 												{
 													ajaxcall("paperdata",null);
@@ -151,7 +148,7 @@ session_start();
 												}				     							
 				     							break;
 							case "rmpaper":		$('#deletepaper').val("");
-						     					$('paper').val("");
+						     					$('#paper').val("");
 						     					ajaxcall("paperdata",null);
 						     					break;
 						    default:			alert("Problem selecting the ajax type in index.php");

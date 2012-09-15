@@ -6,9 +6,11 @@
 	{
 		private $usrn;
 		private $pswd;
+		private $meta;
 		
 		function __construct($a)
 		{
+			$this->meta['engine']='signup';
 			$this->connect();
 			$this->usern=trim($a[0]);
 			$this->pswd=trim($a[1]);
@@ -27,18 +29,25 @@
 			mysql_query($query);
 
 			if (!$result) 
+			{
+				$this->meta['status']='failed';
 	   			die ("Query Failed.");
+			}
 			else if (mysql_num_rows($result) == 0  )
 			{	
 				$query = "insert into accounts(username, pswd) values ('" . $this->usern . "', MD5('" . mysql_real_escape_string($this->pswd) . "'))";
-				mysql_query($query);
+				if(!mysql_query($query))
+					$this->meta['status']='failed';
 				
 				$query = "select `id` from accounts where username='" . $this->usern . "'";
 				$userid=mysql_query($query);
 				$userid = mysql_result($userid, 0, 'id');
 	
 				$query = "create table lit_". $userid ." like lit_testuser";
-				mysql_query($query);
+				if(!mysql_query($query))
+					$this->meta['status']='failed';
+				else
+					$this->meta['status']='passed';
 	
 				session_start();
     			if (!isset($_SESSION['activeuser']))
@@ -47,7 +56,9 @@
     				$_SESSION['activeID'] = $userid;
 			}
 			else    
-				echo "exists";
+				$this->meta['status']='exists';
+			
+			return $this->buildjson(null,$this->meta);
 		}	
 	}
 ?>

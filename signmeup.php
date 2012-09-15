@@ -100,9 +100,7 @@
 					  $("#repeatpassword").val("");
 					  $("#newpassword").val("");
 					  $("#newemail").val("");
-				  });
-
-		 
+				  });		 
 
 
 		function inputvalidation()
@@ -135,10 +133,12 @@
 		 	{
 		  		if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 		  		{
-			  //alert(xmlhttp.responseText);
-		   	  		if( xmlhttp.responseText == "exists")
+		  			var jsonResponse = eval( '(' + xmlhttp.responseText + ')' );
+						console.log(jsonResponse.meta.status);
+						
+		   	  		if( jsonResponse.meta['status'] == "exists")
 		   	  		{
-		   				$('#warningtext').html("This username is already gone.");
+		   				$('#warningtext').html("This username is already gone ...");
 			  		}  
 		   	  		else
 		   	  		{
@@ -147,12 +147,10 @@
 			  		}
 				  }
 		 	}
-		 	xmlhttp.open("GET","php/ajax.php?type=signup&args="+[newemail,password],true);
-		 	
+		 	xmlhttp.open("GET","php/ajax.php?type=signup&args="+[newemail,password],true);		 	
 		 	xmlhttp.send();
        	};
 
-    </script>
-	
+    </script>	
 </body>
 </html>

@@ -15,8 +15,12 @@
 		private $startpage;
 		private $lastpage;
 		
+		private $meta;
+		
 		function __construct($a)
 		{
+			$this->meta['engine']='newpaper';
+			
 			$this->connect();
 			$this->doi=trim($a[0]);
 			$this->author=trim($a[1]);
@@ -39,20 +43,32 @@
    
    			$query  = "select * from lit_". $this->userid ." where title='". $this->title ."'";
    			$result=mysql_query($query);
-   			if(mysql_num_rows($result))
+   			if(!$result)
    			{
-   				echo "This paper is already in the data base";
+   				$this->meta['status']='failed';
+   				die ("Query Failed.");
+   			}
+   			else if(mysql_num_rows($result))
+   			{
+   				$this->meta['status']="This paper is already in your data base";
    			}
    			else 
    			{   
      			$query  = "insert into lit_". $this->userid ."(doi, author, title, date, month, publisher, volume, issue, startpage, lastpage) values ('". $this->doi ."','". $this->author ."','". $this->title ."','". $this->date ."','". $this->month ."','". $this->publisher ."','". $this->volume ."','". $this->issue ."','". $this->startpage ."','". $this->lastpage  ."' );";
  
      			$result=mysql_query($query);
-     			if (!$result) die ("Query Failed.");
+     			if (!$result) 
+     			{
+     				$this->meta['status']='failed';
+     				die ("Query Failed.");
+     			}
+     			else
+     				$this->meta['status']='passed';
    			}
    			$query = "unlock table";
-   			mysql_query($query);	
-			
+   			mysql_query($query);
+
+   			return $this->buildjson(null,$this->meta);			
 		}
 	}
 

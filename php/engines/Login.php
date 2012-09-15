@@ -7,9 +7,11 @@ class Login extends EngineContainer
 	
 	private $pswd;
 	private $usrn;
+	private $meta;
 	
 	function __construct($a)
 	{
+		$this->meta['engine']='login';
 		$this->connect();
 		$this->usrn=$a[0];
 		$this->pswd=$a[1];
@@ -26,11 +28,15 @@ class Login extends EngineContainer
 		mysql_query($query);
 		
 		if (!$result)
+		{
 			die ("Query Failed.");
+			$this->meta['status']='failed';
+		}
 		else if (mysql_num_rows($result) == 0  )
-			echo "Wrong login";
+			$this->meta['status']='wrong login';
 		else
 		{
+			$this->meta['status']='passed';
 			session_start();
 			if(!isset($_SESSION['activeuser']))
 			{
@@ -38,6 +44,7 @@ class Login extends EngineContainer
 				$_SESSION['activeID'] = mysql_result($result, 0, 'id');
 			}
 		}
+		return $this->buildjson(null,$this->meta);
 	}
 }
 

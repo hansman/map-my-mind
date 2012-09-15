@@ -5,6 +5,7 @@
 	   protected $conn;	
 	   protected $userid;
 	   protected $usernm;
+	  
 	      
 	   function connect() 
 	   {	   	
@@ -29,6 +30,14 @@
    	   			$this->userid=$_SESSION['activeID'];
    	   		else
    	   			$this->userid="guest";
+   	   }
+   	   
+   	   
+   	   function buildjson($d,$m)
+   	   {
+   	   		$jsonobj['data']=$d;
+   	   		$jsonobj['meta']=$m;
+   	   		return json_encode($jsonobj);
    	   }
    	   
 	
