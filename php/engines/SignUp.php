@@ -30,7 +30,7 @@
 	   			die ("Query Failed.");
 			else if (mysql_num_rows($result) == 0  )
 			{	
-				$query = "insert into accounts(username, pswd) values ('" . $this->usern . "', MD5('" . $this->pswd . "'))";
+				$query = "insert into accounts(username, pswd) values ('" . $this->usern . "', MD5('" . mysql_real_escape_string($this->pswd) . "'))";
 				mysql_query($query);
 				
 				$query = "select `id` from accounts where username='" . $this->usern . "'";
