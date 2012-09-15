@@ -21,12 +21,15 @@ class NewPswd extends EngineContainer
 		$body =  "Your new password is:". $newpswd;
 				
 		$query = "update accounts set pswd=MD5('". mysql_real_escape_string($newpswd) ."') where username='". $this->address ."'";
+		$result=mysql_query($query);
+   			if (!$result) 
+   				die ("Query Failed.");
 		
 		
-		if ( mail($this->address,$header,$body) )
-			echo "Mail got sent to "+$this->address;
+		if ( mail( $this->address,$header,$body) )
+			echo "Mail got sent to ".$this->address;
 		else
-			echo "Mail failed "+$this->address;  
+			echo "Mail failed ".$this->address;  
 		
 	}
 	
@@ -39,11 +42,6 @@ class NewPswd extends EngineContainer
 			$randstring=$randstring . substr($chars,  rand() % strlen($chars),1 );
 		return $randstring;
 	}
-	
-	
 }
-
-
-
 
 ?>
