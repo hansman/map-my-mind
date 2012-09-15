@@ -53,16 +53,8 @@
 		function sendpswd()
 		{
 			 var email = document.getElementById('newemail').value;
-			 var xmlhttp;
-			 if (window.XMLHttpRequest)
-			  {
-			    xmlhttp=new XMLHttpRequest();
-			  }
-			 else
-			  {
-			    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-			  }
-			 xmlhttp.open("GET","php/sendpswd.php?email="+email,true);
+			 var xmlhttp=new XMLHttpRequest();			  
+			 xmlhttp.open("GET","php/ajax.php?type=sendpswd&args="+email,true);
 			 xmlhttp.send();
 		};
 
