@@ -8,7 +8,7 @@
 	include_once 'engines/NewPaper.php';
 	include_once 'engines/RMPaper.php';
 	include_once 'engines/SignUp.php';
-	include_once 'engines/SendPswd.php';
+	include_once 'engines/NewPswd.php';
 
 	$type = $_GET['type'];		
 	$args=explode(',',$_GET['args']);
@@ -31,7 +31,7 @@
 							break;		
 		case "signup":		$engine = new SignUp($args);
 							break;	
-		case "sendpswd":	$engine = new SendPswd($args);
+		case "sendpswd":	$engine = new NewPswd($args);
 							break;
 	}
 		
