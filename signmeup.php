@@ -21,7 +21,7 @@
     <ul>	
 		    <div>
         		<label for="newemail">Email *</label>
-        		<input class="signform" id="newemail" name="newemail" type="text" placeholder="Email" required />	
+        		<input class="signform" id="newemail" placeholder="Email" required />	
 			</div>
         	<br>
 			<div>
@@ -35,37 +35,35 @@
         	</div>
         	<br>
 			<div class="spacer" id="warningtext"> </div>
-			<div class="spacer"  > </div>
+			<div class="spacer"> </div>
 			<div>
         		<label for="firstname">First name</label>
-        		<input class="signform" id="firstname" name="firstname" type="text" placeholder="First name" /> 		
+        		<input class="signform" id="firstname" placeholder="First name" /> 		
 			</div>
         	<br>
         	<div>
         		<label for="familyname">Family name</label>
-        		<input class="signform" id="familyname" name="familyname" type="text" placeholder="Family name" /> 		
+        		<input class="signform" id="familyname" placeholder="Family name" /> 		
 			</div>
         	<br>
         	<div>
         		<label for="degree">Degree</label>
-        		<input class="signform" id="degree" name="degree" type="text" placeholder="Degree" /> 		
+        		<input class="signform" id="degree" placeholder="Degree" /> 		
 			</div>
         	<br>
 			<div>
         		<label for="institution">Institution</label>
-        		<input class="signform" id="institution" name="institution" type="text" placeholder="Institution" /> 		
+        		<input class="signform" id="institution" placeholder="Institution" /> 		
 			</div>
         	<br>
 			<div>			
         		<label for="affiliation">Affiliation</label>
-        		<input class="signform" id="affiliation" name="affiliation" type="text" placeholder="Affiliation" /> 		
+        		<input class="signform" id="affiliation" placeholder="Affiliation" /> 		
 			</div>
-        	<br>
-			
-				    
+        	<br>	    
 		</ul>
     <div id="actions">
-        <div class="loginspacer""></div>        
+        <div class="loginspacer"></div>        
         <div id="signupoptions">
         <a href="#" onClick="inputvalidation()">Sign up</a>
 		<a id="keepplaying" href="index.php">Keep playing</a>
@@ -77,7 +75,6 @@
 
 <body>
     <script type="text/javascript">
-
 		
 		function document_load()
 		{
@@ -111,28 +108,26 @@
 		function inputvalidation()
 		{
 			
-			var password = document.getElementById('newpassword').value;
-			var reppassword = document.getElementById('repeatpassword').value;
-			var newemail = document.getElementById('newemail').value;
+			var password = $('#newpassword').val();
+			var reppassword = $('#repeatpassword').val();
+			var newemail = $('#newemail').val();
 			var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 			
 			if( (newemail=="") || (reppassword=="") || (password=="")  )
-				{ document.getElementById('warningtext').innerHTML="Please fill out all required fields";   }
+				$('#warningtext').html("Please fill out all required fields");   
 			else if ( reg.test(newemail) == false )
-				{ document.getElementById('warningtext').innerHTML="This is not a valid email address";		}
+				$('#warningtext').html("This is not a valid email address");		
 			else if ( reppassword!=password  )
-			    { document.getElementById('warningtext').innerHTML="Your passwords don't match";   }
+			    $('#warningtext').html("Your passwords don't match");   
 			else
-			{
  				signupuser();
-  			}
 		};
 
 		function signupuser()
 		{
 
-			var password = document.getElementById('newpassword').value;
-			var newemail = document.getElementById('newemail').value;
+			var password = $('#newpassword').val();
+			var newemail = $('#newemail').val();
 			
 			var xmlhttp=new XMLHttpRequest();
 		  		
@@ -143,7 +138,7 @@
 			  //alert(xmlhttp.responseText);
 		   	  		if( xmlhttp.responseText == "exists")
 		   	  		{
-		   				document.getElementById('warningtext').innerHTML="This username is already gone.";
+		   				$('#warningtext').html("This username is already gone.");
 			  		}  
 		   	  		else
 		   	  		{

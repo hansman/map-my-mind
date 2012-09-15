@@ -52,7 +52,7 @@
 
 		function sendpswd()
 		{
-			 var email = document.getElementById('newemail').value;
+			 var email = $('#newemail').val();
 			 var xmlhttp=new XMLHttpRequest();			  
 			 xmlhttp.open("GET","php/ajax.php?type=sendpswd&args="+email,true);
 			 xmlhttp.send();

@@ -1,3 +1,7 @@
+head {
+	margin: 0;
+} 
+
 #nav {
 	position: absolute;
 	top: 0%;
@@ -8,18 +12,18 @@
 	border-bottom: 1px solid #D9D9D9;  
 	border-top: 1px solid #D9D9D9;
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-	}
+}
 	
 #nav ul {
 	margin: 0;
-	}
+}
 	
 #nav li {
 	margin-right: 1%;
 	float: right; 
 	font-size: 16px;
 	list-style-type: none;		
-	}
+}
 	
 #nav li a {
 	display: block;
@@ -28,27 +32,26 @@
 	text-decoration: none;
 	color: #999999;
 	outline: 0;
-	}
+}
 
 #nav li a:hover {
 	color: #FFFFFF;
-	background-color: #222222; 
-	}
+}
 
 #nav #logo {
 	position: relative;
 	margin-left: 0%;
 	padding: 0; 
 	float: left;
-	}
+}
 	
-#nav #username {
+#nav #shownname {
 	position: absolute;
-	margin-left: 45%;
+	margin-left: 35%;
 	margin-top: 8px;
 	color: #999999;
 	font-style: italic;
-	}
+}
 	
 #nav #name {
 	margin-top: 4px;  	
@@ -56,7 +59,7 @@
 	color: orange;
 	letter-spacing: -.06em;
 	text-rendering: optimizeLegibility; 
-	}
+}
    
 .slidedowns { 	
 	position: relative;
@@ -74,25 +77,24 @@
 	border-bottom: 1px solid #D9D9D9; 
 	border-left: 1px solid #D9D9D9; 
 	border-right: 1px solid #D9D9D9;    
-   }  
+}  
 
 .slidedowns input {
 	width: 220px;
 	margin-left: 30px;
 	padding: 0;
-   } 
+} 
 
 .slidedowns span:hover {
 	color: #FFFFFF;
 	cursor:pointer;
-   } 
+} 
 
 .slidedowns .slidespacer {
 	height: 20px;
-   } 
+} 
    
-.slidedowns #warningtext 
-{
+.slidedowns #warningtext{
 	color: red;
 	margin-left:30px;
 	font-size: 12px;
@@ -109,149 +111,12 @@
 
 .slidedowns #loginoptions a:hover{
 	color: #FFFFFF;
-	background-color: #222222;
 }
 
 .slidedowns #loginoptions #submitlogin{
 	font-size: 18px;
 }
-
-#newpaperform { 	
-	position: relative;
-    display: block;
-	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-   } 
-
-#newpaperform #doilabel {
-	float:left;
-	margin-left: 40px;
-	margin-right: 60px;
-}
-
-#newpaperform #doifield {
-	
-}
-
-#newpaperform ul label {
-	vertical-align: middle;
-	float:left;
-}
-
-#newpaperform ul input{
-	vertical-align: middle;
-	float: right;
-	margin-right:20px;
-	margin-top:0px;
-	width: 820px;
-	} 
-	
-#newpaperform div{
-	padding-top: 4px;
-	padding-bottom: 4px;
-	} 
-	
-	
-#newpaperform #newpaperwarning{
-	color: red;
-	margin-left:60px;
-	font-size: 12px;
-}	
-	
-article .buttons{
-	float: right;
-	margin-right:20px;
-	color: #444444;
-	background-color: #FFFFFF;
-	border: 2px solid #D9D9D9; 
-	border-radius: 5px;
-	} 
-	
-article .buttons:hover{
-	cursor:pointer;
-	border: 2px solid orange; 
-	} 
-	
-article textarea
-{
-   resize: none;
-   background-color: #FFFFFF;
-   border-radius: 3px;
-   border: 1px solid #D9D9D9;  
-}
-
-	
-	
-#newpaperform .clear{clear:both;}  
-
-
-#userform { 	
-	position: relative;
-    display: block;
-    top: 90px;
-	background-color: #292929;
-	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-	width:550px;
-	margin-top: 0;
-	margin-left: auto;
-	margin-right: auto; 
-	border-radius: 15px;
-	border: 1px solid #D9D9D9;    
-	
-   } 
-   
-#userform div{
-	padding-top: 4px;
-	padding-bottom: 4px;
-	}   
-   
-   
-#userform label{
-    vertical-align: middle;
-	float:left;
-	color: #999999; 
-	}
-	
-#userform input{
-	vertical-align: middle;
-	float: right;
-	margin-right:20px;
-	margin-top:0px;
-	color: #BBBBBB; 
-	width: 320px;
-	} 
-	
-
-#userform .spacer{
-	height:12px;
-	display: block;
-	position: relative;
-	} 
-	
-#userform .clear{clear:both;}   
-   
-#userform #signupoptions a {
-	margin-left:50px;
-	margin-top:8px;
-	text-decoration: none;
-	color: #999999;
-	outline: 0;
-	font-size:18px;	
-}
-
-#userform #signupoptions a:hover{
-	color: #FFFFFF;
-}
-
-#userform #warningtext {
-	color: red;
-	margin-left:170px;
-	font-size: 12px;
-}
- 
-head {
-	margin: 0;
-}   
-   
+  
 canvas { 	
     display: block;
     margin-top: 60px;
@@ -259,8 +124,7 @@ canvas {
 	margin-right: auto;
 	border: 1px solid #D9D9D9;
 	outline: 0; 
-	
-   }  
+}  
    
 article {
 	display: block;
@@ -291,15 +155,133 @@ article h3 a {
 article fieldset {
 	border-radius: 5px;
 }
-   
-.button {
-	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	
+article .buttons{
+	float: right;
+	margin-right:20px;
+	color: #444444;
+	background-color: #FFFFFF;
+	border: 2px solid #D9D9D9; 
+	border-radius: 5px;
+	text-decoration: none;
+} 
+	
+article .buttons:hover{
+	cursor:pointer;
+	border: 2px solid orange; 
+} 
+	
+article textarea{
+   resize: none;
+   background-color: #FFFFFF;
+   border-radius: 3px;
+   border: 1px solid #D9D9D9;  
+}
+	
+#newpaperform { 	
+	position: relative;
     display: block;
-	margin-left: auto;
-	margin-right: auto; 
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+} 
+
+#newpaperform #doilabel {
+	float:left;
+	margin-left: 40px;
+	margin-right: 60px;
 }
 
-.form {
+#newpaperform ul label {
+	vertical-align: middle;
+	float:left;
+}
+
+#newpaperform ul input{
+	vertical-align: middle;
+	float: right;
+	margin-right:20px;
+	margin-top:0px;
+	width: 820px;
+} 
+	
+#newpaperform div{
+	padding-top: 4px;
+	padding-bottom: 4px;
+} 
+	
+#newpaperform #newpaperwarning{
+	color: red;
+	margin-left:60px;
+	font-size: 12px;
+}
+	
+#newpaperform .clear{
+	clear:both;
+}  
+
+#userform { 	
+	position: relative;
+    display: block;
+    top: 90px;
+	background-color: #292929;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	width:550px;
+	margin-top: 0;
+	margin-left: auto;
+	margin-right: auto; 
+	border-radius: 15px;
+	border: 1px solid #D9D9D9;    
+} 
+   
+#userform div{
+	padding-top: 4px;
+	padding-bottom: 4px;
+}   
+   
+#userform label{
+    vertical-align: middle;
+	float:left;
+	color: #999999; 
+}
+	
+#userform input{
+	vertical-align: middle;
+	float: right;
+	margin-right:20px;
+	margin-top:0px;
+	color: #BBBBBB; 
+	width: 320px;
+} 
+
+#userform .spacer{
+	height:12px;
+	display: block;
+	position: relative;
+} 
+	
+#userform .clear{
+	clear:both;
+}   
+   
+#userform #signupoptions a {
+	margin-left:50px;
+	margin-top:8px;
+	text-decoration: none;
+	color: #999999;
+	outline: 0;
+	font-size:18px;	
+}
+
+#userform #signupoptions a:hover{
+	color: #FFFFFF;
+}
+
+#userform #warningtext {
+	color: red;
+	margin-left:170px;
+	font-size: 12px;
+}
+
+.full-length-elem {
 	display: block;
 	width:1000px;
 	margin-left: auto;
@@ -309,12 +291,4 @@ article fieldset {
 .refform {
 	width:700px; 
 }
-   
-footer { 	
-    font-family: 'DMfonts'; 
- 	color: #444; 
- 	font-size: 0.6em;
-	position: relative;
-    right: 2%;
-    bottom: 2%; 
-   }
+
