@@ -13,7 +13,6 @@ session_start();
 	<link href="css/dm.css" rel="stylesheet" />	
 	<script src="js/painter.js"></script>	
 	<script src="js/jquery-1.7.2.min.js"></script>
-	<script src="js/jquery-ui-1.8.21.custom.min.js"></script>
 	<script src="js/handlers.js"></script>
 	
 	<div id="nav">
@@ -65,12 +64,14 @@ session_start();
 		var mindmap = null;
 		var sm = null;
 		var jsonPapers = null;
+		var authors=0;
 								
 		function document_load()
 		{		
 		  ajaxcall("getusername",null);
 		  ajaxcall("paperdata",null);
-		  handlers();		  	
+		  handlers();
+		  $(".bodies").hide();	  	
 		  sm = new StateMachine();
 		  mindmap = new MindMap(document.getElementById("canvas"));
 		  mindmap.performState();
@@ -84,14 +85,10 @@ session_start();
 			{
 				if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
 				  { 
-						//console.log(xmlhttp.responseText);
-						var jsonResponse = eval( '(' + xmlhttp.responseText + ')' );
-							console.log(jsonResponse.meta.status);
-						
+						var jsonResponse = eval( '(' + xmlhttp.responseText + ')' );						
 						switch(jsonResponse.meta.engine)
 						{
-							case "paperdata":	$(".dlbib").text('');
-												var tag;			                 
+							case "paperdata":	$(".dlbib").text('');			                 
 												for (var i=0; i<jsonResponse.data.length;i++) 
 													$(".dlbib").append('<option label="'+ jsonResponse.data[i].title +'" value="' + jsonResponse.data[i].author + '.  ' + jsonResponse.data[i].date + '.  ' + jsonResponse.data[i].title + '" />');
 												break;
@@ -169,57 +166,51 @@ session_start();
 			xmlhttp.send();
 			
 		}
-				
-		$(function() {
-			$( "#accordion" ).accordion({
-				autoHeight: false,
-				navigation: true
-			});
-		});
-		
-		$(function() {
-			$( "#accordionResizer" ).resizable({
-				minHeight: 140,
-				resize: function() {
-					$( "#accordion" ).accordion( "resize" );
-				}
-			});
-		}); 
+
+		function addauthors()
+		{		
+		  if(!authors)
+			  $('#theauthors').html('');
+		  $('#theauthors').append("<div class='authorrows'><input id='authorf"+authors+"' class='authorsform' placeholder='First name' /><input id='authorl"+authors+1+"' class='authorsform' placeholder='Last name' /><input id='authorf"+authors+2+"' class='authorsform' placeholder='First name' /><input id='authorf"+authors+3+"' class='authorsform' placeholder='First name' /></div><br><div class='authorrows'><input id='authorl"+authors+"' class='authorsform' placeholder='Last name' /><input id='authorl"+authors+1+"' class='authorsform' placeholder='Last name' /><input id='authorl"+authors+2+"' class='authorsform' placeholder='Last name' /><input id='authorl"+authors+3+"' class='authorsform' placeholder='Last name' /></div><br>");
+		  authors+=4;
+		}		
 					
 	</script>    
 </head>
 
 <body id="thebody" onload="document_load()">
   
-  <canvas id="canvas" width="1000" height= "400" tabindex="0"></canvas>
-  
+  <canvas id="canvas" width="1000" height= "400" tabindex="0"></canvas>  
   <input class="full-length-elem" id="paper" autocomplete list="bibliothek" placeholder="please select from your library here ..." />
   <p>  
   <article>  
-  <div id="accordionResizer" style="width:1000px;" class="ui-widget-content">
-  <div id="accordion" class="accordion">  
-  
-  <h3><a>Bibliography</a></h3>
   <div>
-    <textarea readonly rows="10" id="thelist" class="full-length-elem">
+  
+  <div class="panel">
+   <a id="bibHeader" class="headers">Bibliography</a>
+   <div class="bodies">
+    <textarea readonly rows="10" id="thelist" class="semi-length-elem">
       Your bibliography will be generated here once you got something on your mind ...
-    </textarea>     
+    </textarea>   
+   </div>
   </div>
   
-  <h3 id="addlibrary" ><a>Add To Library</a></h3>
-	
-  <form id="newpaperform">
-	<fieldset>
+  <div class="panel">
+   	<a id="addlibrary" class="headers">Add To Library</a>	
+   	<form id="newpaperform" class="bodies">
+   	<fieldset class="semi-length-elem">
       	<label id="doilabel" for="doifield">DOI</label>
       	<input class="refform" id="doifield" placeholder="Enter doi, i.e. 'http://dx.doi.org/10.1023/A:1015460304860' OR '10.1023/A:1015460304860' OR '___.org/10.1023/A:1015460304860' " />
       	<input id="getpaperbtn" class="buttons" type="button" value="Get Paper" onclick="ajaxcall('getdoi',$('#doifield').val());" />
 			
 		<ul>	
-		    <div>
-        		<label for="author">Author *</label>
-        		<input id="author" class="npform" placeholder="Set the author names ..." />	
+		    <div id='authors'>
+		    <label for="theauthors">Authors *</label>
+		      <div id="theauthors">
+		      
+        	  </div>       	  
+        	  <span id="moreauthors" >more</span>     	  
 			</div>
-        	<br>
 			<div>
         		<label for="title">Title *</label>
         		<input id="title" class="npform" placeholder="Set the title ..." />  
@@ -265,12 +256,15 @@ session_start();
 		<input class="buttons" type="button" value="Submit" onclick="ajaxcall('newpaper',[$('#doifield').val(),$('#author').val(),$('#title').val(),$('#publisher').val(),$('#date').val(),$('#month').val(),$('#volume').val(),$('#issue').val(),$('#startpage').val(),$('#lastpage').val() ])" />
 	</fieldset>
   </form>
+  </div>
   	
-  <h3><a>Remove From Library</a></h3>
-  <div>
-   	<input class="full-length-elem" id="deletepaper" list="bibliothek" placeholder="Please select which entry to delete from your library ..." />  
-   	<datalist id="bibliothek" class="dlbib"></datalist>
-   	<input class="buttons" type="button" value="Remove" onclick="ajaxcall('rmpaper',document.getElementById('deletepaper').value.split('.  ')[2])" /> 
+  <div class="panel"><a id="removHeader" class="headers">Remove From Library</a>
+   <div class="bodies">
+   	<input class="semi-length-elem" id="deletepaper" list="bibliothek" placeholder="Please select which entry to delete from your library ..." />  
+   	<input class="buttons" type="button" value="Remove" onclick="ajaxcall('rmpaper',document.getElementById('deletepaper').value.split('.  ')[2])" />
+   	<datalist id="bibliothek" class="dlbib"></datalist> 
+   	<br/>
+   </div>
   </div>
    
  </div>

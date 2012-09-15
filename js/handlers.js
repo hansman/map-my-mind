@@ -6,6 +6,21 @@ function handlers()
 		        linkLocation = this.href;
 		        $("body").fadeOut(1000, redirectPage);     
 			});
+			
+			$("#moreauthors").click(function(){
+		        addauthors();     
+			});
+			
+			$('.headers').click(function() {
+				if( $(this).attr('id') == $('#addlibrary').attr('id')   )
+					{
+						authors=0;
+						addauthors();   
+					}
+				
+				  $(this).siblings('.bodies').toggle('fast', function() {
+				  });
+				});
 		  
 			$('#loginbutton').click(function() {
 			  if($('#loginbutton').text() == "Login")
