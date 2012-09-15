@@ -40,7 +40,7 @@ session_start();
         <div class="slidespacer" id="warningtext"></div>        
         <div id="loginoptions">
         	<a href="#" id="submitlogin" onclick="ajaxcall('login',[$('#loginusername').val(),$('#loginpassword').val()])">Log in</a>
-        	<a href="signup.php" id="signup">Sign up</a>
+        	<a href="signmeup.php" id="signup">Sign up</a>
 			<a href="forgotpswd.php">Forgot password</a>
 			<a href="#">Manage account</a>
 			<a id="closelogin" href="#">Close</a>

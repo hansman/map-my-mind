@@ -125,46 +125,37 @@
 			else
 			{
  				signupuser();
-   
-			}
+  			}
 		};
 
 		function signupuser()
 		{
 
 			var password = document.getElementById('newpassword').value;
-			var reppassword = document.getElementById('repeatpassword').value;
 			var newemail = document.getElementById('newemail').value;
 			
-			var xmlhttp;
-		
-		 if (window.XMLHttpRequest)
-		  {
-		    xmlhttp=new XMLHttpRequest();
-		  }
-		 else
-		  {
-		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-		  }
-		
-		 xmlhttp.onreadystatechange=function()
-		 {
-		  if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
-		  {
+			var xmlhttp=new XMLHttpRequest();
+		  		
+		 	xmlhttp.onreadystatechange=function()
+		 	{
+		  		if (xmlhttp.readyState==4 && xmlhttp.status==200 )				  
+		  		{
 			  //alert(xmlhttp.responseText);
-		   	  if( xmlhttp.responseText == "exists")
-		   	  {
-		   		document.getElementById('warningtext').innerHTML="This username is already gone.";
-			  }  
-		   	  else
-		   	  {
-		   	   console.log( "signedup" );
-		   	   location.href="index.php";
-			  }		  }
-		 }
-		 xmlhttp.open("GET","php/newuser.php?email="+newemail+"&pass="+password,true);
-		 xmlhttp.send();
-       };
+		   	  		if( xmlhttp.responseText == "exists")
+		   	  		{
+		   				document.getElementById('warningtext').innerHTML="This username is already gone.";
+			  		}  
+		   	  		else
+		   	  		{
+		   	   			console.log( "signedup" );
+		   	   			location.href="index.php";
+			  		}
+				  }
+		 	}
+		 	xmlhttp.open("GET","php/ajax.php?type=signup&args="+[newemail,password],true);
+		 	
+		 	xmlhttp.send();
+       	};
 
     </script>
 	

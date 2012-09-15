@@ -7,6 +7,7 @@
 	include_once 'engines/Logout.php';
 	include_once 'engines/NewPaper.php';
 	include_once 'engines/RMPaper.php';
+	include_once 'engines/SignUp.php';
 
 	$type = $_GET['type'];		
 	$args=explode(',',$_GET['args']);
@@ -26,7 +27,9 @@
 		case "newpaper":	$engine = new NewPaper($args);
 							break;
 		case "rmpaper":		$engine = new RMPaper($args);
-							break;			
+							break;		
+		case "signup":		$engine = new SignUp($args);
+							break;	
 	}
 
 	

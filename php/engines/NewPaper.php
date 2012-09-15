@@ -54,10 +54,6 @@
    			mysql_query($query);	
 			
 		}
-		
-		
 	}
-
-
 
 ?>
