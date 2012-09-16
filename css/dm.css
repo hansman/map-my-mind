@@ -209,11 +209,12 @@ article textarea{
 }
 
 #newpaperform .authorrows{
-	margin-left:87px;
+	margin-left:86px;
 }
 
 #newpaperform span {
-	margin-left:87px;
+	float: right;
+	margin-right: 42px;
 	margin-bottom:0px;
 	text-decoration: none;
 	color: #999999;

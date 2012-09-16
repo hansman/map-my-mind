@@ -340,7 +340,7 @@ MindMap.prototype.performState = function()
     						  if( !this.checkNames( document.getElementById("paper").value ) )
     						  {      							  
     							  var tempPoint = new Point(this.mousePosition.x - this.livew/2 , this.mousePosition.y - this.liveh/2 );
-    							  this.refs.push(new Ref(tempPoint, document.getElementById("paper").value, this));
+    							  this.refs.push(new Ref(tempPoint, $("#paper").val(), this));
     							  document.getElementById("paper").value="";
     							  this.literaturelist();
     						  }
@@ -618,6 +618,7 @@ MindMap.prototype.mouseMove = function(e)
     		  if (this.refs[j].node[i].frame.contains(this.mousePosition))
     		  {  
     		    this.refs[j].node[i].sel=true;
+    		    
     		    flag=true;
     		  }
     		  else
@@ -716,16 +717,10 @@ MindMap.prototype.roundedRect = function(x,y,w,h,r, text )
 	if(text)
 	{
  	  var textsize=w/15;
-	  var temp = text.split(",")[0];
-	  var etal="";
-	  if(temp[1])
-	  {
-  		 etal = " et al.";
-	  }
-	  
-	  var author = temp.split(".")[0] + "." + temp.split(".")[1] + etal;
-	  var year = text.split(".  ")[1];
-	  var title = text.split(".  ")[2];
+	  	  
+	  var author = text.split(". ")[0];
+	  var year = text.split(". ")[1];
+	  var title = text.split(". ")[2];
 	
 	  this.ctxt.fillStyle = "blue";
 	  this.ctxt.font = "italic "+textsize+"pt Arial";
@@ -798,7 +793,16 @@ MindMap.prototype.literaturelist = function()
 	{   
 		if( (j=this.getPaperIndex(this.refs[i].title.split(".  ")[2]) ) >=0 )
 		{
-			  string += jsonPapers[j].author + ", " +  jsonPapers[j].title + ", ";
+			  for(var k in jsonPapers[j].author.split(','))
+			  {				  
+				  if(k%2)
+					  string += jsonPapers[j].author.split(',')[k]+', ';
+				  else
+					  if(jsonPapers[j].author.split(',')[k])
+						  string += jsonPapers[j].author.split(',')[k]+' ';
+			  }
+			
+			  string += jsonPapers[j].title + ", ";
 			  if(jsonPapers[j].publisher)
 				string += jsonPapers[j].publisher + ", ";
 			  if(jsonPapers[j].month != 0)
@@ -811,11 +815,11 @@ MindMap.prototype.literaturelist = function()
 			  if( jsonPapers[j].doi )
 				string += "doi:" + jsonPapers[j].doi;
 			  
-			  
 			  string += "\n";
 		}
 	}
 	document.getElementById("thelist").value = string;
+	console.log(string);
 };
 
 MindMap.prototype.getPaperIndex = function(title)

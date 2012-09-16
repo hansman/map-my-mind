@@ -40,34 +40,26 @@
 				$xml = new SimpleXMLElement( $response );
 				curl_close ($ch);			 
 			
-			//print $xml->asXML();
-			
+				//print $xml->asXML();			
 				$title=$xml->xpath('//title');
 				$publisher=$xml->xpath('//full_title');
 				$year=$xml->xpath('//year');
-				$authorslastnames=$xml->xpath('//surname');
-				$authorsfirstnames=$xml->xpath('//given_name');
 				$month=$xml->xpath('//month');
 				$volume=$xml->xpath('//volume');
 				$issue=$xml->xpath('//issue');
 				$startpage=$xml->xpath('//first_page');
 				$lastpage=$xml->xpath('//last_page');
-				$author="";
-				
-				for( $i=0; $i < sizeof($authorsfirstnames)-1 ; $i++  )
-					$author = $author . substr($authorsfirstnames[$i],0,1) . ". " . $authorslastnames[$i] . ", ";
 					
-				$author = $author . " " . substr($authorsfirstnames[sizeof($authorsfirstnames)-1],0,1) . ". " . $authorslastnames[sizeof($authorsfirstnames)-1];
-					
-				$data[]=$author;
-				$data[]=$title[0].implode();
-				$data[]=$year[0].implode();
-				$data[]=$publisher[0].implode();
-				$data[]=$month[0].implode();
-				$data[]=$volume[0].implode();
-				$data[]=$issue[0].implode();
-				$data[]=$startpage[0].implode();
-				$data[]=$lastpage[0].implode();
+				$data[]=$xml->xpath('//surname');
+				$data[]=$xml->xpath('//given_name');
+				$data[]=$title[0];
+				$data[]=$year[0];
+				$data[]=$publisher[0];
+				$data[]=$month[0];
+				$data[]=$volume[0];
+				$data[]=$issue[0];
+				$data[]=$startpage[0];
+				$data[]=$lastpage[0];				
 				
 			}
 			else

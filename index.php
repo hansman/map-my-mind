@@ -11,8 +11,8 @@ session_start();
 	<title>MapMyMind</title>
 	
 	<link href="css/dm.css" rel="stylesheet" />	
-	<script src="js/painter.js"></script>	
 	<script src="js/jquery-1.7.2.min.js"></script>
+	<script src="js/painter.js"></script>		
 	<script src="js/handlers.js"></script>
 	
 	<div id="nav">
@@ -71,7 +71,8 @@ session_start();
 		  ajaxcall("getusername",null);
 		  ajaxcall("paperdata",null);
 		  handlers();
-		  $(".bodies").hide();	  	
+		  $(".bodies").hide();
+		  $("#thelist").val('');	  	
 		  sm = new StateMachine();
 		  mindmap = new MindMap(document.getElementById("canvas"));
 		  mindmap.performState();
@@ -88,20 +89,27 @@ session_start();
 						var jsonResponse = eval( '(' + xmlhttp.responseText + ')' );						
 						switch(jsonResponse.meta.engine)
 						{
-							case "paperdata":	$(".dlbib").text('');			                 
+							case "paperdata":	$(".dlbib").text('');	
+												jsonPapers=jsonResponse.data;                 
 												for (var i=0; i<jsonResponse.data.length;i++) 
-													$(".dlbib").append('<option label="'+ jsonResponse.data[i].title +'" value="' + jsonResponse.data[i].author + '.  ' + jsonResponse.data[i].date + '.  ' + jsonResponse.data[i].title + '" />');
+													$(".dlbib").append('<option label="'+ jsonResponse.data[i].title +'" value="' + jsonResponse.data[i].author.split(",")[1] + '.  ' + jsonResponse.data[i].date + '.  ' + jsonResponse.data[i].title + '" />');
 												break;
-							case "getdoi":      document.getElementById("author").value=jsonResponse.data[0].replace(/,/g,' and');
-				      							$("#title").val(jsonResponse.data[1]);
-				      							$("#date").val(jsonResponse.data[2]);
-				      							$("#publisher").val(jsonResponse.data[3]);
-				      							$("#month").val(jsonResponse.data[4]);
-				      							$("#volume").val(jsonResponse.data[5]);
-				      							$("#issue").val(jsonResponse.data[6]);
-				      							$("#startpage").val(jsonResponse.data[7]);
-				      							$("#lastpage").val(jsonResponse.data[8]);
-												break;
+							case "getdoi":      while(jsonResponse.data[0].length > authors)
+													addauthors();
+												for(var key in jsonResponse.data[0])
+  													$("#authorl"+key).val(jsonResponse.data[0][key][0]);
+  												for(var key in jsonResponse.data[1])
+  													$("#authorf"+key).val(jsonResponse.data[1][key][0]);					      							
+											    $("#title").val(jsonResponse.data[2][0]);
+				      							$("#date").val(jsonResponse.data[3][0]);
+				      							$("#publisher").val(jsonResponse.data[4][0]);
+				      							$("#month").val(jsonResponse.data[5][0]);
+				      							$("#volume").val(jsonResponse.data[6][0]);
+				      							$("#issue").val(jsonResponse.data[7][0]);
+				      							$("#startpage").val(jsonResponse.data[8][0]);
+				      							$("#lastpage").val(jsonResponse.data[9][0]);
+				      							break;
+				      							
 							case "getusername":	$('#shownname').html(jsonResponse.data[0]) ;
 			  				  					if (jsonResponse.data[0]=="guest")
 								  					$('#loginbutton').text("Login");
@@ -142,6 +150,7 @@ session_start();
 												{
 													ajaxcall("paperdata",null);
 													$(".npform").val('');
+													$(".authorsform").val('');
 												}				     							
 				     							break;
 							case "rmpaper":		$('#deletepaper').val("");
@@ -155,11 +164,9 @@ session_start();
 
 			if(type=="getdoi")
 			{
-				var args = args.split(".org/");
+				args = args.split(".org/");
 				if (args[1])
-				{
 					args=args[1];
-				}
 			}
 
 			xmlhttp.open("GET","php/ajax.php?type="+type+"&args="+args,true);
@@ -167,11 +174,28 @@ session_start();
 			
 		}
 
+
+		function newpaper()
+		{
+			if( $('#title').val() && $('#date').val() &&  $('#authorl0').val()  )
+			{
+				var args=[$('#doifield').val(),$('#title').val(),$('#publisher').val(),$('#date').val(),$('#month').val(),$('#volume').val(),$('#issue').val(),$('#startpage').val(),$('#lastpage').val() ];
+				for( var i=0;$('#authorl'+i).val(); i++ )
+				{
+					args.push($('#authorf'+i).val());
+					args.push($('#authorl'+i).val());
+				}				
+				ajaxcall('newpaper',args);
+			}
+			else
+				$("#newpaperwarning").html("Please fill out all required fields");
+		}
+
 		function addauthors()
 		{		
 		  if(!authors)
 			  $('#theauthors').html('');
-		  $('#theauthors').append("<div class='authorrows'><input id='authorf"+authors+"' class='authorsform' placeholder='First name' /><input id='authorl"+authors+1+"' class='authorsform' placeholder='Last name' /><input id='authorf"+authors+2+"' class='authorsform' placeholder='First name' /><input id='authorf"+authors+3+"' class='authorsform' placeholder='First name' /></div><br><div class='authorrows'><input id='authorl"+authors+"' class='authorsform' placeholder='Last name' /><input id='authorl"+authors+1+"' class='authorsform' placeholder='Last name' /><input id='authorl"+authors+2+"' class='authorsform' placeholder='Last name' /><input id='authorl"+authors+3+"' class='authorsform' placeholder='Last name' /></div><br>");
+		  $('#theauthors').append("<div class='authorrows'><input id='authorf"+authors+"' class='authorsform' placeholder='First name' /><input id='authorf"+(authors+1)+"' class='authorsform' placeholder='First name' /><input id='authorf"+(authors+2)+"' class='authorsform' placeholder='First name' /><input id='authorf"+(authors+3)+"' class='authorsform' placeholder='First name' /></div><br><div class='authorrows'><input id='authorl"+authors+"' class='authorsform' placeholder='Last name' /><input id='authorl"+(authors+1)+"' class='authorsform' placeholder='Last name' /><input id='authorl"+(authors+2)+"' class='authorsform' placeholder='Last name' /><input id='authorl"+(authors+3)+"' class='authorsform' placeholder='Last name' /></div><br>");
 		  authors+=4;
 		}		
 					
@@ -200,7 +224,7 @@ session_start();
    	<form id="newpaperform" class="bodies">
    	<fieldset class="semi-length-elem">
       	<label id="doilabel" for="doifield">DOI</label>
-      	<input class="refform" id="doifield" placeholder="Enter doi, i.e. 'http://dx.doi.org/10.1023/A:1015460304860' OR '10.1023/A:1015460304860' OR '___.org/10.1023/A:1015460304860' " />
+      	<input class="refform" id="doifield" placeholder="Enter doi number or url" />
       	<input id="getpaperbtn" class="buttons" type="button" value="Get Paper" onclick="ajaxcall('getdoi',$('#doifield').val());" />
 			
 		<ul>	
@@ -209,51 +233,52 @@ session_start();
 		      <div id="theauthors">
 		      
         	  </div>       	  
-        	  <span id="moreauthors" >more</span>     	  
+        	  <span id="moreauthors" >more</span>  
+        	  <br>  	  
 			</div>
 			<div>
         		<label for="title">Title *</label>
-        		<input id="title" class="npform" placeholder="Set the title ..." />  
+        		<input id="title" class="npform" placeholder="Set the title" />  
         	</div>
         	<br>
 			<div>
         		<label for="date">Year *</label>
-        		<input id="date" class="npform" placeholder="Set the year ..." /> 	 		
+        		<input id="date" class="npform" placeholder="Set the year" /> 	 		
 			</div>
         	<br>
 			<div>
         		<label for="month">Month</label>
-        		<input id="month" class="npform" placeholder="Set the month ..." /> 			
+        		<input id="month" class="npform" placeholder="Set the month" /> 			
 			</div>
         	<br>
 			<div>
         		<label for="publisher">Publisher</label>
-        		<input id="publisher" class="npform" placeholder="Set the publisher ..." />
+        		<input id="publisher" class="npform" placeholder="Set the publisher" />
 			</div>
         	<br>
 			<div>
         		<label for="volume">Volume</label>
-        		<input id="volume" class="npform" placeholder="Set the volume ..." />
+        		<input id="volume" class="npform" placeholder="Set the volume" />
 			</div>
         	<br>
 			<div>
         		<label for="issue">Issue</label>
-        		<input id="issue" class="npform" placeholder="Set the issue ..." />
+        		<input id="issue" class="npform" placeholder="Set the issue" />
 			</div>
         	<br>
 			<div>
         		<label for="startpage">Start page</label>
-        		<input id="startpage" class="npform" placeholder="Set the start page ..." />
+        		<input id="startpage" class="npform" placeholder="Set the start page" />
 			</div>
         	<br>
 			<div>
         		<label for="lastpage">End page</label>
-        		<input id="lastpage" class="npform" placeholder="Set the end page ..." />
+        		<input id="lastpage" class="npform" placeholder="Set the end page" />
 			</div>				    
 		</ul>
 		<br>
 		<span id="newpaperwarning">  </span>
-		<input class="buttons" type="button" value="Submit" onclick="ajaxcall('newpaper',[$('#doifield').val(),$('#author').val(),$('#title').val(),$('#publisher').val(),$('#date').val(),$('#month').val(),$('#volume').val(),$('#issue').val(),$('#startpage').val(),$('#lastpage').val() ])" />
+		<input class="buttons" type="button" value="Submit" onclick="newpaper()" />
 	</fieldset>
   </form>
   </div>
