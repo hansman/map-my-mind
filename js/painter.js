@@ -819,7 +819,7 @@ MindMap.prototype.literaturelist = function()
 		}
 	}
 	document.getElementById("thelist").value = string;
-	console.log(string);
+	//console.log(string);
 };
 
 MindMap.prototype.getPaperIndex = function(title)

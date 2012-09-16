@@ -102,12 +102,18 @@ session_start();
   													$("#authorf"+key).val(jsonResponse.data[1][key][0]);					      							
 											    $("#title").val(jsonResponse.data[2][0]);
 				      							$("#date").val(jsonResponse.data[3][0]);
-				      							$("#publisher").val(jsonResponse.data[4][0]);
-				      							$("#month").val(jsonResponse.data[5][0]);
-				      							$("#volume").val(jsonResponse.data[6][0]);
-				      							$("#issue").val(jsonResponse.data[7][0]);
-				      							$("#startpage").val(jsonResponse.data[8][0]);
-				      							$("#lastpage").val(jsonResponse.data[9][0]);
+				      							if(jsonResponse.data[4])
+				      								$("#publisher").val(jsonResponse.data[4][0]);
+				      							if(jsonResponse.data[5])
+				      								$("#month").val(jsonResponse.data[5][0]);
+				      							if(jsonResponse.data[6])
+				      								$("#volume").val(jsonResponse.data[6][0]);
+				      							if(jsonResponse.data[7])
+				      								$("#issue").val(jsonResponse.data[7][0]);
+				      							if(jsonResponse.data[8])
+				      								$("#startpage").val(jsonResponse.data[8][0]);
+				      							if(jsonResponse.data[9])
+					      							$("#lastpage").val(jsonResponse.data[9][0]);
 				      							break;
 				      							
 							case "getusername":	$('#shownname').html(jsonResponse.data[0]) ;

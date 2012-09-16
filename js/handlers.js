@@ -46,7 +46,6 @@ function handlers()
 			  $("#loginpassword").val("");
 			});
 
-
 			$('#managebutton').click(function() {
 			  $('#managemaps').slideDown('slow', function() {				  
 			  });
