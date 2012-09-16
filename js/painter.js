@@ -1,9 +1,9 @@
 //Johann Steinbrecher
 //Santa Clara 2012
 
-var nsize = 3;   //Node size
-var refw = 200;
-var refh = 100;
+var nsize = 3;   //Node size default
+var refw = 200;  //Reference width default
+var refh = 100;  //Reference height default
 
 var StateMachine = function () {
 
@@ -158,6 +158,40 @@ Rect.prototype.contains = function(p)
 };
 
 
+var Com = function(start,title,map)
+{
+  this.drag=false;
+  this.title=title;
+  this.radius=16;
+  this.frame = new Rect(start.x,start.y,map.livew,map.liveh); 
+  this.sel=false;  
+  this.oldstart=start;
+};
+
+
+Com.prototype.zoom = function(delta, mouse)
+{
+
+    var newwidth = this.frame.width*(1+delta);
+    var newheight = this.frame.height*(1+delta);
+
+    var deltax = (this.frame.x + newwidth/2 - mouse.x)*(1+delta);
+    var deltay = (this.frame.y + newheight/2 - mouse.y)*(1+delta);
+
+    this.frame.x = mouse.x + deltax - newwidth/2;
+    this.frame.y = mouse.y + deltay - newheight/2; 
+	this.frame.width = newwidth;
+	this.frame.height = newheight;
+};
+
+
+Com.prototype.paint = function(map)
+{	
+	map.roundedRect(this.frame.x, this.frame.y , this.frame.width , this.frame.height , 16, this.title, this.sel);
+};
+
+
+
 var Ref = function(start,title,map)
 {
   this.drag=false;
@@ -203,15 +237,7 @@ Ref.prototype.zoom = function(delta, mouse)
 
 Ref.prototype.paint = function(map)
 {
-	
-	map.ctxt.lineWidth = 1;
-	map.ctxt.fillStyle = "#ffffff";
-	if(this.sel  )
-		 map.ctxt.strokeStyle = "#FF0000";
- 	else
- 		 map.ctxt.strokeStyle = "#000000";
- 		
-	map.roundedRect(this.frame.x, this.frame.y , this.frame.width , this.frame.height , 16, this.title );
+	map.roundedRect(this.frame.x, this.frame.y , this.frame.width , this.frame.height , 16, this.title, this.sel );
 		
     if(this.sel)
       for (var j in this.node)
@@ -296,6 +322,7 @@ var MindMap = function(theCanvas)
     this.draghelper=false;
     
 	this.refs = [];
+	this.coms = [];
 	this.cons = [];
 	this.settings = { background: "#fff"};
   
@@ -335,16 +362,25 @@ MindMap.prototype.performState = function()
     				
                     break;
  
-    case "addRef": 			if( document.getElementById("paper").value!="" )
-    						{
-    						  if( !this.checkNames( document.getElementById("paper").value ) )
-    						  {      							  
-    							  var tempPoint = new Point(this.mousePosition.x - this.livew/2 , this.mousePosition.y - this.liveh/2 );
-    							  this.refs.push(new Ref(tempPoint, $("#paper").val(), this));
-    							  document.getElementById("paper").value="";
-    							  this.literaturelist();
-    						  }
-    						}
+    case "addRef": 			if( $("#paper").val()!="" ) 
+    						{    	
+    							if( $("#selectinput").text()=="Reference" )  
+    							{
+    								if( !this.checkNames( $("#paper").val() ) )
+    								{      							  
+    									var tempPoint = new Point(this.mousePosition.x - this.livew/2 , this.mousePosition.y - this.liveh/2 );
+    									this.refs.push(new Ref(tempPoint, $("#paper").val(), this));    									
+    								}
+    							}
+    							else  //its a comment
+    							{
+    								var tempPoint = new Point(this.mousePosition.x - this.livew/2 , this.mousePosition.y - this.liveh/2 );
+									this.coms.push(new Com(tempPoint, $("#paper").val(), this));									
+    							}
+    							$("#paper").val("");
+    							this.literaturelist();
+    						}    
+    
     						this.renderMap();
     						sm.consumeEvent('backToIdle');
                      		break;
@@ -376,12 +412,33 @@ MindMap.prototype.performState = function()
 								
 							  }
 							}
+    
+    						for (var j in this.coms)
+    						{
+    							if(this.coms[j].drag)
+    							{
+    								var deltax = 0;
+    								var deltay = 0;
+    								if(!this.draghelper)
+    								{
+    									deltax = this.mousePosition.x - this.coms[j].oldstart.x;
+    									deltay = this.mousePosition.y - this.coms[j].oldstart.y;     							    
+    								}
+    								this.draghelper=false;     							
+    								this.coms[j].frame.x += deltax;
+    								this.coms[j].frame.y += deltay;    								
+    								this.coms[j].oldstart=this.mousePosition;
+    								break;
+    							}
+    						}
 							
     						this.renderMap();    						 
 							break;							
 							
 	case "endDragRef": 		for (var j in this.refs)					
-    						  this.refs[j].drag=false;   
+    						  this.refs[j].drag=false;	
+							for (var j in this.coms)					
+								this.coms[j].drag=false; 
     						
 	                        this.renderMap();    						 
     						sm.consumeEvent('backToIdle');    						
@@ -430,33 +487,45 @@ MindMap.prototype.performState = function()
     						break;
     						
     						
-    case "deleteObject":	var refkey=null;
-    						var delflag=true;
-    	
-    						for(refkey in this.refs) 
-    							if(this.refs[refkey].sel)   								
-    								break;    							
-    						
-    						while(delflag)
+    case "deleteObject":	var delflag=true;
+    						for(var i in this.coms)
     						{
-    						 delflag=false;
-    						 for (var j in this.cons)
-    						 {
-    							for (var i in this.refs[refkey].node)
-    							   if( (this.refs[refkey].node[i] == this.cons[j].from) || (this.refs[refkey].node[i] == this.cons[j].to) )	
-    								   delflag=true;
-    							
-    							if(delflag)
+    							if(this.coms[i].sel)
     							{
-    								this.cons.splice(j,1);
-    								break;
-    							}
-    						 }
+    								this.coms.splice(i,1);
+    								delflag=false;
+    								break;    								
+    							}    	
     						}
     						
-    						this.refs.splice(refkey,1);
-   							this.renderMap();    
-   							this.literaturelist();
+    						if(delflag)
+    						{    	
+    							var refkey=null;
+    							for(refkey in this.refs) 
+    								if(this.refs[refkey].sel)   								
+    									break;    							
+    						
+    							while(delflag)
+    							{
+    								delflag=false;
+    								for (var j in this.cons)
+    								{
+    									for (var i in this.refs[refkey].node)
+    										if( (this.refs[refkey].node[i] == this.cons[j].from) || (this.refs[refkey].node[i] == this.cons[j].to) )	
+    											delflag=true;
+    							
+    									if(delflag)
+    									{
+    										this.cons.splice(j,1);
+    										break;
+    									}
+    								}
+    							}
+    						
+    							this.refs.splice(refkey,1);
+    							this.literaturelist();
+    						}
+   							this.renderMap();
     						sm.consumeEvent('backToIdle');
     						break; 
     						
@@ -467,6 +536,8 @@ MindMap.prototype.performState = function()
 							  this.liveh = this.liveh*(1+this.zoomdelta/10);	    
     						  for (var j in this.refs)
     							  this.refs[j].zoom(this.zoomdelta/10, this.mousePosition);
+    						  for (var j in this.coms)
+    							  this.coms[j].zoom(this.zoomdelta/10, this.mousePosition);
     						}
     						this.roundedRect(this.mousePosition.x - this.livew/2, this.mousePosition.y - this.liveh/2 , this.livew , this.liveh , 16, document.getElementById("paper").value );
    							this.renderMap();
@@ -496,6 +567,12 @@ MindMap.prototype.performState = function()
 									this.refs[j].node[i].frame.y += deltay;
 								}
     						  }
+							  
+							  for (var j in this.coms)
+    						  {
+    							this.coms[j].frame.x += deltax;
+								this.coms[j].frame.y += deltay;
+							  }							  
 							
 							  this.refs[0].oldstart=this.mousePosition;
     	                    }
@@ -547,7 +624,7 @@ MindMap.prototype.mouseDown = function(e)
 			if(this.refs[j].sel==true && !objClicked)
 			{
 				objClicked=true;
-				document.getElementById("paper").value;
+				$("#paper").val();
 				this.refs[j].drag=true;
 				sm.consumeEvent('clickOnRef');
 				this.draghelper=true;
@@ -558,11 +635,31 @@ MindMap.prototype.mouseDown = function(e)
 					this.refs[j].paint(this);
 			}
 		}
+		
+		for (var j in this.coms)
+		{
+			if(this.coms[j].sel==true && !objClicked)
+			{
+				this.coms[j].drag=true;
+				objClicked=true;
+				sm.consumeEvent('clickOnRef');
+				this.draghelper=true;				
+			}
+		}
 	
 		if(objClicked==false)
-		{
 			sm.consumeEvent('clickOnCanvas');
-		}		
+		else  //push selected ref to the end of the array to keep the right order
+		{
+			for (var j in this.refs)
+				if(this.refs[j].drag==true)
+				{
+					var elem = this.refs[j];
+					this.refs[j]=this.refs[this.refs.length-1];
+					this.refs[this.refs.length-1]=elem;
+					break;
+				}
+		}
 	}
 	else if(e.which == 2)  //mousewheel
 	{
@@ -646,6 +743,23 @@ MindMap.prototype.mouseMove = function(e)
     			this.cons[j].sel=false;
     	}
     }
+    
+    if(!flag)
+    {
+    	for (var j in this.coms)
+    	{
+    		
+    		    if(this.coms[j].frame.contains(this.mousePosition))
+    		    {
+    				this.coms[j].sel=true;
+    				flag=true;
+    			}
+    		    else
+    				this.coms[j].sel=false;			
+    	}
+    }
+    
+    
 	
 	this.performState();
 	this.stopEvent(e); 
@@ -694,11 +808,15 @@ MindMap.prototype.attachRef = function()
 };
 
 
-MindMap.prototype.roundedRect = function(x,y,w,h,r, text )
+MindMap.prototype.roundedRect = function(x,y,w,h,r, text,sel )
 {
-	this.ctxt.lineWidth = 1;
+	this.ctxt.lineWidth = 1;		
 	this.ctxt.fillStyle = "#ffffff";
-	this.ctxt.strokeStyle = "#000000";
+	
+	if(sel)
+		this.ctxt.strokeStyle = "#FF0000";
+	else
+		this.ctxt.strokeStyle = "#000000";
 	 
 	this.ctxt.beginPath();
 	this.ctxt.moveTo(x + r, y);
@@ -717,11 +835,18 @@ MindMap.prototype.roundedRect = function(x,y,w,h,r, text )
 	if(text)
 	{
  	  var textsize=w/15;
-	  	  
-	  var author = text.split(". ")[0];
-	  var year = text.split(". ")[1];
-	  var title = text.split(". ")[2];
-	
+ 	  var author='';
+	  var year='';
+	  var title='';
+	  if(text.split(". ").length==3)//its a reference	  
+	  {	
+		  author = text.split(". ")[0];
+		  year = text.split(". ")[1];
+		  title = text.split(". ")[2];
+	  }
+	  else
+		  title = text;
+	  	
 	  this.ctxt.fillStyle = "blue";
 	  this.ctxt.font = "italic "+textsize+"pt Arial";
       this.ctxt.lineWidth = 1;
@@ -780,8 +905,13 @@ MindMap.prototype.renderMap = function()
 {
 	for (var j in this.cons)
 		this.cons[j].paint(this);
+	
 	for (var j in this.refs)
 		this.refs[j].paint(this);
+	
+	for (var j in this.coms)
+		this.coms[j].paint(this);
+	
 };
 
 MindMap.prototype.literaturelist = function()

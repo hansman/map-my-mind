@@ -94,7 +94,9 @@ session_start();
 												for (var i=0; i<jsonResponse.data.length;i++) 
 													$(".dlbib").append('<option label="'+ jsonResponse.data[i].title +'" value="' + jsonResponse.data[i].author.split(",")[1] + '.  ' + jsonResponse.data[i].date + '.  ' + jsonResponse.data[i].title + '" />');
 												break;
-							case "getdoi":      while(jsonResponse.data[0].length > authors)
+							case "getdoi":      $(".npform").val('');
+												$(".authorsform").val('');
+												while(jsonResponse.data[0].length > authors)
 													addauthors();
 												for(var key in jsonResponse.data[0])
   													$("#authorl"+key).val(jsonResponse.data[0][key][0]);
@@ -210,8 +212,14 @@ session_start();
 
 <body id="thebody" onload="document_load()">
   
-  <canvas id="canvas" width="1000" height= "400" tabindex="0"></canvas>  
-  <input class="full-length-elem" id="paper" autocomplete list="bibliothek" placeholder="please select from your library here ..." />
+  <canvas id="canvas" width="1000" height="400" tabindex="0"></canvas>  
+  <div class="full-length-elem">
+  <input id="paper" autocomplete list="bibliothek0" placeholder="Select a reference from your library" />
+  <span id="selectinput">Reference</span> 
+  <datalist id="bibliothek0" class="dlbib"></datalist> 
+  
+  </div>
+  <br><br>
   <p>  
   <article>  
   <div>
@@ -291,13 +299,34 @@ session_start();
   	
   <div class="panel"><a id="removHeader" class="headers">Remove From Library</a>
    <div class="bodies">
-   	<input class="semi-length-elem" id="deletepaper" list="bibliothek" placeholder="Please select which entry to delete from your library ..." />  
+   	<input class="semi-length-elem" id="deletepaper" list="bibliothek1" placeholder="Please select which entry to delete from your library ..." />  
    	<input class="buttons" type="button" value="Remove" onclick="ajaxcall('rmpaper',document.getElementById('deletepaper').value.split('.  ')[2])" />
-   	<datalist id="bibliothek" class="dlbib"></datalist> 
+   	<datalist id="bibliothek1" class="dlbib"></datalist> 
    	<br/>
    </div>
   </div>
+
+  <div class="panel"><a id="manageHeader" class="headers">Manage Mind Maps</a>
+   <div class="bodies">
    
+   	<input class="mapbuttons" type="button" value="Save Changes" onclick="" />
+   	<br>
+   	<input class="half-length-elem" id="loadmap" list="maps" placeholder="Select which Mind Map to load" />  
+   	<input class="mapbuttons" type="button" value="Load" onclick="" />
+   	<br>
+   	<input class="half-length-elem" id="savemap" list="maps" placeholder="Save current Mind Map as" />  
+   	<input class="mapbuttons" type="button" value="Save" onclick="" />
+   	<br>
+   	<input class="half-length-elem" id="delmap" list="maps" placeholder="Select Mind Map to delete" />  
+   	<input class="mapbuttons" type="button" value="Delete" onclick="" />
+   	<datalist id="maps" class="maps"></datalist> 
+   	<br/>
+   </div>
+  </div>
+  
+  
+  
+  
  </div>
  </article>
 </body>

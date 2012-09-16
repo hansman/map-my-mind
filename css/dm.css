@@ -124,7 +124,36 @@ canvas {
 	margin-right: auto;
 	border: 1px solid #D9D9D9;
 	outline: 0; 
-}  
+}
+
+#paper { 	
+    width: 920px;
+    height: 18px;
+    margin:0;
+    float: left;
+}
+
+#selectinput { 
+	float: right;
+	margin:0px;
+	width:70px;
+	color: #444444;
+	background-color: #FFFFFF;
+	border: 1px solid #D9D9D9; 
+	border-radius: 5px;
+	text-decoration: none;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size:11px;	
+	padding-top:4px;
+	padding-bottom:4px;
+	text-align:center;
+	
+}
+
+#selectinput:hover{
+	cursor:pointer;
+}
+
    
 article {
 	display: block;
@@ -170,13 +199,29 @@ article .buttons{
 	border: 2px solid #D9D9D9; 
 	border-radius: 5px;
 	text-decoration: none;
-} 
-	
+}
+
 article .buttons:hover{
 	cursor:pointer;
 	border: 2px solid orange; 
-} 
-	
+}
+
+article .mapbuttons{
+	float: right;
+	margin-right:110px;
+	width: 110px;
+	color: #444444;
+	background-color: #FFFFFF;
+	border: 2px solid #D9D9D9; 
+	border-radius: 5px;
+	text-decoration: none;
+}
+
+article .mapbuttons:hover{
+	cursor:pointer;
+	border: 2px solid orange; 
+}
+
 article textarea{
    resize: none;
    background-color: #FFFFFF;
@@ -322,6 +367,12 @@ article textarea{
 	width: 950px;
 	margin-left: auto;
 	margin-right: auto; 
+}
+
+.half-length-elem {
+	width: 400px;
+	margin-left: 300px;
+	float:left; 
 }
 
 .refform {

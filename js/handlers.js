@@ -11,6 +11,18 @@ function handlers()
 		        addauthors();     
 			});
 			
+			$('#selectinput').toggle(function () {
+				$("#bibliothek0").text('');
+				$("#paper").attr('placeholder',"Comment your Mind Map");
+			    $("#selectinput").text("Comment");
+			}, function () {
+				ajaxcall("paperdata",null);
+				$("#paper").attr('placeholder',"Select a reference from your library");
+			    $("#selectinput").text("Reference");
+			});
+
+			
+			
 			$('.headers').click(function() {
 				if( $(this).attr('id') == $('#addlibrary').attr('id')   )
 					{
