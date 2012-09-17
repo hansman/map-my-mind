@@ -125,9 +125,7 @@ session_start();
 								  					$('#loginbutton').text("Logout");
 							  					break; 
 							case "login":		if(jsonResponse.meta['status'] == "wrong login")
-								  				{
 									  				$('#warningtext').text("Your login data is incorrect ...");
-							  	  				}
 								  				else
 								  				{
 									  				ajaxcall("paperdata",null);
@@ -165,6 +163,10 @@ session_start();
 						     					$('#paper').val("");
 						     					ajaxcall("paperdata",null);
 						     					break;
+							case "savemap":     console.log("savemap input  "+args);
+												console.log("savemap output  "+jsonResponse.data);
+												//alert('savemap');
+												break;						     					
 						    default:			alert("Problem selecting the ajax type in index.php");
 							}
 				  }
@@ -315,16 +317,16 @@ session_start();
    	<input class="mapbuttons" type="button" value="Load" onclick="" />
    	<br>
    	<input class="half-length-elem" id="savemap" list="maps" placeholder="Save current Mind Map as" />  
-   	<input class="mapbuttons" type="button" value="Save" onclick="" />
+   	<input class="mapbuttons" type="button" value="Save" onclick="ajaxcall('savemap',[$('#savemap').val(),mindmap.getMap()])" />
    	<br>
    	<input class="half-length-elem" id="delmap" list="maps" placeholder="Select Mind Map to delete" />  
    	<input class="mapbuttons" type="button" value="Delete" onclick="" />
    	<datalist id="maps" class="maps"></datalist> 
-   	<br/>
+   	<br>
+   	<span id="mapswarning"></span>
+   	<br>
    </div>
   </div>
-  
-  
   
   
  </div>

@@ -48,6 +48,12 @@
 					$this->meta['status']='failed';
 				else
 					$this->meta['status']='passed';
+				
+				$query = "create table maps_". $userid ." like maps_testuser";
+				if(!mysql_query($query))
+					$this->meta['status']='failed';
+				else
+					$this->meta['status']='passed';
 	
 				session_start();
     			if (!isset($_SESSION['activeuser']))

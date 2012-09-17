@@ -9,6 +9,7 @@
 	include_once 'engines/RMPaper.php';
 	include_once 'engines/SignUp.php';
 	include_once 'engines/NewPswd.php';
+	include_once 'engines/SaveMap.php';
 
 	$type = $_GET['type'];		
 	$args=explode(',',$_GET['args']);
@@ -33,6 +34,9 @@
 							break;	
 		case "sendpswd":	$engine = new NewPswd($args);
 							break;
+		case "savemap":		$engine = new SaveMap($_GET['args']);
+							break;
+		default:			echo "Problem selecting ajax type in ajax.php";
 	}
 		
 	print $engine->run();

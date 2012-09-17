@@ -346,20 +346,14 @@ MindMap.prototype.performState = function()
 {
 
    this.canvas.style.background = this.settings.background;
-   this.ctxt.clearRect(0, 0, this.canvas.width, this.canvas.height);
-   
+   this.ctxt.clearRect(0, 0, this.canvas.width, this.canvas.height);   
    
    switch ( sm.getStatus() ) 
    {
     case "idle": 	
-    				var text;
-    				if ( document.getElementById("paper").value )
-    					text = document.getElementById("paper").value;
-    				else
-    				    text = "";
+    				var text = $("#paper").val();
    					this.roundedRect(this.mousePosition.x - this.livew/2, this.mousePosition.y - this.liveh/2 , this.livew , this.liveh , 16, text );
-					this.renderMap();  
-    				
+					this.renderMap();      				
                     break;
  
     case "addRef": 			if( $("#paper").val()!="" ) 
@@ -385,7 +379,7 @@ MindMap.prototype.performState = function()
     						sm.consumeEvent('backToIdle');
                      		break;
                      		
-    case "dragRef": 		for (var j in this.refs)
+    case "dragRef": 		for (var j in this.refs)       //needs work
     						{
     					 	  if(this.refs[j].drag)
 							  {								  
@@ -487,7 +481,7 @@ MindMap.prototype.performState = function()
     						break;
     						
     						
-    case "deleteObject":	var delflag=true;
+    case "deleteObject":	var delflag=true;            //needs work
     						for(var i in this.coms)
     						{
     							if(this.coms[i].sel)
@@ -545,8 +539,7 @@ MindMap.prototype.performState = function()
     						sm.consumeEvent('backToIdle');
     						break; 
     						
-    case "panState":		
-    	                    if(this.refs[0])
+    case "panState":		if(this.refs || this.coms)              //needs work
     	                    {
     						  var deltax = 0;
 							  var deltay = 0;
@@ -575,6 +568,7 @@ MindMap.prototype.performState = function()
 							  }							  
 							
 							  this.refs[0].oldstart=this.mousePosition;
+							  this.coms[0].oldstart=this.mousePosition;
     	                    }
 							this.renderMap();
     						break;
@@ -935,7 +929,7 @@ MindMap.prototype.literaturelist = function()
 			  string += jsonPapers[j].title + ", ";
 			  if(jsonPapers[j].publisher)
 				string += jsonPapers[j].publisher + ", ";
-			  if(jsonPapers[j].month != 0)
+			  if(jsonPapers[j].month != 0)this.refs[i]
 					string += jsonPapers[j].month + "\/";
 			  string += jsonPapers[j].date + ", ";
 			  if( jsonPapers[j].volume )
@@ -952,6 +946,14 @@ MindMap.prototype.literaturelist = function()
 	//console.log(string);
 };
 
+MindMap.prototype.getPaperId = function(title)
+{
+	for (var j in jsonPapers)
+		if ( jsonPapers[j].title==title )			
+			return jsonPapers[j].id;	
+	return -1;
+};
+
 MindMap.prototype.getPaperIndex = function(title)
 {
 	for (var j in jsonPapers)
@@ -961,26 +963,21 @@ MindMap.prototype.getPaperIndex = function(title)
 };
 
 
-
-MindMap.prototype.createJsonObject = function()
+/*
+ * Returns a JSON Object representing the map
+ */
+MindMap.prototype.getMap = function()
 {
-	/*for (var j = 0; j < jsonPapers.length; j++)
-		if ( jsonPapers[j].title==title )
-			
-			return j;
-	
-	return -1; */
-	return { "Ref": {
-		           "0":{
-		        	   "title":"firsttitle",
-		        	   "position":"theposition"
-		               },
-		           "1":{
-			           "title":"sndtitle",
-			           "position":"the2position"
-			           }	            
-				}, 
-			 "Con": {"name": "somename"},
-			 "metadata": {"zoom": "15"}
-	};
+	var myMap=[];
+	var elem=null;
+	for(var i in this.refs)
+	{
+		elem={};
+		elem['type']='ref';
+		elem['x']=this.refs[i].frame.x;
+		elem['y']=this.refs[i].frame.y;
+		elem['id']=this.getPaperId(this.refs[i].title.split(".  ")[2]);		
+		myMap.push(elem);
+	}	
+	return JSON.stringify(myMap);
 };

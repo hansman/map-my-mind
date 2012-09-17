@@ -20,7 +20,7 @@
 			$query = "lock table lit_". $this->userid ." read";
 			mysql_query($query);
 			
-			$query = "select doi, author, title, date, month, publisher, volume, issue, startpage, lastpage from lit_".$this->userid;
+			$query = "select doi, author, title, date, month, publisher, volume, issue, startpage, lastpage, id from lit_".$this->userid;
 			
 			$result=mysql_query($query);
 			if(!$result)
