@@ -1,5 +1,15 @@
 <?php 
 session_start(); 
+
+function auto_version($file)
+{
+  if(strpos($file, '/') !== 0 || !file_exists($_SERVER['DOCUMENT_ROOT'] . $file))
+    return $file;
+ 
+  $mtime = filemtime($_SERVER['DOCUMENT_ROOT'] . $file);
+  return preg_replace('{\\.([^./]+)$}', ".$mtime.\$1", $file);
+}
+
 ?>
 
 <!doctype html>  
@@ -10,7 +20,7 @@ session_start();
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 	<title>MapMyMind</title>
 	
-	<link href="css/dm.css" rel="stylesheet" />	
+	<link href="<?=auto_version('/map-my-mind/css/mmm.css')?>" rel="stylesheet"/>	
 	<script src="js/jquery-1.7.2.min.js"></script>
 	<script src="js/painter.js"></script>		
 	<script src="js/handlers.js"></script>
