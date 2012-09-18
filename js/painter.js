@@ -130,6 +130,53 @@ Function.prototype.bind = function(obj)
 };
 
 
+var LinkedList = function(root)
+{
+	this.root=root;
+};
+
+LinkedList.prototype.push = function(elem)
+{
+	var iter = this.root;
+	while(iter.next!=null)
+		iter=iter.next;					
+	itr.next=elem;
+};
+
+LinkedList.prototype.pushback = function(id)
+{
+	var iter = this.root;
+	var elem;
+	while(iter.next!=null)
+	{
+		if(iter.next.id==id)
+		{
+			elem = iter.next;
+			iter.next=iter.next.next;
+		}
+		else
+			iter=iter.next;
+	}
+	elem.next=null;
+	iter.next=elem;
+};
+
+LinkedList.prototype.remove = function(id)
+{
+	var iter = this.root;
+	while(iter.next!=null)
+	{		
+		if(iter.next.id==id)
+		{
+			iter.next=iter.next.next;
+			break;
+		}
+		else
+			iter=iter.next;
+	}
+};
+
+
 var Point = function(x,y)
 {
 	this.x =x;
