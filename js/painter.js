@@ -104,7 +104,6 @@ var StateMachine = function () {
 };
 
 
-
 StateMachine.prototype.consumeEvent = function(e)
 {
 	if(this.currentState.events[e])
@@ -135,44 +134,66 @@ var LinkedList = function(root)
 	this.root=root;
 };
 
+
 LinkedList.prototype.push = function(elem)
 {
-	var iter = this.root;
-	while(iter.next!=null)
-		iter=iter.next;					
-	itr.next=elem;
+	var iter;
+	if(this.root)
+	{
+		iter = this.root;
+		while(iter.next!=null)
+			iter=iter.next;					
+		iter.next=elem;
+	}
+	else
+		this.root=elem;
 };
+
 
 LinkedList.prototype.pushback = function(id)
 {
-	var iter = this.root;
-	var elem;
-	while(iter.next!=null)
+	if(this.root)
 	{
-		if(iter.next.id==id)
+		var iter = this.root;
+		var elem=null;
+		while(iter.next!=null)
 		{
-			elem = iter.next;
-			iter.next=iter.next.next;
+			if(iter.next.id==id)
+			{
+				elem = iter.next;
+				iter.next=iter.next.next;
+			}
+			else
+				iter=iter.next;
 		}
-		else
-			iter=iter.next;
+		if(elem)
+		{
+			elem.next=null;
+			iter.next=elem;
+		}
 	}
-	elem.next=null;
-	iter.next=elem;
 };
+
 
 LinkedList.prototype.remove = function(id)
 {
 	var iter = this.root;
-	while(iter.next!=null)
-	{		
-		if(iter.next.id==id)
-		{
-			iter.next=iter.next.next;
-			break;
+	if(iter.id==id)
+	{
+		this.root=iter.next;
+	}	
+	else	
+	{
+		while(iter.next!=null)
+		{		
+			if(iter.next.id==id)
+			{
+				iter.next=iter.next.next;
+				break;
+			}
+			else
+				iter=iter.next;
 		}
-		else
-			iter=iter.next;
 	}
 };
 
@@ -205,8 +226,10 @@ Rect.prototype.contains = function(p)
 };
 
 
-var Com = function(start,title,map)
+var Com = function(start,title,map,id)
 {
+  this.id=id;
+  this.next=null;
   this.drag=false;
   this.title=title;
   this.radius=16;
@@ -238,9 +261,10 @@ Com.prototype.paint = function(map)
 };
 
 
-
-var Ref = function(start,title,map)
+var Ref = function(start,title,map,id)
 {
+  this.id=id;
+  this.next=null;
   this.drag=false;
   this.title=title;
   this.radius=16;
@@ -255,7 +279,6 @@ var Ref = function(start,title,map)
   this.oldstart=start;
 
 };
-
 
 
 Ref.prototype.zoom = function(delta, mouse)
@@ -282,15 +305,14 @@ Ref.prototype.zoom = function(delta, mouse)
     this.node[3].frame.y = this.frame.y + newheight -nsize;
 };
 
+
 Ref.prototype.paint = function(map)
 {
 	map.roundedRect(this.frame.x, this.frame.y , this.frame.width , this.frame.height , 16, this.title, this.sel );
 		
     if(this.sel)
       for (var j in this.node)
-    	this.node[j].paint(map);   
-    
-
+    	this.node[j].paint(map); 
 };
 
 
@@ -367,9 +389,9 @@ var MindMap = function(theCanvas)
     this.liveh=refh;
     
     this.draghelper=false;
-    
-	this.refs = [];
-	this.coms = [];
+        
+    this.objs = new LinkedList();
+    this.comctr=-1;
 	this.cons = [];
 	this.settings = { background: "#fff"};
   
@@ -410,13 +432,13 @@ MindMap.prototype.performState = function()
     								if( !this.checkNames( $("#paper").val() ) )
     								{      							  
     									var tempPoint = new Point(this.mousePosition.x - this.livew/2 , this.mousePosition.y - this.liveh/2 );
-    									this.refs.push(new Ref(tempPoint, $("#paper").val(), this));    									
+    									this.objs.push(new Ref(tempPoint, $("#paper").val(), this,this.getPaperId($("#paper").val().split(".  ")[2])));    									
     								}
     							}
     							else  //its a comment
     							{
     								var tempPoint = new Point(this.mousePosition.x - this.livew/2 , this.mousePosition.y - this.liveh/2 );
-									this.coms.push(new Com(tempPoint, $("#paper").val(), this));									
+									this.objs.push(new Com(tempPoint, $("#paper").val(), this,this.comctr--));									
     							}
     							$("#paper").val("");
     							this.literaturelist();
@@ -426,66 +448,50 @@ MindMap.prototype.performState = function()
     						sm.consumeEvent('backToIdle');
                      		break;
                      		
-    case "dragRef": 		for (var j in this.refs)       //needs work
-    						{
-    					 	  if(this.refs[j].drag)
-							  {								  
-							    var deltax = 0;
-							    var deltay = 0;
- 							    if(!this.draghelper)
-								{
-									deltax = this.mousePosition.x - this.refs[j].oldstart.x;
-     							    deltay = this.mousePosition.y - this.refs[j].oldstart.y;     							    
-     							}
- 							    
-     							this.draghelper=false;     							
-								this.refs[j].frame.x += deltax;
-								this.refs[j].frame.y += deltay;
-								
-								for (var i in this.refs[j].node)
-    							{
-									this.refs[j].node[i].frame.x += deltax;
-									this.refs[j].node[i].frame.y += deltay;
-    							}		
-			
-								this.refs[j].oldstart=this.mousePosition;
-								break;
-								
-							  }
-							}
-    
-    						for (var j in this.coms)
-    						{
-    							if(this.coms[j].drag)
-    							{
+    case "dragRef": 		var elem=this.objs.root;
+    						while(elem)
+    						{	
+    							if(elem.drag)
+  							  	{								  
     								var deltax = 0;
     								var deltay = 0;
     								if(!this.draghelper)
     								{
-    									deltax = this.mousePosition.x - this.coms[j].oldstart.x;
-    									deltay = this.mousePosition.y - this.coms[j].oldstart.y;     							    
+    									deltax = this.mousePosition.x - elem.oldstart.x;
+    									deltay = this.mousePosition.y - elem.oldstart.y;     							    
     								}
+   							    
     								this.draghelper=false;     							
-    								this.coms[j].frame.x += deltax;
-    								this.coms[j].frame.y += deltay;    								
-    								this.coms[j].oldstart=this.mousePosition;
+    								elem.frame.x += deltax;
+    								elem.frame.y += deltay;
+  								
+    								if(elem instanceof Ref)
+    									for (var i in elem.node)
+    									{
+    										elem.node[i].frame.x += deltax;
+    										elem.node[i].frame.y += deltay;
+    									}		
+  			
+    								elem.oldstart=this.mousePosition;
     								break;
-    							}
-    						}
+  							  	}
+    							elem=elem.next;
+    						}	
 							
     						this.renderMap();    						 
 							break;							
 							
-	case "endDragRef": 		for (var j in this.refs)					
-    						  this.refs[j].drag=false;	
-							for (var j in this.coms)					
-								this.coms[j].drag=false; 
-    						
+	case "endDragRef": 		var elem = this.objs.root;
+							while(elem)
+							{
+								elem.drag=false;
+								elem=elem.next;
+							}
 	                        this.renderMap();    						 
     						sm.consumeEvent('backToIdle');    						
 							break;
 							
-	case "createStartNode":	for (var j in this.refs)
+	case "createStartNode":	/*for (var j in this.refs)
     						{
 								for (var i in this.refs[j].node)
 								{
@@ -497,7 +503,7 @@ MindMap.prototype.performState = function()
 									}
 								
 								}
-    						}
+    						}*/
 			
 	case "drawLine":		this.ctxt.lineWidth = 1;
 							this.ctxt.fillStyle = "#ffffff";
@@ -511,7 +517,7 @@ MindMap.prototype.performState = function()
 							this.renderMap();
     						break;
     						
-    case "addCon":   
+    case "addCon":          /*
     						for (var j in this.refs)
     						{
 								for (var i in this.refs[j].node)
@@ -522,50 +528,25 @@ MindMap.prototype.performState = function()
 										sm.consumeEvent('backToIdle');
 									}
 								}
-    						}
+    						}*/
     						
     						this.renderMap();
     						break;
     						
     						
-    case "deleteObject":	var delflag=true;            //needs work
-    						for(var i in this.coms)
+    case "deleteObject":	var elem=this.objs.root;
+    						
+    						while(elem)
     						{
-    							if(this.coms[i].sel)
+    							if(elem.sel)
     							{
-    								this.coms.splice(i,1);
-    								delflag=false;
-    								break;    								
-    							}    	
-    						}
-    						
-    						if(delflag)
-    						{    	
-    							var refkey=null;
-    							for(refkey in this.refs) 
-    								if(this.refs[refkey].sel)   								
-    									break;    							
-    						
-    							while(delflag)
-    							{
-    								delflag=false;
-    								for (var j in this.cons)
-    								{
-    									for (var i in this.refs[refkey].node)
-    										if( (this.refs[refkey].node[i] == this.cons[j].from) || (this.refs[refkey].node[i] == this.cons[j].to) )	
-    											delflag=true;
-    							
-    									if(delflag)
-    									{
-    										this.cons.splice(j,1);
-    										break;
-    									}
-    								}
+    								this.objs.remove(elem.id);
+    								break;
     							}
-    						
-    							this.refs.splice(refkey,1);
-    							this.literaturelist();
-    						}
+    							elem=elem.next;
+    						}	
+    	
+    						this.literaturelist();
    							this.renderMap();
     						sm.consumeEvent('backToIdle');
     						break; 
@@ -574,50 +555,46 @@ MindMap.prototype.performState = function()
     						if( !((this.liveh <= 36) && (this.zoomdelta<0)) )
     						{
 							  this.livew = this.livew*(1+this.zoomdelta/10);
-							  this.liveh = this.liveh*(1+this.zoomdelta/10);	    
-    						  for (var j in this.refs)
-    							  this.refs[j].zoom(this.zoomdelta/10, this.mousePosition);
-    						  for (var j in this.coms)
-    							  this.coms[j].zoom(this.zoomdelta/10, this.mousePosition);
+							  this.liveh = this.liveh*(1+this.zoomdelta/10);
+							  var elem=this.objs.root;
+							  while(elem)
+							  {
+								  elem.zoom(this.zoomdelta/10, this.mousePosition);
+								  elem=elem.next;
+							  }
     						}
     						this.roundedRect(this.mousePosition.x - this.livew/2, this.mousePosition.y - this.liveh/2 , this.livew , this.liveh , 16, document.getElementById("paper").value );
-   							this.renderMap();
-    
+   							
+    						this.renderMap();    
     						sm.consumeEvent('backToIdle');
     						break; 
     						
-    case "panState":		if(this.refs || this.coms)              //needs work
-    	                    {
+    case "panState":		if(this.objs.root)
+    						{
     						  var deltax = 0;
-							  var deltay = 0;
- 							  if(!this.draghelper)
-							  {
-								deltax = this.mousePosition.x - this.refs[0].oldstart.x;
-   							    deltay = this.mousePosition.y - this.refs[0].oldstart.y;
-   							  }
-   							  this.draghelper=false;
-							
-							  for (var j in this.refs)
-    						  {
-    							this.refs[j].frame.x += deltax;
-								this.refs[j].frame.y += deltay;
-								for (var i in this.refs[j].node)
-								{
-									this.refs[j].node[i].frame.x += deltax;
-									this.refs[j].node[i].frame.y += deltay;
-								}
-    						  }
-							  
-							  for (var j in this.coms)
-    						  {
-    							this.coms[j].frame.x += deltax;
-								this.coms[j].frame.y += deltay;
-							  }							  
-							
-							  this.refs[0].oldstart=this.mousePosition;
-							  this.coms[0].oldstart=this.mousePosition;
-    	                    }
-							this.renderMap();
+  							  var deltay = 0;
+   							  if(!this.draghelper)
+  							  {
+  								deltax = this.mousePosition.x - this.objs.root.oldstart.x;
+     							    deltay = this.mousePosition.y - this.objs.root.oldstart.y;
+     							  }
+     							  this.draghelper=false;
+     						  var elem=this.objs.root;
+  							  while(elem)
+      						  {
+      							elem.frame.x += deltax;
+  								elem.frame.y += deltay;
+  								if(elem instanceof Ref)
+  									for (var i in elem.node)
+  									{
+  										elem.node[i].frame.x += deltax;
+  										elem.node[i].frame.y += deltay;
+  									}
+  								elem=elem.next;
+      						  }
+  							  this.objs.root.oldstart=this.mousePosition;
+    						}
+    						this.renderMap();
     						break;
     
  
@@ -644,62 +621,64 @@ MindMap.prototype.mouseDown = function(e)
 {
 	e.preventDefault();
 	this.updateMousePosition(e);
+	var objClicked = false;
 	
 	if(e.which==1)   //left button
 	{		
-		var objClicked = false;
-		//check if an object got clicked
-		for (var j in this.refs)
+		var elem = this.objs.root;
+		while(elem)
 		{
-			for (var i in this.refs[j].node)
+			if(elem instanceof Ref)
 			{
-				if(this.refs[j].node[i].sel==true)
+				for (var i in elem.node)
+				{
+					if(elem.node[i].sel==true)
+					{
+						objClicked=true;
+						sm.consumeEvent('clickOnNode');   	    
+						break;
+					}
+				}
+				
+				if(objClicked)
+					break;
+				
+				//check Refs
+				if(elem.sel==true && !objClicked)
 				{
 					objClicked=true;
-					sm.consumeEvent('clickOnNode');   	    
+					$("#paper").val();
+					elem.drag=true;
+					sm.consumeEvent('clickOnRef');
+					this.draghelper=true;
 					break;
 				}
 			}
-       
-			//check Refs
-			if(this.refs[j].sel==true && !objClicked)
+			else if(elem instanceof Com)
 			{
-				objClicked=true;
-				$("#paper").val();
-				this.refs[j].drag=true;
-				sm.consumeEvent('clickOnRef');
-				this.draghelper=true;
-				for (var j in this.cons)
-					this.cons[j].paint(this);
 				
-				for (var j in this.refs)
-					this.refs[j].paint(this);
-			}
+				if(elem.sel==true)
+				{
+					objClicked=true;
+					$("#paper").val();
+					elem.drag=true;
+					sm.consumeEvent('clickOnRef');
+					this.draghelper=true;
+					break;
+				}
+			}	
+			else
+				alert("problem in left button click");
+			
+			
+			elem=elem.next;
 		}
 		
-		for (var j in this.coms)
-		{
-			if(this.coms[j].sel==true && !objClicked)
-			{
-				this.coms[j].drag=true;
-				objClicked=true;
-				sm.consumeEvent('clickOnRef');
-				this.draghelper=true;				
-			}
-		}
-	
 		if(objClicked==false)
 			sm.consumeEvent('clickOnCanvas');
 		else  //push selected ref to the end of the array to keep the right order
 		{
-			for (var j in this.refs)
-				if(this.refs[j].drag==true)
-				{
-					var elem = this.refs[j];
-					this.refs[j]=this.refs[this.refs.length-1];
-					this.refs[this.refs.length-1]=elem;
-					break;
-				}
+			//let do that later
 		}
 	}
 	else if(e.which == 2)  //mousewheel
@@ -712,7 +691,8 @@ MindMap.prototype.mouseDown = function(e)
 		this.stopEvent(e);
 		return null;
 	}
-   
+    
+	sm.consumeEvent('clickOnCanvas');
 	mindmap.performState();
 	this.stopEvent(e);
 	return null;
@@ -734,73 +714,56 @@ MindMap.prototype.mouseMove = function(e)
   	e.preventDefault(); 
 	this.updateMousePosition(e);
 	
-	var flag = false;
-
-	//mark selected objects
-	for (var j in this.refs)
-    {
-		if(this.refs[j].frame.areacontains(this.mousePosition))
+	var elem = this.objs.root;
+	
+	while(elem)
+	{
+		if(elem instanceof Ref)
 		{
-		    if(this.refs[j].frame.contains(this.mousePosition))
-		    {
-				this.refs[j].sel=true;
-				flag=true;
+			if(elem.frame.areacontains(this.mousePosition))
+			{
+			    if(elem.frame.contains(this.mousePosition))
+			    {
+					elem.sel=true;
+					flag=true;
+				}
+			    else
+			 	{
+					elem.sel=false;			
+				}
+				
+				for (var i in elem.node)
+	    		{
+	    		  if (elem.node[i].frame.contains(this.mousePosition))
+	    		  {  
+	    		    elem.node[i].sel=true;	    		    
+	    		    flag=true;
+	    		  }
+	    		  else
+	    		  {
+	    		    elem.node[i].sel=false;    		  
+	    		  }
+				}		    
 			}
-		    else
-		 	{
-				this.refs[j].sel=false;			
+			else
+			{
+				elem.sel=false;
+				for (var i in elem.node)		
+	    			elem.node[i].sel=false;
 			}
-			
-			for (var i in this.refs[j].node)
-    		{
-    		  if (this.refs[j].node[i].frame.contains(this.mousePosition))
-    		  {  
-    		    this.refs[j].node[i].sel=true;
-    		    
-    		    flag=true;
-    		  }
-    		  else
-    		  {
-    		    this.refs[j].node[i].sel=false;    		  
-    		  }
-			}		    
+		}
+		else if(elem instanceof Com)
+		{
+			if(elem.frame.contains(this.mousePosition))
+    			elem.sel=true;
+    		else
+    			elem.sel=false;
 		}
 		else
-		{
-			this.refs[j].sel=false;
-			for (var i in this.refs[j].node)		
-    			this.refs[j].node[i].sel=false;
-		}
-						
-    }
-    
-    if(!flag)
-    {
-    	for (var j in this.cons)
-    	{
-    		if(this.cons[j].contains(this.mousePosition))
-    			this.cons[j].sel=true;
-    		else
-    			this.cons[j].sel=false;
-    	}
-    }
-    
-    if(!flag)
-    {
-    	for (var j in this.coms)
-    	{
-    		
-    		    if(this.coms[j].frame.contains(this.mousePosition))
-    		    {
-    				this.coms[j].sel=true;
-    				flag=true;
-    			}
-    		    else
-    				this.coms[j].sel=false;			
-    	}
-    }
-    
-    
+			alert("problem in mousemove");		
+		
+		elem=elem.next;
+	}
 	
 	this.performState();
 	this.stopEvent(e); 
@@ -809,12 +772,15 @@ MindMap.prototype.mouseMove = function(e)
 //check if this paper is already in the mind map
 MindMap.prototype.checkNames = function( papername )
 {
-	for (var i in this.refs)
-	{			
-		if(this.refs[i].title==papername)
+	var elem=this.objs.root;
+	while(elem)
+	{
+		if(elem.title==papername)
 			return true;
-	}
+		elem=elem.next;
+	}	
 	return false;
+	
 };
 
 
@@ -837,15 +803,6 @@ MindMap.prototype.updateMousePosition = function(e)
 {
 	this.shiftKey = e.shiftKey;
 	this.mousePosition = new Point(e.pageX - this.canvas.offsetLeft, e.pageY - this.canvas.offsetTop);
-};
-
-MindMap.prototype.attachRef = function()
-{
-	this.updateMouseAttachment();
-	for (var j in this.cons)
-		this.cons[j].paint(this);	
-	for (var j in this.refs)
-		this.refs[j].paint(this);
 };
 
 
@@ -947,50 +904,57 @@ MindMap.prototype.renderMap = function()
 	for (var j in this.cons)
 		this.cons[j].paint(this);
 	
-	for (var j in this.refs)
-		this.refs[j].paint(this);
-	
-	for (var j in this.coms)
-		this.coms[j].paint(this);
+	var elem = this.objs.root;
+	while(elem)
+	{
+		elem.paint(this);
+		elem=elem.next;		
+	}
 	
 };
 
 MindMap.prototype.literaturelist = function()
 {
-	document.getElementById("thelist").value="";
-	var string="";
 	var j;
-	for (var i in this.refs)
-	{   
-		if( (j=this.getPaperIndex(this.refs[i].title.split(".  ")[2]) ) >=0 )
+	$("#thelist").val("");
+	var string="";
+	var elem=this.objs.root;
+	while(elem)
+	{
+		if(elem instanceof Ref)
 		{
-			  for(var k in jsonPapers[j].author.split(','))
-			  {				  
-				  if(k%2)
-					  string += jsonPapers[j].author.split(',')[k]+', ';
-				  else
-					  if(jsonPapers[j].author.split(',')[k])
-						  string += jsonPapers[j].author.split(',')[k]+' ';
-			  }
-			
-			  string += jsonPapers[j].title + ", ";
-			  if(jsonPapers[j].publisher)
-				string += jsonPapers[j].publisher + ", ";
-			  if(jsonPapers[j].month != 0)this.refs[i]
-					string += jsonPapers[j].month + "\/";
-			  string += jsonPapers[j].date + ", ";
-			  if( jsonPapers[j].volume )
-				string += "volume " + jsonPapers[j].volume + ", ";
-			  if( jsonPapers[j].startpage && jsonPapers[j].lastpage )
-				string += "pp. " + jsonPapers[j].startpage + "-" + jsonPapers[j].lastpage + ", ";
-			  if( jsonPapers[j].doi )
-				string += "doi:" + jsonPapers[j].doi;
-			  
-			  string += "\n";
-		}
+			if( (j=this.getPaperIndex(elem.title.split(".  ")[2]) ) >=0 )
+			{
+				  for(var k in jsonPapers[j].author.split(','))
+				  {				  
+					  if(k%2)
+						  string += jsonPapers[j].author.split(',')[k]+', ';
+					  else
+						  if(jsonPapers[j].author.split(',')[k])
+							  string += jsonPapers[j].author.split(',')[k]+' ';
+				  }
+				
+				  string += jsonPapers[j].title + ", ";
+				  if(jsonPapers[j].publisher)
+					string += jsonPapers[j].publisher + ", ";
+				  if(jsonPapers[j].month != 0)
+						string += jsonPapers[j].month + "\/";
+				  string += jsonPapers[j].date + ", ";
+				  if( jsonPapers[j].volume )
+					string += "volume " + jsonPapers[j].volume + ", ";
+				  if( jsonPapers[j].startpage && jsonPapers[j].lastpage )
+					string += "pp. " + jsonPapers[j].startpage + "-" + jsonPapers[j].lastpage + ", ";
+				  if( jsonPapers[j].doi )
+					string += "doi:" + jsonPapers[j].doi;
+				  
+				  string += "\n";
+			}
+		}	
+		elem=elem.next;
 	}
-	document.getElementById("thelist").value = string;
-	//console.log(string);
+	
+	$("#thelist").val(string);
+	
 };
 
 MindMap.prototype.getPaperId = function(title)
@@ -1015,6 +979,7 @@ MindMap.prototype.getPaperIndex = function(title)
  */
 MindMap.prototype.getMap = function()
 {
+	/*
 	var myMap=[];
 	var elem=null;
 	for(var i in this.refs)
@@ -1026,5 +991,5 @@ MindMap.prototype.getMap = function()
 		elem['id']=this.getPaperId(this.refs[i].title.split(".  ")[2]);		
 		myMap.push(elem);
 	}	
-	return JSON.stringify(myMap);
+	return JSON.stringify(myMap); */
 };
