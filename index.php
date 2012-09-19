@@ -324,7 +324,7 @@ function auto_version($file)
    	<input class="mapbuttons" type="button" value="Load" onclick="" />
    	<br>
    	<input class="half-length-elem" id="savemap" list="maps" placeholder="Save current Mind Map as" />  
-   	<input class="mapbuttons" type="button" value="Save" onclick="ajaxcall('savemap',[$('#savemap').val(),mindmap.getMap()])" />
+   	<input class="mapbuttons" type="button" value="Save" onclick="ajaxcall('savemap',[$('#savemap').val(),mindmap.getZoom(),mindmap.getMap()])" />
    	<br>
    	<input class="half-length-elem" id="delmap" list="maps" placeholder="Select Mind Map to delete" />  
    	<input class="mapbuttons" type="button" value="Delete" onclick="" />

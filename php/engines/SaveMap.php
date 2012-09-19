@@ -7,13 +7,15 @@ class SaveMap extends EngineContainer
 	private $meta;
 	private $jsonMap;
 	private $mapName;
+	private $zoom;
 
 	function __construct($a)
 	{
-		$temp=split ( ',' , $a , 2 );
+		$temp=split ( ',' , $a , 3 );
 		$this->meta['engine']='savemap';
 		$this->connect();		
-		$this->jsonMap=json_decode($temp[1]);
+		$this->jsonMap=json_decode($temp[2]);
+		$this->zoom=$temp[1];
 		$this->mapName=$temp[0];
 	}
 

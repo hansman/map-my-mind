@@ -149,25 +149,50 @@ LinkedList.prototype.push = function(elem)
 		this.root=elem;
 };
 
+LinkedList.prototype.print = function()
+{	
+	var elem = this.root;
+	while(elem)
+	{
+		console.log( elem.id );
+		elem=elem.next;
+	}
+};
+
 
 LinkedList.prototype.pushback = function(id)
 {
+	var iter=this.root;
+	var elem=null;
+	
 	if(this.root)
 	{
-		var iter = this.root;
-		var elem=null;
-		while(iter.next!=null)
+		if(this.root.id==id)
 		{
-			if(iter.next.id==id)
+			if(this.root.next)
 			{
-				elem = iter.next;
-				iter.next=iter.next.next;
+				elem=this.root;
+				this.root=this.root.next;
 			}
-			else
-				iter=iter.next;
+		}	
+		else
+		{	
+			while(iter.next!=null)
+			{
+				if(iter.next.id==id)
+				{
+					elem = iter.next;
+					iter.next=iter.next.next;
+					break;
+				}
+				else
+					iter=iter.next;
+			}
 		}
 		if(elem)
-		{
+		{			
+			while(iter.next!=null)
+				iter=iter.next;			
 			elem.next=null;
 			iter.next=elem;
 		}
@@ -217,7 +242,7 @@ var Rect = function(x, y, w, h)
 
 Rect.prototype.areacontains = function(p)
 {
-	return ( (p.x >= this.x-nsize) && (p.x <= (this.x + this.width+nsize)) && (p.y >= this.y-nsize) && (p.y <= (this.y + this.height + nsize )));
+	return ( (p.x >= (this.x-nsize)) && (p.x <= (this.x + this.width+nsize)) && (p.y >= (this.y-nsize)) && (p.y <= (this.y + this.height + nsize )));
 };
 
 Rect.prototype.contains = function(p)
@@ -337,10 +362,12 @@ Node.prototype.paint = function(map)
 };
 
 
-var Con = function(from,to)
+var Con = function(from,fromid,to,toid)
 {
   this.from = from;
-  this.to = to;  
+  this.fromnode=fromid;
+  this.to = to;
+  this.tonode=toid;
   this.sel=false;
 };
 
@@ -357,8 +384,8 @@ Con.prototype.paint = function(map)
 		map.ctxt.strokeStyle = "#000000";
 	
 	map.ctxt.beginPath();
-	map.ctxt.moveTo(this.from.frame.x + nsize , this.from.frame.y + nsize);
-	map.ctxt.lineTo(this.to.frame.x + nsize,this.to.frame.y + nsize);
+	map.ctxt.moveTo(this.from.node[this.fromnode].frame.x + nsize , this.from.node[this.fromnode].frame.y + nsize);
+	map.ctxt.lineTo(this.to.node[this.tonode].frame.x + nsize,this.to.node[this.tonode].frame.y + nsize);
 	map.ctxt.closePath();
 	map.ctxt.stroke();
 };
@@ -382,7 +409,8 @@ var MindMap = function(theCanvas)
     this.ctxt = this.canvas.getContext("2d");
     this.defaultdisplay = true;
     this.mousePosition = new Point(0, 0);
-    this.startNode = new Node(0,0,0,0,0);
+    this.startObj;
+    this.startID;
     
     this.zoomdelta = 0;
     this.livew=refw;
@@ -491,25 +519,30 @@ MindMap.prototype.performState = function()
     						sm.consumeEvent('backToIdle');    						
 							break;
 							
-	case "createStartNode":	/*for (var j in this.refs)
-    						{
-								for (var i in this.refs[j].node)
+	case "createStartNode":	var elem = this.objs.root;
+							while(elem)
+							{
+								if(elem instanceof Ref)
 								{
-									if(this.refs[j].node[i].sel)
+									for (var i in elem.node)
 									{
-										this.startNode=this.refs[j].node[i];
-										sm.consumeEvent('proceedToDrawLine');
-										break;
+										if(elem.node[i].sel)
+										{
+											this.startObj=elem;
+											this.startID=i;
+											sm.consumeEvent('proceedToDrawLine');
+											break;
+										}									
 									}
-								
 								}
-    						}*/
+								elem=elem.next;
+							}
 			
 	case "drawLine":		this.ctxt.lineWidth = 1;
 							this.ctxt.fillStyle = "#ffffff";
 							this.ctxt.strokeStyle = "#000000";
 							this.ctxt.beginPath();
-							this.ctxt.moveTo(this.startNode.frame.x + nsize, this.startNode.frame.y + nsize);
+							this.ctxt.moveTo(this.startObj.node[this.startID].frame.x + nsize, this.startObj.node[this.startID].frame.y + nsize);
 							this.ctxt.lineTo(this.mousePosition.x,this.mousePosition.y);
 							this.ctxt.closePath();
 							this.ctxt.stroke(); 
@@ -517,22 +550,25 @@ MindMap.prototype.performState = function()
 							this.renderMap();
     						break;
     						
-    case "addCon":          /*
-    						for (var j in this.refs)
-    						{
-								for (var i in this.refs[j].node)
+    case "addCon":          var elem = this.objs.root;
+							while(elem)
+							{
+								if(elem instanceof Ref)
 								{
-									if(this.refs[j].node[i].sel)
+									for (var i in elem.node)
 									{
-										this.cons.push( new Con(this.startNode,this.refs[j].node[i]));
-										sm.consumeEvent('backToIdle');
+										if(elem.node[i].sel)
+										{
+											this.cons.push( new Con(this.startObj,this.startID,elem,i));
+											sm.consumeEvent('backToIdle');
+											break;											
+										}
 									}
 								}
-    						}*/
-    						
+								elem=elem.next;
+							}    						
     						this.renderMap();
-    						break;
-    						
+    						break;    						
     						
     case "deleteObject":	var elem=this.objs.root;
     						
@@ -630,6 +666,7 @@ MindMap.prototype.mouseDown = function(e)
 		{
 			if(elem instanceof Ref)
 			{
+				//check nodes
 				for (var i in elem.node)
 				{
 					if(elem.node[i].sel==true)
@@ -643,7 +680,7 @@ MindMap.prototype.mouseDown = function(e)
 				if(objClicked)
 					break;
 				
-				//check Refs
+				//check Ref
 				if(elem.sel==true && !objClicked)
 				{
 					objClicked=true;
@@ -670,7 +707,6 @@ MindMap.prototype.mouseDown = function(e)
 			else
 				alert("problem in left button click");
 			
-			
 			elem=elem.next;
 		}
 		
@@ -678,7 +714,16 @@ MindMap.prototype.mouseDown = function(e)
 			sm.consumeEvent('clickOnCanvas');
 		else  //push selected ref to the end of the array to keep the right order
 		{
-			//let do that later
+			var elemx = this.objs.root;
+			while(elemx)
+			{
+				if(elemx.drag)
+				{
+					this.objs.pushback(elem.id);
+					break;
+				}
+				elemx=elemx.next;
+			}
 		}
 	}
 	else if(e.which == 2)  //mousewheel
@@ -975,21 +1020,52 @@ MindMap.prototype.getPaperIndex = function(title)
 
 
 /*
+ * Returns a the current zoom factor of the map
+ */
+MindMap.prototype.getZoom = function()
+{
+	if(this.objs.root)
+		return this.objs.root.frame.width;
+	return null;
+};
+
+/*
  * Returns a JSON Object representing the map
  */
 MindMap.prototype.getMap = function()
-{
-	/*
+{	
 	var myMap=[];
-	var elem=null;
-	for(var i in this.refs)
+	var object=null;
+	var elem=this.objs.root;
+	
+	while(elem)
 	{
-		elem={};
-		elem['type']='ref';
-		elem['x']=this.refs[i].frame.x;
-		elem['y']=this.refs[i].frame.y;
-		elem['id']=this.getPaperId(this.refs[i].title.split(".  ")[2]);		
-		myMap.push(elem);
+		
+		object={};	//an object (not an array)
+		if(elem instanceof Ref)
+			object['type']='ref';
+		else if(elem instanceof Com)
+			object['type']='com';
+		else 
+			alert("problem in getMap");
+		
+		object['x']=elem.frame.x;
+		object['y']=elem.frame.y;
+		object['id']=elem.id;		
+		myMap.push(object);
+		elem=elem.next;
 	}	
-	return JSON.stringify(myMap); */
+	
+	for(var i in this.cons)
+	{
+		object={};
+		object['type']='con';
+		object['startRef']=this.cons[i].from.id;
+		object['endRef']=this.cons[i].to.id;
+		object['x']=this.cons[i].fromnode;
+		object['y']=this.cons[i].tonode;
+		myMap.push(object);
+	}	
+	
+	return JSON.stringify(myMap); 
 };
