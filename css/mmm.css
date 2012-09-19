@@ -94,7 +94,7 @@ head {
 	height: 20px;
 } 
    
-.slidedowns #warningtext{
+.slidedowns #warningtext, #mapswarning{
 	color: red;
 	margin-left:30px;
 	font-size: 12px;
