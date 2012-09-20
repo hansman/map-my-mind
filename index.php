@@ -170,8 +170,16 @@ function auto_version($file)
 						     					$('#paper').val("");
 						     					ajaxcall("paperdata",null);
 						     					break;
-							case "managemap":   if(jsonResponse.meta['status']=='exists')
-													$("#mapswarning").text('This map already exists');
+							case "managemap":   switch(jsonResponse.meta['option'])
+												{
+													case "0": if(jsonResponse.meta['status']=='exists')
+																$("#mapswarning").text('This map already exists');
+															break;
+													case "1":	$("#maps").text('');
+															for (var i=0; i<jsonResponse.data.length;i++) 
+																$("#maps").append('<option label="'+ jsonResponse.data[i].name +'" value="' + jsonResponse.data[i].name +'" />');
+															break;
+												}												
 												break;						     					
 						    default:			alert("Problem selecting the ajax type in index.php");
 							}
@@ -323,7 +331,7 @@ function auto_version($file)
    	<input class="mapbuttons" type="button" value="Load" onclick="" />
    	<br>
    	<input class="half-length-elem" id="savemap" list="maps" placeholder="Save current Mind Map as" />  
-   	<input class="mapbuttons" type="button" value="Save" onclick="ajaxcall('savemap',[0,$('#savemap').val(),mindmap.getZoom(),mindmap.getMap()])" />
+   	<input class="mapbuttons" type="button" value="Save" onclick="ajaxcall('managemap',[0,$('#savemap').val(),mindmap.getZoom(),mindmap.getMap()])" />
    	<br>
    	<input class="half-length-elem" id="delmap" list="maps" placeholder="Select Mind Map to delete" />  
    	<input class="mapbuttons" type="button" value="Delete" onclick="" />

@@ -34,7 +34,7 @@
 							break;	
 		case "sendpswd":	$engine = new NewPswd($args);
 							break;
-		case "savemap":		$engine = new ManageMap($_GET['args']);
+		case "managemap":	$engine = new ManageMap($_GET['args']);
 							break;
 		default:			echo "Problem selecting ajax type in ajax.php";
 	}

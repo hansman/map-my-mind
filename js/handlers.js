@@ -24,10 +24,14 @@ function handlers()
 			
 			
 			$('.headers').click(function() {
-				if( $(this).attr('id') == $('#addlibrary').attr('id')   )
+				if( $(this).attr('id') == $('#addlibrary').attr('id') )
 					{
 						authors=0;
 						addauthors();   
+					}
+				else if( $(this).attr('id') == $('#manageHeader').attr('id') )
+					{
+						ajaxcall('managemap',[1,'','','']);
 					}
 				
 				  $(this).siblings('.bodies').toggle('fast', function() {
