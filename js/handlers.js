@@ -32,6 +32,7 @@ function handlers()
 				else if( $(this).attr('id') == $('#manageHeader').attr('id') )
 					{
 						ajaxcall('managemap',[1,'','','']);
+						$("#mapswarning").text('');
 					}
 				
 				  $(this).siblings('.bodies').toggle('fast', function() {

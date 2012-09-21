@@ -172,13 +172,36 @@ function auto_version($file)
 						     					break;
 							case "managemap":   switch(jsonResponse.meta['option'])
 												{
-													case "0": if(jsonResponse.meta['status']=='exists')
-																$("#mapswarning").text('This map already exists');
-															break;
+													case "0": 	if(jsonResponse.meta['status']=='exists')
+																	$("#mapswarning").text('This map already exists');
+																else
+																	$("#mapswarning").text('');
+															  	$('#savemap').val('');
+															  	ajaxcall('managemap',[1,'','','']);
+															 	break;
 													case "1":	$("#maps").text('');
-															for (var i=0; i<jsonResponse.data.length;i++) 
-																$("#maps").append('<option label="'+ jsonResponse.data[i].name +'" value="' + jsonResponse.data[i].name +'" />');
-															break;
+																for (var i=0; i<jsonResponse.data.length;i++) 
+																	$("#maps").append('<option label="'+ jsonResponse.data[i].name +'" value="' + jsonResponse.data[i].name +'" />');
+																break;
+													case "2":	ajaxcall('managemap',[1,'','','']);
+																$('#delmap').val('');
+																$("#mapswarning").text('');
+																break;
+													//load map
+													case "3":	if(jsonResponse.meta['status']=='passed')
+																{
+																	$("#mapswarning").text('');
+																	$('#loadmap').val('');
+																	console.log('passed');
+																	sm = new StateMachine();
+													  				mindmap = new MindMap(document.getElementById("canvas"));
+													  				mindmap.load(jsonResponse.data);
+													  				mindmap.performState();
+																}
+																else
+																	$("#mapswarning").text(jsonResponse.meta['status']);								
+																																
+																break;
 												}												
 												break;						     					
 						    default:			alert("Problem selecting the ajax type in index.php");
@@ -328,21 +351,20 @@ function auto_version($file)
    	<input class="mapbuttons" type="button" value="Save Changes" onclick="" />
    	<br>
    	<input class="half-length-elem" id="loadmap" list="maps" placeholder="Select which Mind Map to load" />  
-   	<input class="mapbuttons" type="button" value="Load" onclick="" />
+   	<input class="mapbuttons" type="button" value="Load" onclick="ajaxcall('managemap',[3,$('#loadmap').val(),'',''])" />
    	<br>
-   	<input class="half-length-elem" id="savemap" list="maps" placeholder="Save current Mind Map as" />  
+   	<input class="half-length-elem" id="savemap" placeholder="Save current Mind Map as" />  
    	<input class="mapbuttons" type="button" value="Save" onclick="ajaxcall('managemap',[0,$('#savemap').val(),mindmap.getZoom(),mindmap.getMap()])" />
    	<br>
    	<input class="half-length-elem" id="delmap" list="maps" placeholder="Select Mind Map to delete" />  
-   	<input class="mapbuttons" type="button" value="Delete" onclick="" />
+   	<input class="mapbuttons" type="button" value="Delete" onclick="ajaxcall('managemap',[2,$('#delmap').val(),'',''])" />
    	<datalist id="maps" class="maps"></datalist> 
    	<br>
    	<br>
    	<span id="mapswarning"></span>
    	<br>
    </div>
-  </div>
-  
+  </div>  
   
  </div>
  </article>

@@ -513,6 +513,7 @@ MindMap.prototype.performState = function()
 							while(elem)
 							{
 								elem.drag=false;
+								elem.sel=false;
 								elem=elem.next;
 							}
 	                        this.renderMap();    						 
@@ -657,7 +658,14 @@ MindMap.prototype.mouseDown = function(e)
 {
 	e.preventDefault();
 	this.updateMousePosition(e);
-	var objClicked = false;
+	var objClicked = false;	
+	
+	var elem = this.objs.root;
+	while(elem)
+	{
+		elem.drag=false;
+		elem=elem.next;
+	}	
 	
 	if(e.which==1)   //left button
 	{		
@@ -681,15 +689,14 @@ MindMap.prototype.mouseDown = function(e)
 					break;
 				
 				//check Ref
-				if(elem.sel==true && !objClicked)
+				if(elem.sel==true)
 				{
 					objClicked=true;
-					$("#paper").val();
 					elem.drag=true;
-					sm.consumeEvent('clickOnRef');
 					this.draghelper=true;
+					sm.consumeEvent('clickOnRef');					
 					break;
-				}
+				}				
 			}
 			else if(elem instanceof Com)
 			{
@@ -719,7 +726,7 @@ MindMap.prototype.mouseDown = function(e)
 			{
 				if(elemx.drag)
 				{
-					this.objs.pushback(elem.id);
+					this.objs.pushback(elemx.id);
 					break;
 				}
 				elemx=elemx.next;
@@ -954,9 +961,36 @@ MindMap.prototype.renderMap = function()
 	{
 		elem.paint(this);
 		elem=elem.next;		
-	}
-	
+	}	
 };
+
+MindMap.prototype.load = function(data)
+{
+	
+	this.objs.root=null;
+	this.cons=[];
+	var i=0;
+	while(data[i])
+	{
+		switch(data[i]['type'])
+		{
+			case 'ref':	
+						this.objs.push(new Ref(new Point(parseInt(data[i]['x']),parseInt(data[i]['y'])), this.buildTitle(parseInt(data[i]['id'])) , this, data[i]['id']));
+						this.objs.print();
+						break;
+			
+			case 'com':	this.objs.push(new Com(new Point(parseInt(data[i]['x']),parseInt(data[i]['y'])), data[i]['comment'], this,data[i]['id']));
+						break;
+			
+			case 'con':	//this.cons.push( new Con(this.startObj,this.startID,elem,i));
+				
+						break;
+		
+		}
+		i++;
+	}
+};
+
 
 MindMap.prototype.literaturelist = function()
 {
@@ -1010,6 +1044,15 @@ MindMap.prototype.getPaperId = function(title)
 	return -1;
 };
 
+MindMap.prototype.buildTitle = function(id)
+{
+	for (var j in jsonPapers)
+		if ( jsonPapers[j].id==id )			
+			return jsonPapers[j].author.split(",")[1] + '.  ' + jsonPapers[j].date + '.  ' + jsonPapers[j].title;
+	return -1;
+};
+
+
 MindMap.prototype.getPaperIndex = function(title)
 {
 	for (var j in jsonPapers)
@@ -1045,7 +1088,10 @@ MindMap.prototype.getMap = function()
 		if(elem instanceof Ref)
 			object['type']='ref';
 		else if(elem instanceof Com)
+		{
 			object['type']='com';
+			object['comment']=elem.title;
+		}
 		else 
 			alert("problem in getMap");
 		
