@@ -72,6 +72,8 @@ class ManageMap extends EngineContainer
 							$query = "unlock table";
 							mysql_query($query);							
 							$this->meta['status']='passed';
+							session_start();
+							$_SESSION['activeMap']=$this->mapName;
 						}
 					}
 					break;
@@ -146,7 +148,11 @@ class ManageMap extends EngineContainer
 						if(!$result)
 							$this->meta['status']=$query;
 						else
+						{
 							$this->meta['status']='passed';
+							session_start();
+							$_SESSION['activeMap']=$this->mapName;							
+						}
 							
 						$this->data = array();
 						while($row = mysql_fetch_assoc($result))

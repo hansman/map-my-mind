@@ -362,12 +362,15 @@ Node.prototype.paint = function(map)
 };
 
 
-var Con = function(from,fromid,to,toid)
+var Con = function(fromref,fromnode,toref,tonode,mm)
 {
-  this.from = from;
-  this.fromnode=fromid;
-  this.to = to;
-  this.tonode=toid;
+	
+  this.fromref = fromref;
+  this.fromnode=fromnode;
+  this.toref = toref;
+  this.tonode=tonode;
+  this.from = mm.getObj(fromref);
+  this.to = mm.getObj(toref);
   this.sel=false;
 };
 
@@ -400,7 +403,6 @@ Con.prototype.contains = function(p)
  	else
  		return false;	
 };
-
 
 var MindMap = function(theCanvas)
 {
@@ -560,7 +562,7 @@ MindMap.prototype.performState = function()
 									{
 										if(elem.node[i].sel)
 										{
-											this.cons.push( new Con(this.startObj,this.startID,elem,i));
+											this.cons.push( new Con(this.startObj.id,this.startID,elem.id,i,this));
 											sm.consumeEvent('backToIdle');
 											break;											
 										}
@@ -577,6 +579,14 @@ MindMap.prototype.performState = function()
     						{
     							if(elem.sel)
     							{
+    								
+    								//also delete any connections here
+    								for(var i in this.cons)
+    								{
+    									if( (this.cons[i].fromref == elem.id) || (this.cons[i].toref == elem.id) )
+    										break;
+    								}
+    								this.cons.splice(i,1);    								
     								this.objs.remove(elem.id);
     								break;
     							}
@@ -981,14 +991,17 @@ MindMap.prototype.load = function(data)
 			
 			case 'com':	this.objs.push(new Com(new Point(parseInt(data[i]['x']),parseInt(data[i]['y'])), data[i]['comment'], this,data[i]['id']));
 						break;
-			
-			case 'con':	//this.cons.push( new Con(this.startObj,this.startID,elem,i));
-				
-						break;
-		
 		}
 		i++;
 	}
+	i=0;
+	while(data[i])
+	{
+		if(data[i]['type']=='con')
+			this.cons.push( new Con( data[i]['startref'],data[i]['x'],data[i]['endref'],data[i]['y'],this) );
+		i++;
+	}
+	
 };
 
 
@@ -1043,6 +1056,19 @@ MindMap.prototype.getPaperId = function(title)
 			return jsonPapers[j].id;	
 	return -1;
 };
+
+MindMap.prototype.getObj = function(id)
+{
+	var elem = this.objs.root;
+	while(elem)
+	{
+		if(elem.id == id)
+			return elem;
+		elem=elem.next;
+	}
+	return null;
+};
+
 
 MindMap.prototype.buildTitle = function(id)
 {
@@ -1106,12 +1132,12 @@ MindMap.prototype.getMap = function()
 	{
 		object={};
 		object['type']='con';
-		object['startRef']=this.cons[i].from.id;
-		object['endRef']=this.cons[i].to.id;
+		object['startRef']=this.cons[i].fromref;
+		object['endRef']=this.cons[i].toref;
 		object['x']=this.cons[i].fromnode;
 		object['y']=this.cons[i].tonode;
 		myMap.push(object);
-	}	
+	}
 	
 	return JSON.stringify(myMap); 
 };

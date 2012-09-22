@@ -2,7 +2,7 @@
 
 	include_once 'engines/PaperData.php';
 	include_once 'engines/DOIparser.php';
-	include_once 'engines/GetUserName.php';
+	include_once 'engines/GetSession.php';
 	include_once 'engines/Login.php';
 	include_once 'engines/Logout.php';
 	include_once 'engines/NewPaper.php';
@@ -20,7 +20,7 @@
 							break;
 		case "getdoi":		$engine = new DOIparser($args[0]);
 							break;
-		case "getusername":	$engine = new GetUserName();
+		case "getsession":	$engine = new GetSession($args);
 							break;
 		case "login":		$engine = new Login($args);
 							break;

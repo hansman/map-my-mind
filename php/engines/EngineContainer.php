@@ -5,6 +5,7 @@
 	   protected $conn;	
 	   protected $userid;
 	   protected $usernm;
+	   protected $mapnm;
 	  
 	      
 	   function connect() 
@@ -30,6 +31,12 @@
    	   			$this->userid=$_SESSION['activeID'];
    	   		else
    	   			$this->userid="guest";
+   	   		
+   	   		if(isset($_SESSION['activeMap']))
+   	   			$this->mapnm=$_SESSION['activeMap'];
+   	   		else
+   	   			$this->mapnm=null;
+   	   		
    	   }
    	   
    	   

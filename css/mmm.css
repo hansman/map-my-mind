@@ -52,6 +52,14 @@ head {
 	color: #999999;
 	font-style: italic;
 }
+
+#nav #shownmap {
+	position: absolute;
+	margin-left: 50%;
+	margin-top: 8px;
+	color: #999999;
+	font-style: italic;
+}
 	
 #nav #name {
 	margin-top: 4px;  	
@@ -276,7 +284,7 @@ article textarea{
 	width: 175px;
 	float: left;
 } 
-	
+	f-length-elem"
 #newpaperform div{
 	padding-top: 4px;
 	padding-bottom: 4px;

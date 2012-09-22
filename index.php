@@ -28,6 +28,7 @@ function auto_version($file)
 	    	<span id="name">MapMyMind</span>
 	    </div>
 	    <span id="shownname"></span>
+	    <span id="shownmap"></span>
 	    <li>
 			<a href="#" id="loginbutton">Login</a>
 		</li>
@@ -75,8 +76,9 @@ function auto_version($file)
 								
 		function document_load()
 		{		
-		  ajaxcall("getusername",null);
-		  ajaxcall("paperdata",null);
+		  ajaxcall('getsession','usernm');
+		  ajaxcall('getsession','mapnm');
+		  ajaxcall('paperdata',null);
 		  handlers();
 		  $(".bodies").hide();
 		  $("#thelist").val('');	  	
@@ -125,18 +127,29 @@ function auto_version($file)
 					      							$("#lastpage").val(jsonResponse.data[9][0]);
 				      							break;
 				      							
-							case "getusername":	$('#shownname').html(jsonResponse.data[0]) ;
-			  				  					if (jsonResponse.data[0]=="guest")
-								  					$('#loginbutton').text("Login");
-							  					else
-								  					$('#loginbutton').text("Logout");
-							  					break; 
+							case "getsession":	switch(jsonResponse.meta['option'])
+												{
+													case "usernm":	$('#shownname').html(jsonResponse.data[0]) ;
+			  				  										if (jsonResponse.data[0]=="guest")
+								  										$('#loginbutton').text("Login");
+							  										else
+								  										$('#loginbutton').text("Logout");
+							  										break;
+													case "mapnm":	if(jsonResponse.data[0])
+																	{
+																		$('#shownmap').html(jsonResponse.data[0]);
+																		$('#currmapname').html(jsonResponse.data[0]);																		
+																	}				
+						  											break;
+							  						default:		alert('ajaxcall - getsession');
+												} 
+												break;
 							case "login":		if(jsonResponse.meta['status'] == "wrong login")
 									  				$('#warningtext').text("Your login data is incorrect ...");
 								  				else
 								  				{
 									  				ajaxcall("paperdata",null);
-									  				ajaxcall("getusername",null);									  
+									  				ajaxcall('getsession','usernm');									  
 									  				$('#login').slideUp('slow', function() {window.location.reload();});
 									  				$('#warningtext').text("");
 									  				$('#paper').val("");
@@ -155,7 +168,7 @@ function auto_version($file)
 												$('#deletepaper').val("");
 												$('#thelist').val("");
 												ajaxcall("paperdata",null);
-												ajaxcall("getusername",null);
+												ajaxcall('getsession','usernm');
 												break;
 							case "newpaper":	if (jsonResponse.meta['status']!='passed')
 				     	 							$("#newpaperwarning").html(jsonResponse.meta['status']);
@@ -202,7 +215,8 @@ function auto_version($file)
 																	$("#mapswarning").text(jsonResponse.meta['status']);								
 																																
 																break;
-												}												
+												}
+												ajaxcall('getsession','mapnm');												
 												break;						     					
 						    default:			alert("Problem selecting the ajax type in index.php");
 							}
@@ -348,7 +362,8 @@ function auto_version($file)
   <div class="panel"><a id="manageHeader" class="headers">Manage Mind Maps</a>
    <div class="bodies">
    
-   	<input class="mapbuttons" type="button" value="Save Changes" onclick="" />
+    <span id="currmapname" class="half-length-elem"></span>
+   	<input class="mapbuttons" type="button" value="Save Changes" onclick="ajaxcall('managemap',[0,$('#currmapname').text(),mindmap.getZoom(),mindmap.getMap()])" />
    	<br>
    	<input class="half-length-elem" id="loadmap" list="maps" placeholder="Select which Mind Map to load" />  
    	<input class="mapbuttons" type="button" value="Load" onclick="ajaxcall('managemap',[3,$('#loadmap').val(),'',''])" />
