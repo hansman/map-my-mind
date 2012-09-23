@@ -31,10 +31,17 @@ class ManageMap extends EngineContainer
 		switch ($this->option)
 		{ 
 			//save map
-			case 0:	$query="select * from map_". $this->userid ."_". $this->mapName;
-					
-					if(mysql_query($query))
+			case 0:	$query="select * from maps_". $this->userid . " where name='".$this->mapName."'";
+					$result = mysql_query($query); 
+					if( $result )
+					{
+						$this->meta['status']='failed';
+						die ("Query Failed.");
+					}	
+					else if(mysql_num_rows($result) != 0  )
+					{
 						$this->meta['status']="exists";
+					}
 					else
 					{
 						$query = "lock table maps_". $this->userid ." write";
@@ -171,18 +178,8 @@ class ManageMap extends EngineContainer
 			default:   
 			
 		}
-		
-		
-		//to test I am returning the decoded json data
 		return $this->buildjson($this->data,$this->meta);
 	}
 }
-
-
-
-
-
-
-
 
 ?>

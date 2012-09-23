@@ -1,5 +1,6 @@
 <?php 
 session_start(); 
+unset($_SESSION['activeMap']);
 
 function auto_version($file)
 {
@@ -28,7 +29,6 @@ function auto_version($file)
 	    	<span id="name">MapMyMind</span>
 	    </div>
 	    <span id="shownname"></span>
-	    <span id="shownmap"></span>
 	    <li>
 			<a href="#" id="loginbutton">Login</a>
 		</li>
@@ -83,7 +83,7 @@ function auto_version($file)
 		  $(".bodies").hide();
 		  $("#thelist").val('');	  	
 		  sm = new StateMachine();
-		  mindmap = new MindMap(document.getElementById("canvas"));
+		  mindmap = new MindMap(document.getElementById("canvas"),'untitled');
 		  mindmap.performState();
 		}
 
@@ -136,10 +136,7 @@ function auto_version($file)
 								  										$('#loginbutton').text("Logout");
 							  										break;
 													case "mapnm":	if(jsonResponse.data[0])
-																	{
-																		$('#shownmap').html(jsonResponse.data[0]);
 																		$('#currmapname').html(jsonResponse.data[0]);																		
-																	}				
 						  											break;
 							  						default:		alert('ajaxcall - getsession');
 												} 
@@ -156,12 +153,12 @@ function auto_version($file)
 									  				$('#deletepaper').val("");
 									  				$('#thelist').val("");
 									  				sm = new StateMachine();
-									  				mindmap = new MindMap(document.getElementById("canvas"));
+									  				mindmap = new MindMap(document.getElementById("canvas"),'untitled');
 									  				mindmap.performState();
 									  			}
 									  			break;  
 							case "logout":		sm = new StateMachine();
-												mindmap = new MindMap(document.getElementById("canvas"));
+												mindmap = new MindMap(document.getElementById("canvas"),'untitled');
 												mindmap.performState();
 												$(".dlbib").text('');
 												$('#paper').val("");
@@ -188,7 +185,10 @@ function auto_version($file)
 													case "0": 	if(jsonResponse.meta['status']=='exists')
 																	$("#mapswarning").text('This map already exists');
 																else
+																{
+																	mindmap.title=args[1];
 																	$("#mapswarning").text('');
+																}
 															  	$('#savemap').val('');
 															  	ajaxcall('managemap',[1,'','','']);
 															 	break;
@@ -207,7 +207,7 @@ function auto_version($file)
 																	$('#loadmap').val('');
 																	console.log('passed');
 																	sm = new StateMachine();
-													  				mindmap = new MindMap(document.getElementById("canvas"));
+													  				mindmap = new MindMap(document.getElementById("canvas"),args[1]);
 													  				mindmap.load(jsonResponse.data);
 													  				mindmap.performState();
 																}

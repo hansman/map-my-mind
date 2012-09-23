@@ -52,14 +52,6 @@ head {
 	color: #999999;
 	font-style: italic;
 }
-
-#nav #shownmap {
-	position: absolute;
-	margin-left: 50%;
-	margin-top: 8px;
-	color: #999999;
-	font-style: italic;
-}
 	
 #nav #name {
 	margin-top: 4px;  	

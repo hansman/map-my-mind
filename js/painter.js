@@ -404,7 +404,7 @@ Con.prototype.contains = function(p)
  		return false;	
 };
 
-var MindMap = function(theCanvas)
+var MindMap = function(theCanvas,title)
 {
     this.canvas = theCanvas;
     this.canvas.focus();
@@ -413,6 +413,7 @@ var MindMap = function(theCanvas)
     this.mousePosition = new Point(0, 0);
     this.startObj;
     this.startID;
+    this.title=title;
     
     this.zoomdelta = 0;
     this.livew=refw;
@@ -449,21 +450,22 @@ MindMap.prototype.performState = function()
    
    switch ( sm.getStatus() ) 
    {
-    case "idle": 	
-    				var text = $("#paper").val();
-   					this.roundedRect(this.mousePosition.x - this.livew/2, this.mousePosition.y - this.liveh/2 , this.livew , this.liveh , 16, text );
-					this.renderMap();      				
-                    break;
+    case "idle": 			var text = $("#paper").val();
+   							this.roundedRect(this.mousePosition.x - this.livew/2, this.mousePosition.y - this.liveh/2 , this.livew , this.liveh , 16, text );
+   							this.renderMap();      				
+   							break;
  
     case "addRef": 			if( $("#paper").val()!="" ) 
     						{    	
     							if( $("#selectinput").text()=="Reference" )  
     							{
     								if( !this.checkNames( $("#paper").val() ) )
-    								{      							  
+    								{
     									var tempPoint = new Point(this.mousePosition.x - this.livew/2 , this.mousePosition.y - this.liveh/2 );
     									this.objs.push(new Ref(tempPoint, $("#paper").val(), this,this.getPaperId($("#paper").val().split(".  ")[2])));    									
     								}
+    								else
+    									alert("invalid reference / reference already inserted");
     							}
     							else  //its a comment
     							{
@@ -643,9 +645,8 @@ MindMap.prototype.performState = function()
     						}
     						this.renderMap();
     						break;
-    
  
-    default: alert('default state');
+    default: 				alert('default state');
    }
 
 };
@@ -840,7 +841,10 @@ MindMap.prototype.checkNames = function( papername )
 		if(elem.title==papername)
 			return true;
 		elem=elem.next;
-	}	
+	}
+	if(this.getPaperIndex( papername.split(".  ")[2]) == -1)
+		return true;
+	
 	return false;
 	
 };
@@ -971,7 +975,14 @@ MindMap.prototype.renderMap = function()
 	{
 		elem.paint(this);
 		elem=elem.next;		
-	}	
+	}
+	
+	this.ctxt.fillStyle = "grey";
+	this.ctxt.font = "italic 10pt Arial";
+    this.ctxt.lineWidth = 0.5;
+	this.ctxt.fillText( "\""+this.title+"\"" , 10 , 15);
+	
+	
 };
 
 MindMap.prototype.load = function(data)
