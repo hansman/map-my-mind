@@ -33,7 +33,7 @@ class ManageMap extends EngineContainer
 			//save map
 			case 0:	$query="select * from maps_". $this->userid . " where name='".$this->mapName."'";
 					$result = mysql_query($query); 
-					if( $result )
+					if( !$result )
 					{
 						$this->meta['status']='failed';
 						die ("Query Failed.");
