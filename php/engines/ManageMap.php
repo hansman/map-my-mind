@@ -30,7 +30,7 @@ class ManageMap extends EngineContainer
 		
 		switch ($this->option)
 		{ 
-			//save map
+			//save new map
 			case 0:	$query="select * from maps_". $this->userid . " where name='".$this->mapName."'";
 					$result = mysql_query($query); 
 					if( !$result )
@@ -173,6 +173,65 @@ class ManageMap extends EngineContainer
 						$this->meta['status']='does not exist';						
 					}
 					
+					break;
+					
+			//save changes to a map
+			case 4:	$query="select * from maps_". $this->userid . " where name='".$this->mapName."'";
+					$result = mysql_query($query);
+					if( !$result )
+					{
+						$this->meta['status']='failed';
+						die ("Query Failed.");
+					}
+					else if(mysql_num_rows($result) != 1  )
+					{
+						$this->meta['status']="does not exists";
+					}
+					else
+					{
+						$query = "lock table maps_". $this->userid ." write";
+						mysql_query($query);
+						$query="update maps_". $this->userid ." set timestamp=NOW(), zoom='". $this->zoom ."' where name='". $this->mapName ."'";
+						if(!mysql_query($query))
+						{
+							$this->meta['status']=$query;
+						}
+						
+						$query="select id from maps_". $this->userid ." where name='". $this->mapName ."'";
+						$result = mysql_query($query);
+						if(!$result)
+						{
+							$this->meta['status']=$query;
+						}
+						else
+						{
+							$row = mysql_fetch_row($result);
+							$id = $row[0];	
+						}
+					
+						$query = "unlock table";
+						mysql_query($query);
+					
+						$query="delete from map_". $this->userid ."_". $id;
+						if(!mysql_query($query))
+							$this->meta['status']=$query;
+						else
+						{
+							$query = "lock table map_". $this->userid ."_". $id ." write";
+							mysql_query($query);
+							for($i=0;$i<count($this->jsonMap);$i++)
+							{
+								$query="insert into map_". $this->userid ."_". $id."(type,x,y,id,startref,endref,comment) values ('".$this->jsonMap[$i]['type']."','".$this->jsonMap[$i]['x']."','".$this->jsonMap[$i]['y']."','".$this->jsonMap[$i]['id']."','".$this->jsonMap[$i]['startRef']."','".$this->jsonMap[$i]['endRef']."','".$this->jsonMap[$i]['comment']."')";
+								if(!mysql_query($query))
+									$this->meta['status']='failed';
+							}
+							$query = "unlock table";
+							mysql_query($query);
+							$this->meta['status']='passed';
+							session_start();
+							$_SESSION['activeMap']=$this->mapName;
+						}
+					}
 					break;
 					
 			default:   

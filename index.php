@@ -146,11 +146,13 @@ function auto_version($file)
 								  				else
 								  				{
 									  				ajaxcall("paperdata",null);
-									  				ajaxcall('getsession','usernm');									  
+									  				ajaxcall('getsession','usernm');	
+									  				ajaxcall('managemap',[1,'','','']);								  
 									  				$('#login').slideUp('slow', function() {window.location.reload();});
 									  				$('#warningtext').text("");
 									  				$('#paper').val("");
 									  				$('#deletepaper').val("");
+									  				
 									  				$('#thelist').val("");
 									  				sm = new StateMachine();
 									  				mindmap = new MindMap(document.getElementById("canvas"),'untitled');
@@ -163,9 +165,11 @@ function auto_version($file)
 												$(".dlbib").text('');
 												$('#paper').val("");
 												$('#deletepaper').val("");
+												$('#savemap').val('');
 												$('#thelist').val("");
 												ajaxcall("paperdata",null);
 												ajaxcall('getsession','usernm');
+												ajaxcall('managemap',[1,'','','']);
 												break;
 							case "newpaper":	if (jsonResponse.meta['status']!='passed')
 				     	 							$("#newpaperwarning").html(jsonResponse.meta['status']);
@@ -187,6 +191,7 @@ function auto_version($file)
 																else
 																{
 																	mindmap.title=args[1];
+																	mindmap.performState();
 																	$("#mapswarning").text('');
 																}
 															  	$('#savemap').val('');
@@ -196,9 +201,16 @@ function auto_version($file)
 																for (var i=0; i<jsonResponse.data.length;i++) 
 																	$("#maps").append('<option label="'+ jsonResponse.data[i].name +'" value="' + jsonResponse.data[i].name +'" />');
 																break;
+													//delete map
 													case "2":	ajaxcall('managemap',[1,'','','']);
 																$('#delmap').val('');
 																$("#mapswarning").text('');
+																if(mindmap.title==args[1])
+																{
+																	sm = new StateMachine();
+													  				mindmap = new MindMap(document.getElementById("canvas"),'untitled');
+													  				mindmap.performState();
+																}																
 																break;
 													//load map
 													case "3":	if(jsonResponse.meta['status']=='passed')
@@ -214,6 +226,15 @@ function auto_version($file)
 																else
 																	$("#mapswarning").text(jsonResponse.meta['status']);								
 																																
+																break;
+													//save changes
+													case "4":	if(jsonResponse.meta['status']=='passed')
+																{
+																	$("#mapswarning").text('');
+																	console.log('passed');
+																}
+																else
+																	$("#mapswarning").text(jsonResponse.meta['status']);								
 																break;
 												}
 												ajaxcall('getsession','mapnm');												
@@ -363,7 +384,7 @@ function auto_version($file)
    <div class="bodies">
    
     <span id="currmapname" class="half-length-elem"></span>
-   	<input class="mapbuttons" type="button" value="Save Changes" onclick="ajaxcall('managemap',[0,$('#currmapname').text(),mindmap.getZoom(),mindmap.getMap()])" />
+   	<input class="mapbuttons" type="button" value="Save Changes" onclick="ajaxcall('managemap',[4,$('#currmapname').text(),mindmap.getZoom(),mindmap.getMap()])" />
    	<br>
    	<input class="half-length-elem" id="loadmap" list="maps" placeholder="Select which Mind Map to load" />  
    	<input class="mapbuttons" type="button" value="Load" onclick="ajaxcall('managemap',[3,$('#loadmap').val(),'',''])" />
