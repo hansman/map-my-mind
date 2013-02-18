@@ -3,7 +3,7 @@ Santa Clara, CA
 2012
 
 This project aims to support paper publishers and students to store their related work, organize it using mind maps and generate bibliographies in a futuristic manner. Try it out (while work is in progress, I am hosting it on Amazon Web Services):
-http://ec2-54-245-19-156.us-west-2.compute.amazonaws.com/map-my-mind
+http://ec2-50-17-118-250.compute-1.amazonaws.com/map-my-mind
 Browsers supported are currently Firefox, Chrome and Safari.
 
 The core competency is to search for publications using DOI numbers and render mind maps based on paper objects. The mind map is a HTML5 canvas. The JavaScript renderer (just as the entire project) is designed and implemented by Johann Steinbrecher.
